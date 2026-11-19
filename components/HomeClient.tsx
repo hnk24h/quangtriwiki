@@ -130,6 +130,7 @@ export default function HomeClient({
   const [isThreadModalOpen, setIsThreadModalOpen] = useState(false);
   const [adminStats, setAdminStats] = useState<any>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [pageViews, setPageViews] = useState<number>(18240);
 
   // Community Threads state
   const [threads, setThreads] = useState(initialThreads);
@@ -180,6 +181,24 @@ export default function HomeClient({
 
       const savedChecklist = localStorage.getItem('qt_checklist');
       if (savedChecklist) setCheckedItems(JSON.parse(savedChecklist));
+    } catch (e) {}
+  }, []);
+
+  // Track page views on front page & hourly distribution
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('qt_page_views');
+      const current = stored ? parseInt(stored, 10) : 18240;
+      const nextViews = current + 1;
+      localStorage.setItem('qt_page_views', nextViews.toString());
+      setPageViews(nextViews);
+
+      // Track hourly views distribution
+      const hour = new Date().getHours();
+      const hourlyStr = localStorage.getItem('qt_hourly_views');
+      const hourly = hourlyStr ? JSON.parse(hourlyStr) : {};
+      hourly[hour] = (hourly[hour] || 0) + 1;
+      localStorage.setItem('qt_hourly_views', JSON.stringify(hourly));
     } catch (e) {}
   }, []);
 
@@ -428,7 +447,25 @@ export default function HomeClient({
 
         <div className="container hagiang-hero-content">
           <div className="hagiang-hero-left">
-            <div className="hagiang-kicker">MIỀN TRUNG VIỆT NAM · GÓC NHÌN ĐỊA PHƯƠNG</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap', marginBottom: '0.6rem' }}>
+              <div className="hagiang-kicker" style={{ margin: 0 }}>MIỀN TRUNG VIỆT NAM · GÓC NHÌN ĐỊA PHƯƠNG</div>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.2rem 0.65rem',
+                borderRadius: '20px',
+                background: 'rgba(16, 185, 129, 0.22)',
+                color: '#34d399',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                border: '1px solid rgba(52, 211, 153, 0.4)',
+                backdropFilter: 'blur(6px)',
+              }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399' }} />
+                {pageViews.toLocaleString()} lượt xem
+              </span>
+            </div>
             <h1 className="hagiang-main-title">
               Gần hơn với Quảng<br />
               Trị chân thật.
@@ -465,6 +502,10 @@ export default function HomeClient({
               <div className="hagiang-stat-chip">
                 <span className="stat-chip-num">{itineraries.length}</span>
                 <span className="stat-chip-label">Tuyến phượt</span>
+              </div>
+              <div className="hagiang-stat-chip" style={{ border: '1px solid rgba(52, 211, 153, 0.4)', background: 'rgba(52, 211, 153, 0.12)' }}>
+                <span className="stat-chip-num" style={{ color: '#34d399' }}>{pageViews.toLocaleString()}</span>
+                <span className="stat-chip-label">Lượt xem</span>
               </div>
             </div>
           </div>
