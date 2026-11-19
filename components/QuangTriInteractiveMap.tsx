@@ -1,29 +1,9 @@
 'use client';
 
-import React, { useState, useMemo, useRef } from 'react';
-import Link from 'next/link';
-import { QUANGTRI_DATA } from '@/lib/data';
-
-interface Place {
-  id: string;
-  name: string;
-  zoneCode: string;
-  zoneName: string;
-  category: string;
-  categoryName?: string;
-  image?: string;
-  hero_image?: string;
-  rating?: number;
-  reviewsCount?: number;
-  shortDesc?: string;
-  fullDesc?: string;
-  highlights?: string[];
-  ticket?: string;
-  openHours?: string;
-  coordinates?: string;
-  address?: string;
-  tips?: string;
-}
+import React, { memo, useMemo, useRef, useState } from 'react';
+import SafeImage from '@/components/common/SafeImage';
+import PlaceQuickModal from '@/components/home/PlaceQuickModal';
+import type { Place } from '@/lib/supabase/types';
 
 interface MapCoordinate {
   id: string;
@@ -199,7 +179,7 @@ interface Props {
   onToggleBookmark?: (id: string, e?: React.MouseEvent) => void;
 }
 
-export default function QuangTriInteractiveMap({
+function QuangTriInteractiveMap({
   places = [],
   onOpenModal,
   bookmarkedIds = [],
@@ -213,33 +193,33 @@ export default function QuangTriInteractiveMap({
   const [internalModalPlace, setInternalModalPlace] = useState<Place | null>(null);
   const horizontalScrollRef = useRef<HTMLDivElement>(null);
 
-  // Fallback data pool so no place is ever undefined or missing
-  const allPlacesPool = useMemo(() => {
-    const map = new Map<string, Place>();
-    (QUANGTRI_DATA.places as Place[]).forEach((p) => map.set(p.id, p));
-    (places || []).forEach((p) => {
-      const existing = map.get(p.id) || {};
-      map.set(p.id, { ...existing, ...p });
-    });
-    return Array.from(map.values());
-  }, [places]);
+  const allPlacesPool = useMemo(() => places || [], [places]);
 
-  // Active tour route object
   const activeRoute = useMemo(() => {
     return TOUR_ROUTES.find((r) => r.id === selectedRouteId) || TOUR_ROUTES[0];
   }, [selectedRouteId]);
 
-  // Places belonging to the active route, ordered chronologically
   const routePlaces = useMemo(() => {
-    const ids = activeRoute.places;
-    return ids
-      .map((id) => allPlacesPool.find((p) => p.id === id))
-      .filter(Boolean) as Place[];
-  }, [allPlacesPool, activeRoute]);
+    if (selectedRouteId === 'all') {
+      const orderIndex = new Map<string, number>();
+      TOUR_ROUTES[0].places.forEach((id, i) => orderIndex.set(id, i));
+      return [...allPlacesPool].sort((a, b) => {
+        const ia = orderIndex.get(a.id) ?? 999;
+        const ib = orderIndex.get(b.id) ?? 999;
+        return ia - ib;
+      });
+    }
+    const byId = new Map(allPlacesPool.map((p) => [p.id, p]));
+    return activeRoute.places.map((id) => byId.get(id)).filter(Boolean) as Place[];
+  }, [allPlacesPool, activeRoute, selectedRouteId]);
 
-  // Currently focused place
   const focusedPlace = useMemo(() => {
-    return allPlacesPool.find((p) => p.id === selectedId) || routePlaces[0] || allPlacesPool[0];
+    return (
+      routePlaces.find((p) => p.id === selectedId) ||
+      allPlacesPool.find((p) => p.id === selectedId) ||
+      routePlaces[0] ||
+      allPlacesPool[0]
+    );
   }, [allPlacesPool, selectedId, routePlaces]);
 
   const handleOpenDetailModal = (placeToView: Place) => {
@@ -641,10 +621,12 @@ export default function QuangTriInteractiveMap({
         {/* Floating Quick Inspector Card (Top Right of Map) */}
         {focusedPlace && (
           <div className="floating-map-inspector">
-            <div className="inspector-mini-thumb">
-              <img
-                src={focusedPlace.image || focusedPlace.hero_image || 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=400&q=80'}
+            <div className="inspector-mini-thumb" style={{ position: 'relative', overflow: 'hidden' }}>
+              <SafeImage
+                src={focusedPlace.image || focusedPlace.hero_image}
                 alt={focusedPlace.name}
+                fill
+                sizes="320px"
               />
               <span className="inspector-mini-zone">{focusedPlace.zoneCode}</span>
             </div>
@@ -745,11 +727,12 @@ export default function QuangTriInteractiveMap({
                 className={`horizontal-stop-card ${isSelected ? 'active-stop' : ''}`}
               >
                 {/* Image Banner */}
-                <div className="hstop-media-wrap">
-                  <img
-                    src={place.image || place.hero_image || 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=500&q=80'}
+                <div className="hstop-media-wrap" style={{ position: 'relative', overflow: 'hidden' }}>
+                  <SafeImage
+                    src={place.image || place.hero_image}
                     alt={place.name}
-                    loading="lazy"
+                    fill
+                    sizes="300px"
                   />
                   <span className="hstop-step-badge">
                     Trạm {idx + 1}
@@ -816,59 +799,14 @@ export default function QuangTriInteractiveMap({
       </div>
 
       {/* Internal Modal Fallback */}
-      {internalModalPlace && (
-        <div className="modal-overlay active" onClick={() => setInternalModalPlace(null)}>
-          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={() => setInternalModalPlace(null)}>×</button>
-            <div className="modal-header-visual">
-              <img
-                src={internalModalPlace.image || internalModalPlace.hero_image || 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80'}
-                alt={internalModalPlace.name}
-              />
-              <div className="modal-title-overlay">
-                <span className="modal-zone-badge">{internalModalPlace.zoneCode} · {internalModalPlace.zoneName}</span>
-                <h2>{internalModalPlace.name}</h2>
-              </div>
-            </div>
-            <div className="modal-content-body">
-              <p className="modal-desc">{internalModalPlace.fullDesc || internalModalPlace.shortDesc}</p>
-              {Array.isArray(internalModalPlace.highlights) && internalModalPlace.highlights.length > 0 && (
-                <div className="modal-highlights-box">
-                  <h4>Điểm nhấn nổi bật:</h4>
-                  <ul>
-                    {internalModalPlace.highlights.map((hl: string, idx: number) => (
-                      <li key={idx}>{hl}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <div className="modal-meta-grid">
-                <div><strong>📍 Địa chỉ:</strong> {internalModalPlace.address}</div>
-                <div><strong>🕒 Giờ mở cửa:</strong> {internalModalPlace.openHours || '07:00 - 17:30'}</div>
-                <div><strong>🎟️ Giá vé:</strong> {internalModalPlace.ticket || 'Miễn phí'}</div>
-                <div><strong>🧭 Tọa độ:</strong> {internalModalPlace.coordinates}</div>
-              </div>
-              <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((internalModalPlace.name || '') + ' Quảng Trị')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="modal-map-link-btn"
-                >
-                  Mở Google Maps chỉ đường ↗
-                </a>
-                <Link
-                  href={`/diem-den/${internalModalPlace.id}`}
-                  className="modal-map-link-btn"
-                  style={{ backgroundColor: '#fff', color: '#133e2f', border: '1px solid #133e2f' }}
-                >
-                  Xem trang chi tiết ↗
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <PlaceQuickModal
+        place={internalModalPlace}
+        isBookmarked={internalModalPlace ? bookmarkedIds.includes(internalModalPlace.id) : false}
+        onToggleBookmark={onToggleBookmark ? (id) => onToggleBookmark(id) : undefined}
+        onClose={() => setInternalModalPlace(null)}
+      />
     </div>
   );
 }
+
+export default memo(QuangTriInteractiveMap);

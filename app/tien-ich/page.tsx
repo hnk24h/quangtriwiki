@@ -2,38 +2,37 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
-import { QUANGTRI_DATA } from '@/lib/data';
+import { getGuides } from '@/lib/get-data';
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Cây Xăng, Trạm Cứu Hộ & Tiện Ích Hành Trình Quảng Trị',
-  description: 'Danh bạ cây xăng Petrolimex, trạm cứu hộ đèo Sa Mù 24/7, hotline cảng Cửa Việt đặt vé tàu Cồn Cỏ, công an và y tế khẩn cấp tại Quảng Trị.',
+  description:
+    'Danh bạ cây xăng Petrolimex, trạm cứu hộ đèo Sa Mù 24/7, hotline cảng Cửa Việt đặt vé tàu Cồn Cỏ, công an và y tế khẩn cấp tại Quảng Trị.',
 };
 
-export default function TienIchPage() {
-  const { emergencyHotlines, gasStations, bestTimeToVisit } = QUANGTRI_DATA.guides || {
-    emergencyHotlines: [],
-    gasStations: [],
-    bestTimeToVisit: [],
-  };
+export default async function TienIchPage() {
+  const { emergencyHotlines, gasStations, bestTimeToVisit } = await getGuides();
 
   return (
     <div style={{ backgroundColor: '#f7f4ee', minHeight: '100vh', color: '#1b2a22' }}>
       <Navbar />
 
       <main style={{ paddingBottom: '4rem' }}>
-        {/* Hero Section */}
-        <div style={{
-          backgroundColor: '#133e2f',
-          color: '#fff',
-          padding: '4rem 1.5rem 3.5rem',
-          textAlign: 'center',
-          position: 'relative',
-        }}>
+        <div
+          style={{
+            backgroundColor: '#133e2f',
+            color: '#fff',
+            padding: '4rem 1.5rem 3.5rem',
+            textAlign: 'center',
+          }}
+        >
           <div style={{ maxWidth: '850px', margin: '0 auto' }}>
             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
               AN TOÀN TRÊN MỌI CUNG ĐƯỜNG
             </span>
-            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '3rem', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
+            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
               Cây Xăng, Cứu Hộ & Tiện Ích
             </h1>
             <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: 0 }}>
@@ -43,11 +42,11 @@ export default function TienIchPage() {
         </div>
 
         <div style={{ maxWidth: '1150px', margin: '2.5rem auto 0', padding: '0 1.5rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
-          {/* Emergency Hotlines Section */}
+          {/* Emergency Hotlines */}
           <section>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.2rem' }}>
               <span style={{ fontSize: '1.5rem' }}>🚨</span>
-              <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', color: '#991b1b', margin: 0 }}>
+              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#991b1b', margin: 0 }}>
                 Đường Dây Nóng & Cứu Hộ Khẩn Cấp 24/7
               </h2>
             </div>
@@ -55,7 +54,7 @@ export default function TienIchPage() {
               Lưu ngay vào điện thoại trước khi khởi hành vào các đoạn đường rừng đèo hoang sơ.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
               {emergencyHotlines.map((hl, idx) => (
                 <div
                   key={idx}
@@ -75,7 +74,7 @@ export default function TienIchPage() {
                       {hl.name}
                     </h3>
                     <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: '0 0 1rem 0', lineHeight: 1.5 }}>
-                      {hl.note}
+                      {hl.note || 'Hỗ trợ 24/7'}
                     </p>
                   </div>
 
@@ -93,22 +92,20 @@ export default function TienIchPage() {
                       textDecoration: 'none',
                       fontWeight: 600,
                       fontSize: '0.95rem',
-                      transition: 'background 0.15s ease',
                     }}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    <span>Gọi: {hl.phone}</span>
+                    <span>📞 Gọi: {hl.phone}</span>
                   </a>
                 </div>
               ))}
             </div>
           </section>
 
-          {/* Gas Stations Section */}
+          {/* Gas Stations */}
           <section>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.2rem' }}>
               <span style={{ fontSize: '1.5rem' }}>⛽</span>
-              <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', color: '#133e2f', margin: 0 }}>
+              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#133e2f', margin: 0 }}>
                 Trạm Xăng & Nhiên Liệu Cốt Lõi
               </h2>
             </div>
@@ -116,7 +113,7 @@ export default function TienIchPage() {
               Các trạm xăng chốt chặn quan trọng trước khi vào các tuyến đèo và đường Hồ Chí Minh Tây.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
               {gasStations.map((gas, idx) => (
                 <div
                   key={idx}
@@ -146,12 +143,12 @@ export default function TienIchPage() {
           <section>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.2rem' }}>
               <span style={{ fontSize: '1.5rem' }}>🌤️</span>
-              <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', color: '#133e2f', margin: 0 }}>
+              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#133e2f', margin: 0 }}>
                 Thời Tiết & Thời Điểm Lý Tưởng
               </h2>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
               {bestTimeToVisit.map((season, idx) => (
                 <div
                   key={idx}
@@ -174,20 +171,21 @@ export default function TienIchPage() {
             </div>
           </section>
 
-          {/* Quick links banner */}
-          <div style={{
-            background: '#133e2f',
-            color: '#fff',
-            borderRadius: '16px',
-            padding: '2rem 2.5rem',
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '1.5rem',
-          }}>
+          <div
+            style={{
+              background: '#133e2f',
+              color: '#fff',
+              borderRadius: '16px',
+              padding: '2rem 2.5rem',
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '1.5rem',
+            }}
+          >
             <div>
-              <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.6rem', margin: '0 0 0.4rem 0' }}>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', margin: '0 0 0.4rem 0' }}>
                 Cần thêm hành trang và ghi chú?
               </h3>
               <p style={{ color: 'rgba(255,255,255,0.8)', margin: 0, fontSize: '0.95rem' }}>

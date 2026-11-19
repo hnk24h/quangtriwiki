@@ -1,141 +1,120 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
-import QuangTriInteractiveMap from '@/components/QuangTriInteractiveMap';
+import React, { useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
+import SafeImage from '@/components/common/SafeImage';
+import { useToast } from '@/components/common/ToastProvider';
+import { ZONE_METAS } from '@/components/home/ZonesExplorer';
+import PlaceQuickModal from '@/components/home/PlaceQuickModal';
+import { getBookmarkedIds, subscribeStorageSync, toggleBookmarkId } from '@/lib/storage';
+import type { Place, Zone } from '@/lib/supabase/types';
+
+const QuangTriInteractiveMap = dynamic(
+  () => import('@/components/QuangTriInteractiveMap'),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        style={{
+          height: '520px',
+          borderRadius: '24px',
+          background: 'linear-gradient(135deg, #0d2c20 0%, #133e2f 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#a7f3d0',
+          fontWeight: 600,
+        }}
+      >
+        🧭 Đang tải bản đồ tọa độ tương tác Quảng Trị...
+      </div>
+    ),
+  }
+);
 
 interface CungDuongClientProps {
-  places: any[];
-  zones: any[];
+  places: Place[];
+  zones: Zone[];
 }
 
-const ZONE_METAS: Record<string, { specialty: string; typeTag: string; typeGroup: 'history' | 'mountain' | 'coastal' }> = {
-  'QT-01': {
-    specialty: 'Bánh bột lọc & Cháo bột cá lóc',
-    typeTag: '🏛️ Đô thị & Cửa ngõ',
-    typeGroup: 'history',
-  },
-  'QT-02': {
-    specialty: 'Cháo vạt giường Diên Sanh & Bánh lọc Mỹ Chánh',
-    typeTag: '⚔️ Thành Cổ & Đất thiêng',
-    typeGroup: 'history',
-  },
-  'QT-03': {
-    specialty: 'Hải sản biển Cửa Tùng & Tôm cá Bến Hải',
-    typeTag: '🕊️ Vĩ tuyến 17 & Làng hầm',
-    typeGroup: 'history',
-  },
-  'QT-04': {
-    specialty: 'Bún hến Mai Xá (Di sản ẩm thực Việt Nam)',
-    typeTag: '🌊 Biển Cửa Việt & Mũi Trèo',
-    typeGroup: 'coastal',
-  },
-  'QT-05': {
-    specialty: 'Cà phê Arabica Khe Sanh & Thịt trâu lá trơng',
-    typeTag: '☁️ Săn mây Sa Mù & Núi cao',
-    typeGroup: 'mountain',
-  },
-  'QT-06': {
-    specialty: 'Cơm lam, rượu cần & Suối khoáng Klu',
-    typeTag: '🌲 Trường Sơn & Bản làng',
-    typeGroup: 'mountain',
-  },
-  'QT-07': {
-    specialty: 'Cua đá Cồn Cỏ & Rong biển đảo ngọc',
-    typeTag: '🏝️ Đảo tiền tiêu & San hô',
-    typeGroup: 'coastal',
-  },
-  'QT-08': {
-    specialty: 'Gà đồi Cùa & Cao chè vằng Định Sơn',
-    typeTag: '🌿 Căn cứ Tân Sở & Đồi Cùa',
-    typeGroup: 'history',
-  },
-};
-
 export default function CungDuongClient({ places, zones }: CungDuongClientProps) {
+  const { showToast } = useToast();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedZone, setSelectedZone] = useState('all');
   const [zoneTypeFilter, setZoneTypeFilter] = useState<'all' | 'history' | 'mountain' | 'coastal'>('all');
   const [placesViewMode, setPlacesViewMode] = useState<'map' | 'grid'>('map');
-  const [activeModal, setActiveModal] = useState<any>(null);
+  const [activeModal, setActiveModal] = useState<Place | null>(null);
+  const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setBookmarkedIds(getBookmarkedIds());
+    return subscribeStorageSync(() => setBookmarkedIds(getBookmarkedIds()));
+  }, []);
+
+  const handleToggleBookmark = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const { ids, added } = toggleBookmarkId(id);
+    setBookmarkedIds(ids);
+    showToast(added ? 'Đã lưu điểm đến vào Sổ tay!' : 'Đã bỏ khỏi Sổ tay.');
+  };
 
   const phuotCategories = [
-    {
-      id: 'all',
-      icon: '🧭',
-      code: 'TỌA ĐỘ TOÀN CẢNH',
-      label: 'Tất cả tọa độ',
-      badge: '24 ĐIỂM',
-      desc: 'Bao quát toàn tỉnh lộ',
-    },
-    {
-      id: 'history',
-      icon: '🏛️',
-      code: 'VĨ TUYẾN 17 & DMZ',
-      label: 'Di tích lịch sử',
-      badge: 'HÀO HÙNG',
-      desc: 'Thành Cổ · Vịnh Mốc',
-    },
-    {
-      id: 'cloud',
-      icon: '☁️',
-      code: 'CAO ĐỘ 1.400M',
-      label: 'Săn mây Sa Mù',
-      badge: 'ĐÈO GIÓ',
-      desc: 'Khe Sanh · Điện gió',
-    },
-    {
-      id: 'beach',
-      icon: '🏖️',
-      code: '75KM BIỂN CÁT',
-      label: 'Biển cát trắng',
-      badge: 'HOANG SƠ',
-      desc: 'Cửa Việt · Mũi Trèo',
-    },
-    {
-      id: 'island',
-      icon: '🏝️',
-      code: '15 HẢI LÝ BIỂN ĐÔNG',
-      label: 'Đảo Cồn Cỏ',
-      badge: 'TIỀN ĐỒN',
-      desc: 'Lặn ngắm san hô',
-    },
-    {
-      id: 'waterfall',
-      icon: '💦',
-      code: 'RỪNG NGUYÊN SINH',
-      label: 'Thác & Suối ngàn',
-      badge: 'TREKKING',
-      desc: 'Thác Chênh Vênh · Klu',
-    },
+    { id: 'all', icon: '🧭', code: 'TỌA ĐỘ TOÀN CẢNH', label: 'Tất cả tọa độ', badge: `${places.length} ĐIỂM`, desc: 'Bao quát toàn tỉnh lộ' },
+    { id: 'history', icon: '🏛️', code: 'VĨ TUYẾN 17 & DMZ', label: 'Di tích lịch sử', badge: 'HÀO HÙNG', desc: 'Thành Cổ · Vịnh Mốc' },
+    { id: 'cloud', icon: '☁️', code: 'CAO ĐỘ 1.400M', label: 'Săn mây Sa Mù', badge: 'ĐÈO GIÓ', desc: 'Khe Sanh · Điện gió' },
+    { id: 'beach', icon: '🏖️', code: '75KM BIỂN CÁT', label: 'Biển cát trắng', badge: 'HOANG SƠ', desc: 'Cửa Việt · Mũi Trèo' },
+    { id: 'island', icon: '🏝️', code: '15 HẢI LÝ BIỂN ĐÔNG', label: 'Đảo Cồn Cỏ', badge: 'TIỀN ĐỒN', desc: 'Lặn ngắm san hô' },
+    { id: 'waterfall', icon: '💦', code: 'RỪNG NGUYÊN SINH', label: 'Thác & Suối ngàn', badge: 'TREKKING', desc: 'Thác Chênh Vênh · Klu' },
   ];
 
   const filteredPlaces = useMemo(() => {
+    const q = search.trim().toLowerCase();
     return places.filter((p) => {
       let matchCat = selectedCategory === 'all';
       if (!matchCat) {
         if (selectedCategory === 'history') {
-          matchCat = p.category === 'history' || p.categoryName?.includes('lịch sử');
+          matchCat = p.category === 'history' || p.categoryName.toLowerCase().includes('lịch sử');
         } else if (selectedCategory === 'cloud') {
-          matchCat = p.category === 'adventure' || p.category === 'checkin' || p.id?.includes('sa-mu') || p.id?.includes('gio') || p.id?.includes('ta-con') || p.name?.includes('Sa Mù') || p.name?.includes('Gió') || p.name?.includes('Tà Cơn');
+          matchCat =
+            p.category === 'adventure' ||
+            p.category === 'checkin' ||
+            p.id.includes('sa-mu') ||
+            p.id.includes('gio') ||
+            p.id.includes('ta-con') ||
+            p.name.includes('Sa Mù') ||
+            p.name.includes('Gió') ||
+            p.name.includes('Tà Cơn');
         } else if (selectedCategory === 'beach') {
-          matchCat = p.category === 'beach' || p.id?.includes('cua-viet') || p.id?.includes('cua-tung') || p.id === 'mui-treo' || p.name?.includes('Biển') || p.name?.includes('Mũi Trèo');
+          matchCat =
+            p.category === 'beach' ||
+            p.id.includes('cua-viet') ||
+            p.id.includes('cua-tung') ||
+            p.id.includes('mui-treo') ||
+            p.name.includes('Biển') ||
+            p.name.includes('Mũi Trèo');
         } else if (selectedCategory === 'island') {
-          matchCat = p.category === 'island' || p.id?.includes('con-co') || p.name?.includes('Cồn Cỏ');
+          matchCat = p.category === 'island' || p.id.includes('con-co') || p.name.includes('Cồn Cỏ');
         } else if (selectedCategory === 'waterfall') {
-          matchCat = p.category === 'nature' || p.id?.includes('thac') || p.id?.includes('suoi') || p.id?.includes('dakrong') || p.name?.includes('Thác') || p.name?.includes('Suối') || p.name?.includes('Đakrông');
+          matchCat =
+            p.category === 'nature' ||
+            p.id.includes('thac') ||
+            p.id.includes('suoi') ||
+            p.id.includes('dakrong') ||
+            p.name.includes('Thác') ||
+            p.name.includes('Suối') ||
+            p.name.includes('Đakrông');
         } else {
           matchCat = p.category === selectedCategory;
         }
       }
 
-      const matchZone = selectedZone === 'all' || p.zoneCode === selectedZone || p.zone_code === selectedZone;
+      const matchZone = selectedZone === 'all' || p.zoneCode === selectedZone;
       const matchSearch =
-        !search ||
-        p.name?.toLowerCase().includes(search.toLowerCase()) ||
-        p.shortDesc?.toLowerCase().includes(search.toLowerCase()) ||
-        p.zoneName?.toLowerCase().includes(search.toLowerCase());
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        p.shortDesc.toLowerCase().includes(q) ||
+        p.zoneName.toLowerCase().includes(q);
       return matchCat && matchZone && matchSearch;
     });
   }, [places, selectedCategory, selectedZone, search]);
@@ -163,7 +142,6 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
           </p>
         </div>
 
-        {/* Filter tabs */}
         <div className="zone-filter-tabs">
           {[
             { id: 'all', label: 'Tất cả 8 vùng', count: zones.length },
@@ -172,18 +150,21 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
             { id: 'coastal', label: '🏖️ Biển đảo & Sinh thái', count: 2 },
           ].map((tab) => (
             <button
+              type="button"
               key={tab.id}
               onClick={() => setZoneTypeFilter(tab.id as any)}
               className={`zone-tab-btn ${zoneTypeFilter === tab.id ? 'active' : ''}`}
             >
               <span>{tab.label}</span>
-              <span style={{
-                fontSize: '0.75rem',
-                opacity: zoneTypeFilter === tab.id ? 1 : 0.7,
-                background: zoneTypeFilter === tab.id ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.06)',
-                padding: '1px 6px',
-                borderRadius: '10px'
-              }}>
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  opacity: zoneTypeFilter === tab.id ? 1 : 0.7,
+                  background: zoneTypeFilter === tab.id ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.06)',
+                  padding: '1px 6px',
+                  borderRadius: '10px',
+                }}
+              >
                 {tab.count}
               </span>
             </button>
@@ -191,7 +172,7 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
         </div>
 
         <div className="zone-grid">
-          {filteredZones.map((z: any) => {
+          {filteredZones.map((z) => {
             const meta = ZONE_METAS[z.code] || {
               specialty: 'Ẩm thực & Đặc sản bản địa',
               typeTag: 'Điểm đến tiêu biểu',
@@ -205,23 +186,18 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
                 onClick={() => setSelectedZone(selectedZone === z.code ? 'all' : z.code)}
                 className={`zone-card ${isSelected ? 'selected' : ''}`}
               >
-                <div className="zone-card-media">
-                  <img
-                    src={z.heroImage || 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80'}
-                    alt={z.name}
-                    loading="lazy"
-                  />
+                <div className="zone-card-media" style={{ position: 'relative', overflow: 'hidden' }}>
+                  <SafeImage src={z.heroImage} alt={z.name} fill sizes="(max-width: 768px) 100vw, 320px" />
                   <div className="zone-media-gradient" />
                   <span className="zone-code-badge">{z.code}</span>
                   <span className="zone-type-badge">{meta.typeTag}</span>
-                  <span className="zone-count-badge">📍 {z.featuredCount}</span>
+                  {z.featuredCount && <span className="zone-count-badge">📍 {z.featuredCount}</span>}
                 </div>
 
                 <div className="zone-card-body">
                   <h3 className="zone-card-title">{z.name}</h3>
                   <div className="zone-card-tagline">{z.tagline}</div>
 
-                  {/* Local Specialty Box */}
                   <div className="zone-specialty-box">
                     <span style={{ fontSize: '1rem', flexShrink: 0 }}>🍲</span>
                     <div>
@@ -230,13 +206,13 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
                     </div>
                   </div>
 
-                  <p className="zone-card-desc">{z.description}</p>
+                  <p className="zone-card-desc">{z.description || z.desc}</p>
 
                   <div className="zone-card-footer">
                     {isSelected ? (
                       <span className="zone-selected-indicator">
                         <span>✓</span>
-                        <span>Đang lọc {places.filter(p => p.zoneCode === z.code || p.zone_code === z.code).length} điểm đến</span>
+                        <span>Đang lọc {places.filter((p) => p.zoneCode === z.code).length} điểm đến</span>
                       </span>
                     ) : (
                       <span className="zone-action-text">
@@ -252,22 +228,25 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
         </div>
 
         {selectedZone !== 'all' && (
-          <div style={{
-            marginTop: '1.8rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: '#f0fdf4',
-            border: '1px solid #bbf7d0',
-            padding: '0.8rem 1.4rem',
-            borderRadius: '10px',
-            fontSize: '0.92rem',
-            color: '#166534',
-          }}>
+          <div
+            style={{
+              marginTop: '1.8rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: '#f0fdf4',
+              border: '1px solid #bbf7d0',
+              padding: '0.8rem 1.4rem',
+              borderRadius: '10px',
+              fontSize: '0.92rem',
+              color: '#166534',
+            }}
+          >
             <div>
               Đang lọc theo phân vùng <strong>{zones.find((z) => z.code === selectedZone)?.name || selectedZone}</strong> ({filteredPlaces.length} điểm đến)
             </div>
             <button
+              type="button"
               onClick={() => setSelectedZone('all')}
               style={{
                 background: '#133e2f',
@@ -293,7 +272,7 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
             <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d97706', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               📍 RADAR TỌA ĐỘ DU LỊCH & PHƯỢT THỦ
             </span>
-            <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', color: '#133e2f', margin: '0.2rem 0 0' }}>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#133e2f', margin: '0.2rem 0 0' }}>
               Trạm Dừng Chân Khám Phá
             </h3>
           </div>
@@ -304,6 +283,7 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Tìm theo tên điểm đến, di tích, bãi biển..."
+              aria-label="Tìm điểm đến"
               style={{
                 width: '100%',
                 padding: '0.75rem 1rem 0.75rem 2.5rem',
@@ -320,13 +300,13 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
           </div>
         </div>
 
-        {/* Phượt Explorer Waypoints Bar */}
         <div className="phuot-filter-wrapper">
           <div className="phuot-filter-track">
             {phuotCategories.map((f) => {
               const isActive = selectedCategory === f.id;
               return (
                 <button
+                  type="button"
                   key={f.id}
                   onClick={() => setSelectedCategory(f.id)}
                   className={`phuot-waypoint-btn ${isActive ? 'active' : ''}`}
@@ -346,7 +326,6 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
             })}
           </div>
 
-          {/* Status Readout Strip */}
           <div className="phuot-status-strip">
             <div className="phuot-status-left">
               <span style={{ fontSize: '1.1rem' }}>🧭</span>
@@ -361,11 +340,13 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
               </span>
             </div>
 
-            {(selectedCategory !== 'all' || selectedZone !== 'all') && (
+            {(selectedCategory !== 'all' || selectedZone !== 'all' || search.trim() !== '') && (
               <button
+                type="button"
                 onClick={() => {
                   setSelectedCategory('all');
                   setSelectedZone('all');
+                  setSearch('');
                 }}
                 className="phuot-status-reset-btn"
               >
@@ -375,17 +356,10 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
           </div>
         </div>
 
-        {/* View Mode Switcher: Interactive Map vs Grid */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          margin: '1.2rem 0 1.5rem',
-        }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', margin: '1.2rem 0 1.5rem' }}>
           <div style={{ display: 'flex', gap: '0.4rem', background: 'rgba(19, 62, 47, 0.08)', padding: '4px', borderRadius: '12px' }}>
             <button
+              type="button"
               onClick={() => setPlacesViewMode('map')}
               style={{
                 display: 'flex',
@@ -399,8 +373,6 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
                 cursor: 'pointer',
                 backgroundColor: placesViewMode === 'map' ? '#133e2f' : 'transparent',
                 color: placesViewMode === 'map' ? '#ffffff' : '#4b5563',
-                boxShadow: placesViewMode === 'map' ? '0 2px 8px rgba(19, 62, 47, 0.25)' : 'none',
-                transition: 'all 0.2s ease',
               }}
             >
               <span>🗺️</span>
@@ -408,6 +380,7 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
             </button>
 
             <button
+              type="button"
               onClick={() => setPlacesViewMode('grid')}
               style={{
                 display: 'flex',
@@ -421,8 +394,6 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
                 cursor: 'pointer',
                 backgroundColor: placesViewMode === 'grid' ? '#133e2f' : 'transparent',
                 color: placesViewMode === 'grid' ? '#ffffff' : '#4b5563',
-                boxShadow: placesViewMode === 'grid' ? '0 2px 8px rgba(19, 62, 47, 0.25)' : 'none',
-                transition: 'all 0.2s ease',
               }}
             >
               <span>📋</span>
@@ -435,39 +406,47 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
           </div>
         </div>
 
-        {/* Conditional Rendering: Interactive Map or Grid */}
         {placesViewMode === 'map' ? (
           <QuangTriInteractiveMap
-            places={places}
+            places={filteredPlaces}
             onOpenModal={(p) => setActiveModal(p)}
+            bookmarkedIds={bookmarkedIds}
+            onToggleBookmark={handleToggleBookmark}
           />
         ) : (
           <div className="places-grid">
-            {filteredPlaces.map((p: any) => (
+            {filteredPlaces.map((p) => (
               <article
                 key={p.id}
                 onClick={() => setActiveModal(p)}
                 className="place-card"
                 style={{ cursor: 'pointer' }}
               >
-                <div className="card-media">
-                  <img
-                    src={p.image || p.hero_image || 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=600&q=80'}
-                    alt={p.name}
-                    loading="lazy"
-                  />
-                  <span className="card-zone-tag">{p.zoneCode || p.zone_code}</span>
+                <div className="card-media" style={{ position: 'relative', overflow: 'hidden' }}>
+                  <SafeImage src={p.image || p.hero_image} alt={p.name} fill sizes="(max-width: 768px) 100vw, 360px" />
+                  <span className="card-zone-tag">{p.zoneCode}</span>
+                  <button
+                    type="button"
+                    onClick={(e) => handleToggleBookmark(p.id, e)}
+                    aria-label={bookmarkedIds.includes(p.id) ? `Bỏ lưu ${p.name}` : `Lưu ${p.name} vào sổ tay`}
+                    className={`card-bookmark-btn ${bookmarkedIds.includes(p.id) ? 'bookmarked' : ''}`}
+                    title="Lưu vào Sổ tay"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill={bookmarkedIds.includes(p.id) ? '#d97706' : 'none'} stroke="currentColor" strokeWidth="2">
+                      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                    </svg>
+                  </button>
                 </div>
                 <div className="card-body">
                   <div className="card-meta-row">
-                    <span className="card-cat">{p.categoryName || p.category_name}</span>
-                    <span className="card-rating">★ {p.rating || 4.8} ({p.reviewsCount || p.rating_count || 100})</span>
+                    <span className="card-cat">{p.categoryName}</span>
+                    <span className="card-rating">★ {p.rating} ({p.reviewsCount})</span>
                   </div>
                   <h3 className="card-title">{p.name}</h3>
-                  <p className="card-short-desc">{p.shortDesc || p.short_desc}</p>
+                  <p className="card-short-desc">{p.shortDesc}</p>
                   <div className="card-footer-info">
-                    <span className="card-coord">📍 {p.zoneName || p.zone_name}</span>
-                    <span className="card-ticket-preview">{p.ticket || p.ticket_price || 'Miễn phí'}</span>
+                    <span className="card-coord">📍 {p.zoneName}</span>
+                    <span className="card-ticket-preview">{p.ticket || 'Miễn phí'}</span>
                   </div>
                 </div>
               </article>
@@ -476,57 +455,12 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
         )}
       </section>
 
-      {/* Place Detail Modal */}
-      {activeModal && (
-        <div className="modal-overlay active" onClick={() => setActiveModal(null)}>
-          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={() => setActiveModal(null)}>×</button>
-            <div className="modal-header-visual">
-              <img src={activeModal.image || activeModal.hero_image} alt={activeModal.name} />
-              <div className="modal-title-overlay">
-                <span className="modal-zone-badge">{activeModal.zoneCode || activeModal.zone_code} · {activeModal.zoneName || activeModal.zone_name}</span>
-                <h2>{activeModal.name}</h2>
-              </div>
-            </div>
-            <div className="modal-content-body">
-              <p className="modal-desc">{activeModal.fullDesc || activeModal.history || activeModal.shortDesc || activeModal.short_desc}</p>
-              {Array.isArray(activeModal.highlights) && activeModal.highlights.length > 0 && (
-                <div className="modal-highlights-box">
-                  <h4>Điểm nhấn nổi bật:</h4>
-                  <ul>
-                    {activeModal.highlights.map((hl: string, idx: number) => (
-                      <li key={idx}>{hl}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <div className="modal-meta-grid">
-                <div><strong>📍 Địa chỉ:</strong> {activeModal.address}</div>
-                <div><strong>🕒 Giờ mở cửa:</strong> {activeModal.openHours || activeModal.open_time || '07:00 - 17:30'}</div>
-                <div><strong>🎟️ Giá vé:</strong> {activeModal.ticket || activeModal.ticket_price || 'Miễn phí'}</div>
-                <div><strong>🧭 Tọa độ:</strong> {activeModal.coordinates}</div>
-              </div>
-              <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activeModal.name + ' Quảng Trị')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="modal-map-link-btn"
-                >
-                  Mở Google Maps chỉ đường ↗
-                </a>
-                <Link
-                  href={`/diem-den/${activeModal.id}`}
-                  className="modal-map-link-btn"
-                  style={{ backgroundColor: '#fff', color: '#133e2f', border: '1px solid #133e2f' }}
-                >
-                  Trang SEO chi tiết ↗
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <PlaceQuickModal
+        place={activeModal}
+        isBookmarked={activeModal ? bookmarkedIds.includes(activeModal.id) : false}
+        onToggleBookmark={(id) => handleToggleBookmark(id)}
+        onClose={() => setActiveModal(null)}
+      />
     </div>
   );
 }
