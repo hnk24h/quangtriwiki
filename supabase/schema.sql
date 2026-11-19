@@ -142,6 +142,8 @@ CREATE TABLE IF NOT EXISTS public.page_views (
     path TEXT NOT NULL DEFAULT '/',
     ip TEXT,
     user_agent TEXT,
+    region TEXT,
+    device_type TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -158,8 +160,10 @@ CREATE TABLE IF NOT EXISTS public.foods (
     type TEXT DEFAULT 'Món mặn truyền thống',
     price_range TEXT,
     description TEXT,
+    taste_notes TEXT,
     image TEXT,
     address_recs TEXT[] DEFAULT '{}',
+    highlights TEXT[] DEFAULT '{}',
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -188,11 +192,42 @@ CREATE TABLE IF NOT EXISTS public.zones (
     tagline TEXT,
     hero_image TEXT,
     description TEXT,
+    featured_count TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- -----------------------------------------------------------------------------
--- 11. ROW LEVEL SECURITY (RLS) POLICIES
+-- 11. BẢNG: banner_slides (Slideshow Hero trên trang chủ)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.banner_slides (
+    id TEXT PRIMARY KEY,
+    badge TEXT,
+    title TEXT NOT NULL,
+    subtitle TEXT,
+    image TEXT NOT NULL,
+    zone_code TEXT,
+    stats_tag TEXT,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_banner_slides_sort ON public.banner_slides(sort_order ASC);
+
+-- -----------------------------------------------------------------------------
+-- 12. BẢNG: guides (Cẩm nang, Checklist, Hotline & Cây xăng)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.guides (
+    id TEXT PRIMARY KEY DEFAULT 'main',
+    best_time_to_visit JSONB DEFAULT '[]',
+    packing_checklist JSONB DEFAULT '[]',
+    emergency_hotlines JSONB DEFAULT '[]',
+    gas_stations JSONB DEFAULT '[]',
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- -----------------------------------------------------------------------------
+-- 13. ROW LEVEL SECURITY (RLS) POLICIES
 -- -----------------------------------------------------------------------------
 
 -- Kích hoạt RLS
@@ -206,43 +241,48 @@ ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.foods ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.itineraries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.zones ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.banner_slides ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.guides ENABLE ROW LEVEL SECURITY;
 
--- Page views: Mọi người đều được ghi nhận và đọc lượt xem
+-- Page views: Public ghi nhận và xem bộ đếm tổng
 CREATE POLICY "Public insert page_views" ON public.page_views FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public read page_views" ON public.page_views FOR SELECT USING (true);
 
--- Foods, Itineraries, Zones: Mọi người đều được đọc
+-- Foods, Itineraries, Zones, Banner Slides, Guides, Places, Services: Public đọc
 CREATE POLICY "Public read foods" ON public.foods FOR SELECT USING (true);
 CREATE POLICY "Public read itineraries" ON public.itineraries FOR SELECT USING (true);
 CREATE POLICY "Public read zones" ON public.zones FOR SELECT USING (true);
-
--- Mọi người (Public) đều được xem Places và Services
+CREATE POLICY "Public read banner_slides" ON public.banner_slides FOR SELECT USING (true);
+CREATE POLICY "Public read guides" ON public.guides FOR SELECT USING (true);
 CREATE POLICY "Public read places" ON public.places FOR SELECT USING (true);
 CREATE POLICY "Public read services" ON public.services FOR SELECT USING (true);
 
--- Diễn đàn: Mọi người được đọc và tạo bài viết, bình luận
+-- Diễn đàn: Public đọc và tạo bài viết/bình luận (cập nhật/xóa qua service_role)
 CREATE POLICY "Public read threads" ON public.threads FOR SELECT USING (true);
 CREATE POLICY "Public insert threads" ON public.threads FOR INSERT WITH CHECK (true);
-CREATE POLICY "Public update thread likes" ON public.threads FOR UPDATE USING (true);
 
 CREATE POLICY "Public read comments" ON public.comments FOR SELECT USING (true);
 CREATE POLICY "Public insert comments" ON public.comments FOR INSERT WITH CHECK (true);
 
--- Leads: Người dùng tạo log khi click, chỉ Admin xem thống kê
+-- Leads: Người dùng tạo log khi click, chỉ service_role (Admin server) xem thống kê
 CREATE POLICY "Public insert leads" ON public.leads FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admin read leads" ON public.leads FOR SELECT USING (true);
 
--- Partner registrations: Chủ cơ sở gửi đơn đăng ký
+-- Partner registrations: Chủ cơ sở gửi đơn đăng ký, chỉ service_role (Admin server) xem & duyệt
 CREATE POLICY "Public insert registrations" ON public.partner_registrations FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admin read registrations" ON public.partner_registrations FOR SELECT USING (true);
 
 -- -----------------------------------------------------------------------------
--- 8. CẤP QUYỀN (GRANTS) CHO ROLE 'anon' & 'authenticated'
+-- 14. CẤP QUYỀN TỐI THIỂU (LEAST PRIVILEGE GRANTS) CHO 'anon' & 'service_role'
 -- -----------------------------------------------------------------------------
+REVOKE ALL ON ALL TABLES IN SCHEMA public FROM anon, authenticated;
 GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
-GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
-GRANT ALL ON ALL ROUTINES IN SCHEMA public TO anon, authenticated, service_role;
 
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated, service_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
+-- Quyền đọc nội dung công khai
+GRANT SELECT ON public.places, public.services, public.threads, public.comments, public.foods, public.itineraries, public.zones, public.banner_slides, public.guides, public.page_views TO anon, authenticated;
+
+-- Quyền ghi công khai có kiểm soát qua API
+GRANT INSERT ON public.threads, public.comments, public.leads, public.partner_registrations, public.page_views TO anon, authenticated;
+
+-- Toàn quyền cho service_role (Server Admin API)
+GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO service_role;
+GRANT ALL ON ALL ROUTINES IN SCHEMA public TO service_role;
