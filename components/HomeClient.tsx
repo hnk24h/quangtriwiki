@@ -132,6 +132,13 @@ export default function HomeClient({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [pageViews, setPageViews] = useState<number>(18240);
 
+  // Dynamic Datasets from Database (with real-time state)
+  const [placesList, setPlacesList] = useState<any[]>(initialPlaces);
+  const [servicesList, setServicesList] = useState<any[]>(initialServices);
+  const [foodList, setFoodList] = useState<any[]>(foods);
+  const [itineraryList, setItineraryList] = useState<any[]>(itineraries);
+  const [zoneList, setZoneList] = useState<any[]>(zones);
+
   // Community Threads state
   const [threads, setThreads] = useState(initialThreads);
   const [threadComments, setThreadComments] = useState<{ [key: string]: any[] }>({});
@@ -220,6 +227,51 @@ export default function HomeClient({
       });
   }, []);
 
+  // Sync dynamic datasets with database props and CMS updates
+  useEffect(() => {
+    if (initialPlaces && initialPlaces.length > 0) setPlacesList(initialPlaces);
+  }, [initialPlaces]);
+
+  useEffect(() => {
+    if (initialServices && initialServices.length > 0) setServicesList(initialServices);
+  }, [initialServices]);
+
+  useEffect(() => {
+    if (foods && foods.length > 0) setFoodList(foods);
+  }, [foods]);
+
+  useEffect(() => {
+    if (itineraries && itineraries.length > 0) setItineraryList(itineraries);
+  }, [itineraries]);
+
+  useEffect(() => {
+    if (zones && zones.length > 0) setZoneList(zones);
+  }, [zones]);
+
+  useEffect(() => {
+    if (initialThreads && initialThreads.length > 0) setThreads(initialThreads);
+  }, [initialThreads]);
+
+  // Sync with CMS local updates if present
+  useEffect(() => {
+    try {
+      const cmsPlaces = localStorage.getItem('qt_cms_places');
+      if (cmsPlaces) setPlacesList(JSON.parse(cmsPlaces));
+
+      const cmsServices = localStorage.getItem('qt_cms_services');
+      if (cmsServices) setServicesList(JSON.parse(cmsServices));
+
+      const cmsFoods = localStorage.getItem('qt_cms_foods');
+      if (cmsFoods) setFoodList(JSON.parse(cmsFoods));
+
+      const cmsItineraries = localStorage.getItem('qt_cms_itineraries');
+      if (cmsItineraries) setItineraryList(JSON.parse(cmsItineraries));
+
+      const cmsThreads = localStorage.getItem('qt_cms_threads');
+      if (cmsThreads) setThreads(JSON.parse(cmsThreads));
+    } catch (e) {}
+  }, []);
+
   const toggleBookmark = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setBookmarkedIds((prev) => {
@@ -244,25 +296,18 @@ export default function HomeClient({
   const forecastList = Array.isArray(currentWeatherData.forecast) ? currentWeatherData.forecast : [];
   const currentDayForecast = forecastList[weatherDayIdx] || forecastList[0] || { high: 17, low: 11, rain: '80%', icon: 'rain' };
 
-  // Food list resolution (supports both `foods` and `food`)
-  const foodList = useMemo(() => {
-    if (Array.isArray(foods) && foods.length > 0) return foods;
-    if (Array.isArray(food) && food.length > 0) return food;
-    return [];
-  }, [foods, food]);
-
   // Zones filtering by thematic category
   const filteredZones = useMemo(() => {
-    if (zoneTypeFilter === 'all') return zones;
-    return zones.filter((z) => {
+    if (zoneTypeFilter === 'all') return zoneList;
+    return zoneList.filter((z) => {
       const meta = ZONE_METAS[z.code];
       return meta && meta.typeGroup === zoneTypeFilter;
     });
-  }, [zones, zoneTypeFilter]);
+  }, [zoneList, zoneTypeFilter]);
 
   // Places filtering with smart outdoor explorer categories
   const filteredPlaces = useMemo(() => {
-    return initialPlaces.filter((p) => {
+    return placesList.filter((p) => {
       let matchCat = placeCategory === 'all';
       if (!matchCat) {
         if (placeCategory === 'history') {
@@ -289,15 +334,15 @@ export default function HomeClient({
         p.zoneCode?.toLowerCase().includes(searchQuery.toLowerCase());
       return matchCat && matchZone && matchSearch;
     });
-  }, [initialPlaces, placeCategory, selectedZone, searchQuery]);
+  }, [placesList, placeCategory, selectedZone, searchQuery]);
 
   // Services filtering
   const filteredServices = useMemo(() => {
-    return initialServices.filter((s) => {
+    return servicesList.filter((s) => {
       if (serviceCategory === 'all') return true;
       return s.category === serviceCategory || s.type === serviceCategory;
     });
-  }, [initialServices, serviceCategory]);
+  }, [servicesList, serviceCategory]);
 
   // Budget calculation
   const calculatedBudget = useMemo(() => {
@@ -357,7 +402,7 @@ export default function HomeClient({
     } catch (e) {
       setAdminStats({
         totalLeads: 2,
-        totalPartners: initialServices.length,
+        totalPartners: servicesList.length,
         totalRegistrations: 1,
         totalThreads: threads.length,
         estimatedRevenue: '650.000 VNĐ',
@@ -506,11 +551,11 @@ export default function HomeClient({
 
             <div className="hagiang-stats-row">
               <div className="hagiang-stat-chip">
-                <span className="stat-chip-num">{initialPlaces.length}</span>
+                <span className="stat-chip-num">{placesList.length}</span>
                 <span className="stat-chip-label">Điểm đến</span>
               </div>
               <div className="hagiang-stat-chip">
-                <span className="stat-chip-num">{zones.length}</span>
+                <span className="stat-chip-num">{zoneList.length}</span>
                 <span className="stat-chip-label">Vùng cung đường</span>
               </div>
               <div className="hagiang-stat-chip">
@@ -518,7 +563,7 @@ export default function HomeClient({
                 <span className="stat-chip-label">Món ngon</span>
               </div>
               <div className="hagiang-stat-chip">
-                <span className="stat-chip-num">{itineraries.length}</span>
+                <span className="stat-chip-num">{itineraryList.length}</span>
                 <span className="stat-chip-label">Tuyến phượt</span>
               </div>
               <div className="hagiang-stat-chip" style={{ border: '1px solid rgba(52, 211, 153, 0.4)', background: 'rgba(52, 211, 153, 0.12)' }}>
@@ -648,7 +693,7 @@ export default function HomeClient({
           {/* Filter tabs */}
           <div className="zone-filter-tabs">
             {[
-              { id: 'all', label: 'Tất cả 8 vùng', count: zones.length },
+              { id: 'all', label: 'Tất cả 8 vùng', count: zoneList.length },
               { id: 'history', label: '🏛️ Di tích lịch sử & Tâm linh', count: 4 },
               { id: 'mountain', label: '🏔️ Núi cao & Săn mây Sa Mù', count: 2 },
               { id: 'coastal', label: '🏖️ Biển đảo & Sinh thái', count: 2 },
@@ -764,7 +809,7 @@ export default function HomeClient({
               color: '#166534',
             }}>
               <div>
-                Đang lọc các điểm đến thuộc <strong>{zones.find((z) => z.code === selectedZone)?.name || selectedZone}</strong> ({filteredPlaces.length} địa danh)
+                Đang lọc các điểm đến thuộc <strong>{zoneList.find((z) => z.code === selectedZone)?.name || selectedZone}</strong> ({filteredPlaces.length} địa danh)
               </div>
               <button
                 onClick={() => setSelectedZone('all')}
@@ -962,7 +1007,7 @@ export default function HomeClient({
           {/* Conditional Rendering: Interactive Map or Grid */}
           {placesViewMode === 'map' ? (
             <QuangTriInteractiveMap
-              places={initialPlaces}
+              places={placesList}
               onOpenModal={(p) => setActivePlaceModal(p)}
               bookmarkedIds={bookmarkedIds}
               onToggleBookmark={toggleBookmark}
@@ -1124,7 +1169,7 @@ export default function HomeClient({
           {/* Chuyển hướng xem toàn bộ dịch vụ */}
           <div className="section-view-all-row">
             <Link href="/dich-vu" className="section-view-all-btn">
-              Xem tất cả {initialServices.length} đối tác dịch vụ & lưu trú tại Quảng Trị →
+              Xem tất cả {servicesList.length} đối tác dịch vụ & lưu trú tại Quảng Trị →
             </Link>
           </div>
         </div>
@@ -1185,7 +1230,7 @@ export default function HomeClient({
           </div>
 
           <div className="itineraries-curated-grid">
-            {itineraries.map((it: any) => {
+            {itineraryList.map((it: any) => {
               const rawHighlights = it.highlights || it.highlight;
               const highlightsList = Array.isArray(rawHighlights)
                 ? rawHighlights
@@ -1426,7 +1471,7 @@ export default function HomeClient({
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                  {initialPlaces.filter((p) => bookmarkedIds.includes(p.id)).map((p) => (
+                  {placesList.filter((p) => bookmarkedIds.includes(p.id)).map((p) => (
                     <div key={p.id} style={{ display: 'flex', gap: '0.8rem', padding: '0.8rem', background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
                       <img src={p.image || p.hero_image} alt={p.name} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
                       <div style={{ flexGrow: 1 }}>

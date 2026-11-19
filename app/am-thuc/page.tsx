@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
@@ -9,8 +9,22 @@ import { QUANGTRI_DATA } from '@/lib/data';
 export default function AmThucPage() {
   const [activeType, setActiveType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [foodList, setFoodList] = useState<any[]>(QUANGTRI_DATA.foods || []);
 
-  const foodList = QUANGTRI_DATA.foods || [];
+  useEffect(() => {
+    fetch('/api/foods')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.foods?.length) {
+          setFoodList(data.foods);
+        }
+      })
+      .catch(() => {});
+    try {
+      const cmsFoods = localStorage.getItem('qt_cms_foods');
+      if (cmsFoods) setFoodList(JSON.parse(cmsFoods));
+    } catch (e) {}
+  }, []);
 
   const types = [
     { key: 'all', label: 'Tất cả món ngon' },
@@ -224,7 +238,7 @@ export default function AmThucPage() {
                         Địa chỉ thưởng thức gợi ý:
                       </span>
                       <ul style={{ margin: '0.5rem 0 0 0', paddingLeft: '1.2rem', fontSize: '0.85rem', color: '#4b5563', lineHeight: 1.6 }}>
-                        {food.addressRecs.map((addr, idx) => (
+                        {food.addressRecs?.map((addr: any, idx: number) => (
                           <li key={idx} style={{ marginBottom: '0.2rem' }}>{addr}</li>
                         ))}
                       </ul>

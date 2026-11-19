@@ -1,14 +1,37 @@
-import { getPlaces, getServices, getThreads } from '@/lib/get-data';
+import {
+  getPlaces,
+  getServices,
+  getThreads,
+  getFoods,
+  getItineraries,
+  getZones,
+  getGuides,
+  getBannerSlides,
+} from '@/lib/get-data';
 import { QUANGTRI_DATA } from '@/lib/data';
 import HomeClient from '@/components/HomeClient';
 
 export const revalidate = 60; // ISR cache revalidation every 60 seconds
 
 export default async function HomePage() {
-  const [places, services, threads] = await Promise.all([
+  const [
+    places,
+    services,
+    threads,
+    foods,
+    itineraries,
+    zones,
+    guides,
+    bannerSlides,
+  ] = await Promise.all([
     getPlaces(),
     getServices(),
     getThreads(),
+    getFoods(),
+    getItineraries(),
+    getZones(),
+    getGuides(),
+    getBannerSlides(),
   ]);
 
   return (
@@ -16,11 +39,11 @@ export default async function HomePage() {
       initialPlaces={places || []}
       initialServices={services || []}
       initialThreads={threads || []}
-      zones={QUANGTRI_DATA.zones || []}
-      foods={QUANGTRI_DATA.foods || []}
-      itineraries={QUANGTRI_DATA.itineraries || []}
-      guides={QUANGTRI_DATA.guides || {}}
-      bannerSlides={QUANGTRI_DATA.bannerSlides || []}
+      zones={zones || []}
+      foods={foods || []}
+      itineraries={itineraries || []}
+      guides={guides || {}}
+      bannerSlides={bannerSlides || []}
       weatherData={QUANGTRI_DATA.weatherData || {}}
     />
   );

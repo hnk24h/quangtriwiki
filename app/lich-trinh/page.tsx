@@ -1,15 +1,31 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import { QUANGTRI_DATA } from '@/lib/data';
 
 export default function LichTrinhPage() {
-  const itineraries = QUANGTRI_DATA.itineraries || [];
+  const [itineraries, setItineraries] = useState<any[]>(QUANGTRI_DATA.itineraries || []);
   const [selectedItinId, setSelectedItinId] = useState(itineraries[0]?.id || '');
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/itineraries')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.itineraries?.length) {
+          setItineraries(data.itineraries);
+          if (!selectedItinId) setSelectedItinId(data.itineraries[0]?.id);
+        }
+      })
+      .catch(() => {});
+    try {
+      const cmsItin = localStorage.getItem('qt_cms_itineraries');
+      if (cmsItin) setItineraries(JSON.parse(cmsItin));
+    } catch (e) {}
+  }, []);
 
   const currentItinerary = itineraries.find((it) => it.id === selectedItinId) || itineraries[0];
 
@@ -174,7 +190,12 @@ export default function LichTrinhPage() {
                   CÁC TRẠM DỪNG CHÂN ĐẶC SẮC:
                 </span>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  {currentItinerary.highlight.split('·').map((hl, idx) => (
+                  {(Array.isArray(currentItinerary.highlights)
+                    ? currentItinerary.highlights
+                    : typeof currentItinerary.highlight === 'string'
+                    ? currentItinerary.highlight.split('·')
+                    : []
+                  ).map((hl: any, idx: number) => (
                     <span
                       key={idx}
                       style={{
@@ -186,7 +207,7 @@ export default function LichTrinhPage() {
                         fontWeight: 500,
                       }}
                     >
-                      📍 {hl.trim()}
+                      📍 {typeof hl === 'string' ? hl.trim() : hl}
                     </span>
                   ))}
                 </div>
@@ -210,7 +231,7 @@ export default function LichTrinhPage() {
                     zIndex: 0,
                   }} />
 
-                  {currentItinerary.steps.map((step, idx) => (
+                  {currentItinerary.steps?.map((step: any, idx: number) => (
                     <div
                       key={idx}
                       style={{

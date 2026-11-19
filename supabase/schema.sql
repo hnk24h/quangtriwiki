@@ -149,7 +149,50 @@ CREATE INDEX IF NOT EXISTS idx_page_views_created_at ON public.page_views(create
 CREATE INDEX IF NOT EXISTS idx_page_views_path ON public.page_views(path);
 
 -- -----------------------------------------------------------------------------
--- 8. ROW LEVEL SECURITY (RLS) POLICIES
+-- 8. BẢNG: foods (Ẩm thực đặc sản Quảng Trị)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.foods (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    origin TEXT,
+    type TEXT DEFAULT 'Món mặn truyền thống',
+    price_range TEXT,
+    description TEXT,
+    image TEXT,
+    address_recs TEXT[] DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- -----------------------------------------------------------------------------
+-- 9. BẢNG: itineraries (Lịch trình & Cung đường du lịch)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.itineraries (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    duration TEXT NOT NULL,
+    suitability TEXT,
+    distance TEXT,
+    description TEXT,
+    highlights TEXT[] DEFAULT '{}',
+    stops JSONB DEFAULT '[]',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- -----------------------------------------------------------------------------
+-- 10. BẢNG: zones (Phân vùng 8 cụm danh thắng)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.zones (
+    code TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL,
+    tagline TEXT,
+    hero_image TEXT,
+    description TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- -----------------------------------------------------------------------------
+-- 11. ROW LEVEL SECURITY (RLS) POLICIES
 -- -----------------------------------------------------------------------------
 
 -- Kích hoạt RLS
@@ -160,10 +203,18 @@ ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.partner_registrations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.foods ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.itineraries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.zones ENABLE ROW LEVEL SECURITY;
 
 -- Page views: Mọi người đều được ghi nhận và đọc lượt xem
 CREATE POLICY "Public insert page_views" ON public.page_views FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public read page_views" ON public.page_views FOR SELECT USING (true);
+
+-- Foods, Itineraries, Zones: Mọi người đều được đọc
+CREATE POLICY "Public read foods" ON public.foods FOR SELECT USING (true);
+CREATE POLICY "Public read itineraries" ON public.itineraries FOR SELECT USING (true);
+CREATE POLICY "Public read zones" ON public.zones FOR SELECT USING (true);
 
 -- Mọi người (Public) đều được xem Places và Services
 CREATE POLICY "Public read places" ON public.places FOR SELECT USING (true);
