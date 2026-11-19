@@ -184,8 +184,9 @@ export default function HomeClient({
     } catch (e) {}
   }, []);
 
-  // Track page views on front page & hourly distribution
+  // Track page views on front page & sync with database
   useEffect(() => {
+    // 1. Instant local update for fast render
     try {
       const stored = localStorage.getItem('qt_page_views');
       const current = stored ? parseInt(stored, 10) : 18240;
@@ -200,6 +201,23 @@ export default function HomeClient({
       hourly[hour] = (hourly[hour] || 0) + 1;
       localStorage.setItem('qt_hourly_views', JSON.stringify(hourly));
     } catch (e) {}
+
+    // 2. Persist to Supabase Database via /api/views
+    fetch('/api/views', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: '/' }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.totalViews) {
+          setPageViews(data.totalViews);
+          localStorage.setItem('qt_page_views', data.totalViews.toString());
+        }
+      })
+      .catch((err) => {
+        console.warn('Database view tracking notice:', err);
+      });
   }, []);
 
   const toggleBookmark = (id: string, e?: React.MouseEvent) => {

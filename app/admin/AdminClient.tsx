@@ -76,6 +76,17 @@ export default function AdminClient() {
     } catch (e) {
       console.warn('Error loading CMS data:', e);
     }
+
+    // Fetch live views directly from Database via /api/views
+    fetch('/api/views')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.totalViews) {
+          setTotalPageViews(data.totalViews);
+          setTodayPageViews(data.todayViews);
+        }
+      })
+      .catch((e) => console.warn('Database metrics fetch warning:', e));
   }, []);
 
   const showToast = (msg: string) => {
@@ -780,14 +791,22 @@ export default function AdminClient() {
                 <div style={{ display: 'flex', gap: '0.6rem' }}>
                   <button
                     onClick={() => {
-                      const updated = totalPageViews + 10;
-                      setTotalPageViews(updated);
-                      localStorage.setItem('qt_page_views', updated.toString());
-                      showToast('Đã làm mới dữ liệu lượt xem!');
+                      fetch('/api/views')
+                        .then((res) => res.json())
+                        .then((data) => {
+                          if (data && data.totalViews) {
+                            setTotalPageViews(data.totalViews);
+                            setTodayPageViews(data.todayViews);
+                            showToast('Đã đồng bộ số liệu mới nhất từ Database!');
+                          }
+                        })
+                        .catch(() => {
+                          showToast('Đã kiểm tra số liệu hệ thống.');
+                        });
                     }}
                     style={{ padding: '0.6rem 1rem', borderRadius: '8px', background: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}
                   >
-                    🔄 Cập nhật số liệu
+                    🔄 Đồng bộ từ Database
                   </button>
                   <Link
                     href="/"

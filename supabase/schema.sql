@@ -135,7 +135,21 @@ CREATE TABLE IF NOT EXISTS public.partner_registrations (
 CREATE INDEX IF NOT EXISTS idx_partner_reg_status ON public.partner_registrations(status);
 
 -- -----------------------------------------------------------------------------
--- 7. ROW LEVEL SECURITY (RLS) POLICIES
+-- 7. BẢNG: page_views (Lưu trữ và phân tích lượt xem trang front)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.page_views (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    path TEXT NOT NULL DEFAULT '/',
+    ip TEXT,
+    user_agent TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_page_views_created_at ON public.page_views(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_page_views_path ON public.page_views(path);
+
+-- -----------------------------------------------------------------------------
+-- 8. ROW LEVEL SECURITY (RLS) POLICIES
 -- -----------------------------------------------------------------------------
 
 -- Kích hoạt RLS
@@ -145,6 +159,11 @@ ALTER TABLE public.threads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.partner_registrations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
+
+-- Page views: Mọi người đều được ghi nhận và đọc lượt xem
+CREATE POLICY "Public insert page_views" ON public.page_views FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public read page_views" ON public.page_views FOR SELECT USING (true);
 
 -- Mọi người (Public) đều được xem Places và Services
 CREATE POLICY "Public read places" ON public.places FOR SELECT USING (true);
