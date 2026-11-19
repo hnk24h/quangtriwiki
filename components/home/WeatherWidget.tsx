@@ -1,7 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import type { WeatherLocationData } from '@/lib/weather';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  buildOpenMeteoBatchUrl,
+  parseOpenMeteoResponse,
+  type WeatherLocationData,
+  type WeatherTargetZone,
+} from '@/lib/weather';
 
 interface WeatherWidgetProps {
   weatherData: Record<string, WeatherLocationData>;
@@ -15,14 +20,93 @@ function getWeatherEmoji(icon?: string): string {
   return '⛅';
 }
 
+function formatVnTime(isoString?: string): string {
+  if (!isoString) return '';
+  try {
+    return new Intl.DateTimeFormat('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Asia/Ho_Chi_Minh',
+    }).format(new Date(isoString));
+  } catch {
+    return '';
+  }
+}
+
 export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
-  const keys = Object.keys(weatherData || {});
-  const [weatherLocKey, setWeatherLocKey] = useState(
-    weatherData['huong-hoa'] ? 'huong-hoa' : keys[0] || 'huong-hoa'
+  const [liveWeather, setLiveWeather] = useState<Record<string, WeatherLocationData>>(weatherData || {});
+  const keys = useMemo(() => Object.keys(liveWeather), [liveWeather]);
+
+  const [weatherLocKey, setWeatherLocKey] = useState(() =>
+    weatherData?.['QT-05'] ? 'QT-05' : Object.keys(weatherData || {})[0] || 'QT-05'
   );
   const [weatherDayIdx, setWeatherDayIdx] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const didAutoRefresh = useRef(false);
+  const liveWeatherRef = useRef(liveWeather);
+  liveWeatherRef.current = liveWeather;
 
-  const currentLoc = weatherData[weatherLocKey] || weatherData[keys[0]];
+  useEffect(() => {
+    if (weatherData && Object.keys(weatherData).length > 0) {
+      setLiveWeather(weatherData);
+    }
+  }, [weatherData]);
+
+  const fetchBrowserDirectOpenMeteo = useCallback(
+    async (currentMap: Record<string, WeatherLocationData>) => {
+      const entries = Object.values(currentMap);
+      if (entries.length === 0) return null;
+
+      const targets: WeatherTargetZone[] = entries.map((loc) => ({
+        key: loc.key,
+        zoneCode: loc.zoneCode,
+        name: loc.name,
+        region: loc.region,
+        lat: loc.lat,
+        lon: loc.lon,
+        typeGroup: loc.typeGroup || 'history',
+      }));
+
+      const url = buildOpenMeteoBatchUrl(targets);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      try {
+        const res = await fetch(url, { cache: 'no-store', signal: controller.signal });
+        if (!res.ok) return null;
+        const rawJson = await res.json();
+        return parseOpenMeteoResponse(rawJson, targets);
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    },
+    []
+  );
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      const directData = await fetchBrowserDirectOpenMeteo(liveWeatherRef.current);
+      if (directData) {
+        setLiveWeather(directData);
+      }
+    } catch {
+      // retain current forecast gracefully
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [fetchBrowserDirectOpenMeteo]);
+
+  // Auto-upgrade fallback SSR weather to real Open-Meteo readings on mount
+  useEffect(() => {
+    if (didAutoRefresh.current) return;
+    didAutoRefresh.current = true;
+    const sample = Object.values(liveWeatherRef.current)[0];
+    if (!sample || sample.source !== 'open-meteo') {
+      handleRefresh();
+    }
+  }, [handleRefresh]);
+
+  const currentLoc = liveWeather[weatherLocKey] || liveWeather[keys[0]];
   if (!currentLoc) return null;
 
   const forecastList = Array.isArray(currentLoc.forecast) ? currentLoc.forecast : [];
@@ -34,51 +118,98 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
     : selectedDay?.condition || currentLoc.current?.condition;
 
   const displayIcon = isToday ? currentLoc.current?.icon || selectedDay?.icon : selectedDay?.icon;
-  const displayTempOrRange = isToday
-    ? `${currentLoc.current?.temp ?? selectedDay?.high ?? 22}°C`
-    : `${selectedDay?.low ?? 18}°–${selectedDay?.high ?? 25}°C`;
   const displayRain = selectedDay?.rain || currentLoc.current?.rainChance || '20%';
+  const displayRainMm = isToday ? currentLoc.current?.rainMm ?? 0 : selectedDay?.rainMm ?? 0;
   const displayWind = isToday
     ? currentLoc.current?.wind || selectedDay?.windMax || '10 km/h'
-    : selectedDay?.windMax || currentLoc.current?.wind || '10 km/h';
+    : selectedDay?.windMax || '10 km/h';
+  const displayUv = selectedDay?.uvMax ?? currentLoc.current?.uvMax ?? 5;
+  const displaySunrise = selectedDay?.sunrise || currentLoc.current?.sunrise || '05:45';
+  const displaySunset = selectedDay?.sunset || currentLoc.current?.sunset || '17:40';
+  const hourlySlots = selectedDay?.hourly || [];
+  const updatedTime = formatVnTime(currentLoc.updatedAt);
 
   return (
     <div className="weather-card-glass" id="weather-card-widget">
-      <div className="weather-card-header">
-        <div>
-          <span className="weather-region-tag">
-            {currentLoc.region} · {currentLoc.source === 'open-meteo' ? '● Open-Meteo Live' : 'Dự báo tham khảo'}
-          </span>
-          <h3 className="weather-card-title">Thời tiết sắp tới</h3>
+      {/* Header */}
+      <div className="weather-card-header" style={{ gap: '0.75rem' }}>
+        <div style={{ minWidth: 0 }}>
+          <div className="weather-live-strip">
+            <span className="weather-region-tag">
+              {currentLoc.source === 'open-meteo' ? '● Open-Meteo Live' : 'Dự báo khu vực'}
+              {updatedTime ? ` · ${updatedTime}` : ''}
+            </span>
+            <span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>
+              {currentLoc.lat.toFixed(2)}°N, {currentLoc.lon.toFixed(2)}°E
+            </span>
+          </div>
+          <h3 className="weather-card-title">Thời tiết {currentLoc.zoneCode}</h3>
           <p className="weather-card-meta">
-            7 ngày · °C · Giờ Việt Nam
-            <br />
-            Chọn từng ngày bên dưới để xem chi tiết
+            {currentLoc.region} · 7 ngày theo giờ VN
           </p>
         </div>
 
-        <select
-          value={weatherLocKey}
-          aria-label="Chọn khu vực dự báo thời tiết"
-          onChange={(e) => {
-            setWeatherLocKey(e.target.value);
-            setWeatherDayIdx(0);
-          }}
-          className="weather-district-dropdown"
-        >
-          {keys.map((k) => (
-            <option key={k} value={k}>
-              {weatherData[k]?.name || k}
-            </option>
-          ))}
-        </select>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
+          <select
+            value={currentLoc.key}
+            aria-label="Chọn khu vực dự báo thời tiết"
+            onChange={(e) => {
+              setWeatherLocKey(e.target.value);
+              setWeatherDayIdx(0);
+            }}
+            className="weather-district-dropdown"
+            style={{ maxWidth: '175px' }}
+          >
+            {keys.map((k) => (
+              <option key={k} value={k}>
+                {liveWeather[k]?.zoneCode} · {liveWeather[k]?.name}
+              </option>
+            ))}
+          </select>
+
+          <button
+            type="button"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            title="Cập nhật dữ liệu thời tiết mới nhất"
+            aria-label="Làm mới thời tiết thực tế"
+            className="weather-refresh-btn"
+          >
+            <span style={{ display: 'inline-block', transform: isRefreshing ? 'rotate(180deg)' : 'none', transition: 'transform 0.4s ease' }}>
+              🔄
+            </span>
+          </button>
+        </div>
       </div>
 
+      {/* Hero Temperature & Current Condition Summary */}
+      <div className="weather-now-hero">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <span style={{ fontSize: '2.1rem', lineHeight: 1 }}>{getWeatherEmoji(displayIcon)}</span>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.45rem' }}>
+              <strong style={{ fontSize: '1.65rem', color: 'var(--primary)', fontWeight: 800, lineHeight: 1 }}>
+                {isToday ? `${currentLoc.current?.temp ?? 22}°C` : `${selectedDay?.low}°–${selectedDay?.high}°C`}
+              </strong>
+              <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                {isToday
+                  ? `Cảm giác ${currentLoc.current?.feelsLike ?? currentLoc.current?.temp}°C · Mây ${currentLoc.current?.cloudCover || '40%'}`
+                  : `${selectedDay?.day} (${selectedDay?.date})`}
+              </span>
+            </div>
+            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginTop: '0.15rem' }}>
+              {displayCondition}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 7-Day Interactive Strip */}
       <div className="weather-days-row">
         {forecastList.map((fc, idx) => (
           <button
             type="button"
-            key={idx}
+            key={fc.isoDate || idx}
             onClick={() => setWeatherDayIdx(idx)}
             className={`weather-day-card ${idx === weatherDayIdx ? 'active' : ''}`}
             style={{ cursor: 'pointer', textAlign: 'center', font: 'inherit', color: 'inherit' }}
@@ -93,53 +224,53 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
         ))}
       </div>
 
+      {/* Hourly Slots + 4-Col Detailed Metrics */}
       <div className="weather-detail-box">
-        <div className="weather-detail-time">
-          {isToday
-            ? `Hiện tại · ${currentLoc.name}`
-            : `Dự báo ${selectedDay?.day} (${selectedDay?.date}) · ${currentLoc.name}`}
-        </div>
-        <div className="weather-detail-condition">
-          <span className="weather-detail-icon">{getWeatherEmoji(displayIcon)}</span>
-          <strong>
-            {displayCondition} · {displayTempOrRange}
-          </strong>
-        </div>
+        {hourlySlots.length > 0 && (
+          <div className="weather-hourly-strip" aria-label="Dự báo theo khung giờ trong ngày">
+            {hourlySlots.map((slot) => (
+              <div key={slot.time} className="weather-hour-chip">
+                <span className="hour-label">{slot.time}</span>
+                <span className="hour-icon">{getWeatherEmoji(slot.icon)}</span>
+                <strong className="hour-temp">{slot.temp}°</strong>
+                <span className="hour-rain">💧{slot.rain}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
-        <div className="weather-detail-metrics">
+        <div className="weather-detail-metrics-4">
           <div className="metric-col">
-            <div className="metric-label">Khả năng mưa</div>
+            <div className="metric-label">Mưa</div>
             <div className="metric-value">{displayRain}</div>
-            <div className="metric-sub">
-              {parseInt(displayRain, 10) >= 50 ? 'Có khả năng mưa' : 'Ít mưa'}
-            </div>
+            <div className="metric-sub">{displayRainMm > 0 ? `${displayRainMm} mm` : 'Khô ráo'}</div>
           </div>
           <div className="metric-col">
-            <div className="metric-label">{isToday ? 'Độ ẩm' : 'Biên độ nhiệt'}</div>
-            <div className="metric-value">
-              {isToday ? currentLoc.current?.humidity : `${selectedDay?.low}° / ${selectedDay?.high}°`}
-            </div>
-            <div className="metric-sub">
-              {isToday ? currentLoc.current?.humidityNote : 'Thấp / Cao nhất ngày'}
-            </div>
+            <div className="metric-label">{isToday ? 'Độ ẩm' : 'Chỉ số UV'}</div>
+            <div className="metric-value">{isToday ? currentLoc.current?.humidity : `UV ${displayUv}`}</div>
+            <div className="metric-sub">{isToday ? currentLoc.current?.humidityNote : displayUv >= 8 ? 'Nắng gắt' : 'Trung bình'}</div>
           </div>
           <div className="metric-col">
-            <div className="metric-label">{isToday ? 'Gió' : 'Gió tối đa'}</div>
+            <div className="metric-label">Gió</div>
             <div className="metric-value">{displayWind}</div>
-            <div className="metric-sub">
-              {parseInt(displayWind, 10) >= 22 ? 'Gió khá mạnh' : 'Gió nhẹ'}
-            </div>
+            <div className="metric-sub">{isToday ? `Hướng ${currentLoc.current?.windDir}` : currentLoc.current?.windNote}</div>
+          </div>
+          <div className="metric-col">
+            <div className="metric-label">Mặt trời</div>
+            <div className="metric-value" style={{ fontSize: '0.92rem' }}>🌅 {displaySunrise}</div>
+            <div className="metric-sub">🌇 Lặn {displaySunset}</div>
           </div>
         </div>
       </div>
 
-      <div className="weather-advisories">
+      {/* Advisories */}
+      <div className="weather-advisories" style={{ marginBottom: 0 }}>
         <div className="advisory-item">
-          <span>🌧️</span>
+          <span>🧭</span>
           <span>{currentLoc.tipRain}</span>
         </div>
         <div className="advisory-item">
-          <span>☕</span>
+          <span>🎒</span>
           <span>{currentLoc.tipSleep}</span>
         </div>
       </div>

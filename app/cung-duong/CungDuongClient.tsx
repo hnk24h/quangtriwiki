@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import SafeImage from '@/components/common/SafeImage';
 import { useToast } from '@/components/common/ToastProvider';
-import { ZONE_METAS } from '@/components/home/ZonesExplorer';
+import { DEFAULT_ZONE_META } from '@/lib/normalize';
 import PlaceQuickModal from '@/components/home/PlaceQuickModal';
 import { getBookmarkedIds, subscribeStorageSync, toggleBookmarkId } from '@/lib/storage';
 import type { Place, Zone } from '@/lib/supabase/types';
@@ -119,12 +119,20 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
     });
   }, [places, selectedCategory, selectedZone, search]);
 
+  const getGroup = (z: Zone) => z.typeGroup || DEFAULT_ZONE_META[z.code]?.typeGroup || 'history';
+
+  const zoneCounts = useMemo(() => {
+    return {
+      all: zones.length,
+      history: zones.filter((z) => getGroup(z) === 'history').length,
+      mountain: zones.filter((z) => getGroup(z) === 'mountain').length,
+      coastal: zones.filter((z) => getGroup(z) === 'coastal').length,
+    };
+  }, [zones]);
+
   const filteredZones = useMemo(() => {
     if (zoneTypeFilter === 'all') return zones;
-    return zones.filter((z) => {
-      const meta = ZONE_METAS[z.code];
-      return meta && meta.typeGroup === zoneTypeFilter;
-    });
+    return zones.filter((z) => getGroup(z) === zoneTypeFilter);
   }, [zones, zoneTypeFilter]);
 
   return (
@@ -134,9 +142,9 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
         <div className="zones-header-wrap">
           <div className="zones-badge-kicker">
             <span>🗺️</span>
-            <span>HỆ THỐNG MÃ CUNG ĐƯỜNG QT-01 → QT-08</span>
+            <span>HỆ THỐNG MÃ CUNG ĐƯỜNG ({zones.length} KHU VỰC)</span>
           </div>
-          <h2 className="zones-main-title">8 Vùng Di Sản, Danh Thắng & Đặc Sản Bản Địa</h2>
+          <h2 className="zones-main-title">{zones.length} Vùng Di Sản, Danh Thắng & Đặc Sản Bản Địa</h2>
           <p className="zones-lead-desc">
             Chọn một phân vùng để lọc danh sách tọa độ, xem đặc sản địa phương và lời khuyên phượt thủ.
           </p>
@@ -144,10 +152,10 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
 
         <div className="zone-filter-tabs">
           {[
-            { id: 'all', label: 'Tất cả 8 vùng', count: zones.length },
-            { id: 'history', label: '🏛️ Di tích lịch sử & Tâm linh', count: 4 },
-            { id: 'mountain', label: '🏔️ Núi cao & Săn mây Sa Mù', count: 2 },
-            { id: 'coastal', label: '🏖️ Biển đảo & Sinh thái', count: 2 },
+            { id: 'all', label: `Tất cả ${zoneCounts.all} vùng`, count: zoneCounts.all },
+            { id: 'history', label: '🏛️ Di tích lịch sử & Tâm linh', count: zoneCounts.history },
+            { id: 'mountain', label: '🏔️ Núi cao & Săn mây Sa Mù', count: zoneCounts.mountain },
+            { id: 'coastal', label: '🏖️ Biển đảo & Sinh thái', count: zoneCounts.coastal },
           ].map((tab) => (
             <button
               type="button"
@@ -173,11 +181,9 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
 
         <div className="zone-grid">
           {filteredZones.map((z) => {
-            const meta = ZONE_METAS[z.code] || {
-              specialty: 'Ẩm thực & Đặc sản bản địa',
-              typeTag: 'Điểm đến tiêu biểu',
-              typeGroup: 'history',
-            };
+            const def = DEFAULT_ZONE_META[z.code];
+            const typeTag = z.typeTag || def?.typeTag || 'Điểm đến tiêu biểu';
+            const specialty = z.specialty || def?.specialty || 'Ẩm thực & Đặc sản bản địa';
             const isSelected = selectedZone === z.code;
 
             return (
@@ -190,7 +196,7 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
                   <SafeImage src={z.heroImage} alt={z.name} fill sizes="(max-width: 768px) 100vw, 320px" />
                   <div className="zone-media-gradient" />
                   <span className="zone-code-badge">{z.code}</span>
-                  <span className="zone-type-badge">{meta.typeTag}</span>
+                  <span className="zone-type-badge">{typeTag}</span>
                   {z.featuredCount && <span className="zone-count-badge">📍 {z.featuredCount}</span>}
                 </div>
 
@@ -202,7 +208,7 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
                     <span style={{ fontSize: '1rem', flexShrink: 0 }}>🍲</span>
                     <div>
                       <span>Đặc sản: </span>
-                      <strong>{meta.specialty}</strong>
+                      <strong>{specialty}</strong>
                     </div>
                   </div>
 

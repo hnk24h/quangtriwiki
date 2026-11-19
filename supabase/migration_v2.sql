@@ -6,6 +6,13 @@
 
 -- 1. New columns on existing tables
 ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS featured_count TEXT;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS specialty TEXT;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS type_tag TEXT;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS type_group TEXT DEFAULT 'history';
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS lon DOUBLE PRECISION;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS show_in_weather BOOLEAN DEFAULT TRUE;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS weather_region_label TEXT;
 ALTER TABLE public.foods ADD COLUMN IF NOT EXISTS taste_notes TEXT;
 ALTER TABLE public.foods ADD COLUMN IF NOT EXISTS highlights TEXT[] DEFAULT '{}';
 ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS region TEXT;

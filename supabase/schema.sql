@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS public.itineraries (
 );
 
 -- -----------------------------------------------------------------------------
--- 10. BẢNG: zones (Phân vùng 8 cụm danh thắng)
+-- 10. BẢNG: zones (Phân vùng 8 cụm danh thắng & tọa độ thời tiết)
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.zones (
     code TEXT PRIMARY KEY,
@@ -193,6 +193,13 @@ CREATE TABLE IF NOT EXISTS public.zones (
     hero_image TEXT,
     description TEXT,
     featured_count TEXT,
+    specialty TEXT,
+    type_tag TEXT,
+    type_group TEXT DEFAULT 'history',
+    lat DOUBLE PRECISION,
+    lon DOUBLE PRECISION,
+    show_in_weather BOOLEAN DEFAULT TRUE,
+    weather_region_label TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

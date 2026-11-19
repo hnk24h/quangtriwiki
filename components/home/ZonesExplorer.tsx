@@ -3,53 +3,8 @@
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
+import { DEFAULT_ZONE_META } from '@/lib/normalize';
 import type { Zone } from '@/lib/supabase/types';
-
-export const ZONE_METAS: Record<
-  string,
-  { specialty: string; typeTag: string; typeGroup: 'history' | 'mountain' | 'coastal' }
-> = {
-  'QT-01': {
-    specialty: 'Bánh bột lọc & Cháo bột cá lóc',
-    typeTag: '🏛️ Đô thị & Cửa ngõ',
-    typeGroup: 'history',
-  },
-  'QT-02': {
-    specialty: 'Cháo vạt giường Diên Sanh & Bánh lọc Mỹ Chánh',
-    typeTag: '⚔️ Thành Cổ & Đất thiêng',
-    typeGroup: 'history',
-  },
-  'QT-03': {
-    specialty: 'Hải sản biển Cửa Tùng & Tôm cá Bến Hải',
-    typeTag: '🕊️ Vĩ tuyến 17 & Làng hầm',
-    typeGroup: 'history',
-  },
-  'QT-04': {
-    specialty: 'Bún hến Mai Xá (Di sản ẩm thực Việt Nam)',
-    typeTag: '🌊 Biển Cửa Việt & Mũi Trèo',
-    typeGroup: 'coastal',
-  },
-  'QT-05': {
-    specialty: 'Cà phê Arabica Khe Sanh & Thịt trâu lá trơng',
-    typeTag: '☁️ Săn mây Sa Mù & Núi cao',
-    typeGroup: 'mountain',
-  },
-  'QT-06': {
-    specialty: 'Cơm lam, rượu cần & Suối khoáng Klu',
-    typeTag: '🌲 Trường Sơn & Bản làng',
-    typeGroup: 'mountain',
-  },
-  'QT-07': {
-    specialty: 'Cua đá Cồn Cỏ & Rong biển đảo ngọc',
-    typeTag: '🏝️ Đảo tiền tiêu & San hô',
-    typeGroup: 'coastal',
-  },
-  'QT-08': {
-    specialty: 'Gà đồi Cùa & Cao chè vằng Định Sơn',
-    typeTag: '🌿 Căn cứ Tân Sở & Đồi Cùa',
-    typeGroup: 'history',
-  },
-};
 
 interface ZonesExplorerProps {
   zones: Zone[];
@@ -66,12 +21,20 @@ export default function ZonesExplorer({
 }: ZonesExplorerProps) {
   const [zoneTypeFilter, setZoneTypeFilter] = useState<'all' | 'history' | 'mountain' | 'coastal'>('all');
 
+  const getGroup = (z: Zone) => z.typeGroup || DEFAULT_ZONE_META[z.code]?.typeGroup || 'history';
+
+  const counts = useMemo(() => {
+    return {
+      all: zones.length,
+      history: zones.filter((z) => getGroup(z) === 'history').length,
+      mountain: zones.filter((z) => getGroup(z) === 'mountain').length,
+      coastal: zones.filter((z) => getGroup(z) === 'coastal').length,
+    };
+  }, [zones]);
+
   const filteredZones = useMemo(() => {
     if (zoneTypeFilter === 'all') return zones;
-    return zones.filter((z) => {
-      const meta = ZONE_METAS[z.code];
-      return meta && meta.typeGroup === zoneTypeFilter;
-    });
+    return zones.filter((z) => getGroup(z) === zoneTypeFilter);
   }, [zones, zoneTypeFilter]);
 
   return (
@@ -80,20 +43,20 @@ export default function ZonesExplorer({
         <div className="zones-header-wrap">
           <div className="zones-badge-kicker">
             <span>🗺️</span>
-            <span>HỆ THỐNG MÃ CUNG ĐƯỜNG QT-01 → QT-08</span>
+            <span>HỆ THỐNG MÃ CUNG ĐƯỜNG ({zones.length} KHU VỰC)</span>
           </div>
-          <h2 className="zones-main-title">8 Vùng Di Sản, Danh Thắng & Đặc Sản Bản Địa</h2>
+          <h2 className="zones-main-title">{zones.length} Vùng Di Sản, Danh Thắng & Đặc Sản Bản Địa</h2>
           <p className="zones-lead-desc">
-            Quảng Trị được chia tách theo 8 mạch không gian trải nghiệm độc đáo — kết nối di tích lịch sử linh thiêng, bãi biển cát trắng, đại ngàn Trường Sơn săn mây và những đặc sản trứ danh của từng địa phương.
+            Quảng Trị được chia tách theo {zones.length} mạch không gian trải nghiệm độc đáo — kết nối di tích lịch sử linh thiêng, bãi biển cát trắng, đại ngàn Trường Sơn săn mây và những đặc sản trứ danh của từng địa phương.
           </p>
         </div>
 
         <div className="zone-filter-tabs">
           {[
-            { id: 'all', label: 'Tất cả 8 vùng', count: zones.length },
-            { id: 'history', label: '🏛️ Di tích lịch sử & Tâm linh', count: 4 },
-            { id: 'mountain', label: '🏔️ Núi cao & Săn mây Sa Mù', count: 2 },
-            { id: 'coastal', label: '🏖️ Biển đảo & Sinh thái', count: 2 },
+            { id: 'all', label: `Tất cả ${counts.all} vùng`, count: counts.all },
+            { id: 'history', label: '🏛️ Di tích lịch sử & Tâm linh', count: counts.history },
+            { id: 'mountain', label: '🏔️ Núi cao & Săn mây Sa Mù', count: counts.mountain },
+            { id: 'coastal', label: '🏖️ Biển đảo & Sinh thái', count: counts.coastal },
           ].map((tab) => (
             <button
               type="button"
@@ -119,11 +82,9 @@ export default function ZonesExplorer({
 
         <div className="zone-grid">
           {filteredZones.map((z) => {
-            const meta = ZONE_METAS[z.code] || {
-              specialty: 'Ẩm thực & Đặc sản bản địa',
-              typeTag: 'Điểm đến tiêu biểu',
-              typeGroup: 'history',
-            };
+            const def = DEFAULT_ZONE_META[z.code];
+            const typeTag = z.typeTag || def?.typeTag || 'Điểm đến tiêu biểu';
+            const specialty = z.specialty || def?.specialty || 'Ẩm thực & Đặc sản bản địa';
             const isSelected = selectedZone === z.code;
 
             return (
@@ -144,7 +105,7 @@ export default function ZonesExplorer({
                   <SafeImage src={z.heroImage} alt={z.name} fill sizes="(max-width: 768px) 100vw, 320px" />
                   <div className="zone-media-gradient" />
                   <span className="zone-code-badge">{z.code}</span>
-                  <span className="zone-type-badge">{meta.typeTag}</span>
+                  <span className="zone-type-badge">{typeTag}</span>
                   {z.featuredCount && <span className="zone-count-badge">📍 {z.featuredCount}</span>}
                 </div>
 
@@ -156,7 +117,7 @@ export default function ZonesExplorer({
                     <span style={{ fontSize: '1rem', flexShrink: 0 }}>🍲</span>
                     <div>
                       <span>Đặc sản: </span>
-                      <strong>{meta.specialty}</strong>
+                      <strong>{specialty}</strong>
                     </div>
                   </div>
 

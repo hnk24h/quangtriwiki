@@ -15,13 +15,14 @@ import HomeClient from '@/components/HomeClient';
 export const revalidate = 60;
 
 export default async function HomePage() {
+  const zones = await getZones();
+
   const [
     places,
     services,
     threads,
     foods,
     itineraries,
-    zones,
     guides,
     bannerSlides,
     siteViews,
@@ -32,11 +33,10 @@ export default async function HomePage() {
     getThreads(),
     getFoods(),
     getItineraries(),
-    getZones(),
     getGuides(),
     getBannerSlides(),
     getSiteViews(),
-    getQuangTriWeather(),
+    getQuangTriWeather(zones),
   ]);
 
   return (

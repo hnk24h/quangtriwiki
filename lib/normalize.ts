@@ -158,12 +158,109 @@ export function normalizeItinerary(raw: any): Itinerary {
   };
 }
 
+export interface ZoneMetaDefault {
+  specialty: string;
+  typeTag: string;
+  typeGroup: 'history' | 'mountain' | 'coastal';
+  lat: number;
+  lon: number;
+  showInWeather: boolean;
+  weatherRegionLabel: string;
+}
+
+export const DEFAULT_ZONE_META: Record<string, ZoneMetaDefault> = {
+  'QT-01': {
+    specialty: 'Bánh bột lọc & Cháo bột cá lóc',
+    typeTag: '🏛️ Đô thị & Cửa ngõ',
+    typeGroup: 'history',
+    lat: 16.8163,
+    lon: 107.1003,
+    showInWeather: true,
+    weatherRegionLabel: 'TRUNG TÂM · TP. ĐÔNG HÀ',
+  },
+  'QT-02': {
+    specialty: 'Cháo vạt giường Diên Sanh & Bánh lọc Mỹ Chánh',
+    typeTag: '⚔️ Thành Cổ & Đất thiêng',
+    typeGroup: 'history',
+    lat: 16.746,
+    lon: 107.1856,
+    showInWeather: true,
+    weatherRegionLabel: 'ĐẤT THIÊNG · THÀNH CỔ',
+  },
+  'QT-03': {
+    specialty: 'Hải sản biển Cửa Tùng & Tôm cá Bến Hải',
+    typeTag: '🕊️ Vĩ tuyến 17 & Làng hầm',
+    typeGroup: 'history',
+    lat: 17.0714,
+    lon: 107.11,
+    showInWeather: true,
+    weatherRegionLabel: 'VĨ TUYẾN 17 · BỜ BIỂN',
+  },
+  'QT-04': {
+    specialty: 'Bún hến Mai Xá (Di sản ẩm thực Việt Nam)',
+    typeTag: '🌊 Biển Cửa Việt & Mũi Trèo',
+    typeGroup: 'coastal',
+    lat: 16.9065,
+    lon: 107.185,
+    showInWeather: true,
+    weatherRegionLabel: 'BIỂN CỬA VIỆT · GIO LINH',
+  },
+  'QT-05': {
+    specialty: 'Cà phê Arabica Khe Sanh & Thịt trâu lá trơng',
+    typeTag: '☁️ Săn mây Sa Mù & Núi cao',
+    typeGroup: 'mountain',
+    lat: 16.69,
+    lon: 106.71,
+    showInWeather: true,
+    weatherRegionLabel: 'VÙNG CAO · ĐÈO SA MÙ',
+  },
+  'QT-06': {
+    specialty: 'Cơm lam, rượu cần & Suối khoáng Klu',
+    typeTag: '🌲 Trường Sơn & Bản làng',
+    typeGroup: 'mountain',
+    lat: 16.578,
+    lon: 106.956,
+    showInWeather: true,
+    weatherRegionLabel: 'ĐẠI NGÀN TRƯỜNG SƠN',
+  },
+  'QT-07': {
+    specialty: 'Cua đá Cồn Cỏ & Rong biển đảo ngọc',
+    typeTag: '🏝️ Đảo tiền tiêu & San hô',
+    typeGroup: 'coastal',
+    lat: 17.1583,
+    lon: 107.3389,
+    showInWeather: true,
+    weatherRegionLabel: 'HẢI ĐẢO · 15 HẢI LÝ',
+  },
+  'QT-08': {
+    specialty: 'Gà đồi Cùa & Cao chè vằng Định Sơn',
+    typeTag: '🌿 Căn cứ Tân Sở & Đồi Cùa',
+    typeGroup: 'history',
+    lat: 16.803,
+    lon: 106.993,
+    showInWeather: true,
+    weatherRegionLabel: 'TRUNG DU · VÙNG CÙA',
+  },
+};
+
+function normalizeZoneGroup(val?: string | null): 'history' | 'mountain' | 'coastal' {
+  if (val === 'mountain' || val === 'coastal' || val === 'history') return val;
+  return 'history';
+}
+
 export function normalizeZone(raw: any, fallbackZone?: any): Zone {
+  const code = String(raw.code || '').trim();
+  const metaDefault = DEFAULT_ZONE_META[code];
   const description = String(raw.description || raw.desc || fallbackZone?.description || '');
+  const rawLat = raw.lat !== null && raw.lat !== undefined && raw.lat !== '' ? Number(raw.lat) : metaDefault?.lat;
+  const rawLon = raw.lon !== null && raw.lon !== undefined && raw.lon !== '' ? Number(raw.lon) : metaDefault?.lon;
+  const lat = rawLat !== undefined && Number.isFinite(rawLat) ? rawLat : 16.8163;
+  const lon = rawLon !== undefined && Number.isFinite(rawLon) ? rawLon : 107.1003;
+
   return {
-    code: String(raw.code || ''),
+    code,
     name: String(raw.name || ''),
-    slug: String(raw.slug || raw.code || ''),
+    slug: String(raw.slug || code.toLowerCase()),
     tagline: String(raw.tagline || ''),
     heroImage: String(
       raw.hero_image ||
@@ -175,6 +272,30 @@ export function normalizeZone(raw: any, fallbackZone?: any): Zone {
     desc: description,
     featuredCount: String(
       raw.featured_count || raw.featuredCount || fallbackZone?.featuredCount || 'Điểm đến bản địa'
+    ),
+    specialty: String(
+      raw.specialty || fallbackZone?.specialty || metaDefault?.specialty || 'Ẩm thực & Đặc sản bản địa'
+    ),
+    typeTag: String(
+      raw.type_tag || raw.typeTag || fallbackZone?.typeTag || metaDefault?.typeTag || 'Điểm đến tiêu biểu'
+    ),
+    typeGroup: normalizeZoneGroup(
+      raw.type_group || raw.typeGroup || fallbackZone?.typeGroup || metaDefault?.typeGroup
+    ),
+    lat,
+    lon,
+    showInWeather:
+      typeof raw.show_in_weather === 'boolean'
+        ? raw.show_in_weather
+        : typeof raw.showInWeather === 'boolean'
+        ? raw.showInWeather
+        : metaDefault?.showInWeather ?? true,
+    weatherRegionLabel: String(
+      raw.weather_region_label ||
+        raw.weatherRegionLabel ||
+        metaDefault?.weatherRegionLabel ||
+        raw.name ||
+        code
     ),
   };
 }

@@ -18,12 +18,14 @@ import type {
   Place,
   Service,
   Thread,
+  Zone,
 } from '@/lib/supabase/types';
 
 type CmsTab =
   | 'overview'
   | 'analytics'
   | 'banners'
+  | 'zones'
   | 'threads'
   | 'places'
   | 'services'
@@ -53,6 +55,7 @@ export default function AdminClient() {
 
   // CMS Entities State (Synced directly with Supabase APIs)
   const [bannerSlides, setBannerSlides] = useState<BannerSlide[]>([]);
+  const [zones, setZones] = useState<Zone[]>([]);
   const [places, setPlaces] = useState<Place[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [foods, setFoods] = useState<Food[]>([]);
@@ -117,6 +120,7 @@ export default function AdminClient() {
         itinRes,
         threadsRes,
         bannersRes,
+        zonesRes,
         guidesRes,
         regRes,
         metricsRes,
@@ -127,6 +131,7 @@ export default function AdminClient() {
         fetch('/api/itineraries').then((r) => r.json()),
         fetch('/api/threads').then((r) => r.json()),
         fetch('/api/banners').then((r) => r.json()),
+        fetch('/api/zones').then((r) => r.json()),
         fetch('/api/guides').then((r) => r.json()),
         fetch('/api/partner-registrations').then((r) => r.json()),
         fetch('/api/admin/metrics').then((r) => r.json()),
@@ -138,6 +143,7 @@ export default function AdminClient() {
       if (Array.isArray(itinRes?.itineraries)) setItineraries(itinRes.itineraries);
       if (Array.isArray(threadsRes?.threads)) setThreads(threadsRes.threads);
       if (Array.isArray(bannersRes?.banners)) setBannerSlides(bannersRes.banners);
+      if (Array.isArray(zonesRes?.zones)) setZones(zonesRes.zones);
       if (guidesRes?.guides) setGuidesData(guidesRes.guides);
       if (Array.isArray(regRes?.registrations)) setRegistrations(regRes.registrations);
       if (metricsRes?.metrics) setMetrics(metricsRes.metrics);
@@ -230,6 +236,20 @@ export default function AdminClient() {
         return;
       }
 
+      if (type === 'zones') {
+        const res = await fetch(`/api/zones?code=${encodeURIComponent(String(idOrIdx))}`, {
+          method: 'DELETE',
+        });
+        const data = await res.json();
+        if (!res.ok || !data?.success) {
+          showToast(data?.error || `Xóa khu vực "${label}" thất bại.`, 'error');
+          return;
+        }
+        setZones((prev) => prev.filter((z) => z.code !== idOrIdx));
+        showToast(`Đã xóa khu vực "${label}" khỏi Database.`);
+        return;
+      }
+
       const endpointMap: Record<string, string> = {
         banners: '/api/banners',
         places: '/api/places',
@@ -294,6 +314,35 @@ export default function AdminClient() {
           editingItem ? prev.map((b) => (b.id === saved.id ? saved : b)) : [...prev, saved]
         );
         showToast(editingItem ? 'Đã cập nhật slide banner!' : 'Đã thêm slide banner mới!');
+      } else if (editingType === 'zones') {
+        const res = await fetch('/api/zones', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            code: dataObj.code,
+            name: dataObj.name,
+            slug: dataObj.slug,
+            tagline: dataObj.tagline,
+            featuredCount: dataObj.featuredCount,
+            specialty: dataObj.specialty,
+            typeTag: dataObj.typeTag,
+            typeGroup: dataObj.typeGroup,
+            heroImage: dataObj.heroImage,
+            description: dataObj.description,
+            lat: dataObj.lat !== '' && dataObj.lat !== undefined ? Number(dataObj.lat) : null,
+            lon: dataObj.lon !== '' && dataObj.lon !== undefined ? Number(dataObj.lon) : null,
+            weatherRegionLabel: dataObj.weatherRegionLabel,
+            showInWeather: dataObj.showInWeather === 'on' || dataObj.showInWeather === 'true',
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data?.success) throw new Error(data?.error || 'Lỗi lưu khu vực');
+        const saved: Zone = data.zone;
+        setZones((prev) => {
+          const exists = prev.some((z) => z.code === saved.code);
+          return exists ? prev.map((z) => (z.code === saved.code ? saved : z)) : [...prev, saved];
+        });
+        showToast(editingItem ? `Đã cập nhật khu vực ${saved.code}!` : `Đã thêm khu vực ${saved.code}!`);
       } else if (editingType === 'places') {
         const res = await fetch('/api/places', {
           method: 'POST',
@@ -532,6 +581,13 @@ export default function AdminClient() {
   const filteredThreads = threads.filter(
     (t) => !q || t.title.toLowerCase().includes(q) || t.author.toLowerCase().includes(q)
   );
+  const filteredZones = zones.filter(
+    (z) =>
+      !q ||
+      z.code.toLowerCase().includes(q) ||
+      z.name.toLowerCase().includes(q) ||
+      (z.specialty || '').toLowerCase().includes(q)
+  );
 
   const pendingRegistrationsCount = registrations.filter((r) => r.status === 'pending').length;
 
@@ -669,6 +725,7 @@ export default function AdminClient() {
             { id: 'overview', label: 'Tổng Quan Hệ Thống', icon: '📊', count: null },
             { id: 'analytics', label: 'Phân Tích Lượt Xem', icon: '📈', count: analytics?.todayViews ?? 'Live' },
             { id: 'banners', label: 'Slide Trang Top (Banner)', icon: '🖼️', count: bannerSlides.length },
+            { id: 'zones', label: 'Khu Vực & Thời Tiết', icon: '🧭', count: zones.length },
             { id: 'threads', label: 'Bài Viết & Diễn Đàn', icon: '✍️', count: threads.length },
             { id: 'places', label: 'Điểm Đến & Danh Thắng', icon: '📍', count: places.length },
             { id: 'services', label: 'Dịch Vụ & Đối Tác', icon: '🏕️', count: services.length },
@@ -747,7 +804,7 @@ export default function AdminClient() {
                 <div style={{ background: '#fff', padding: '1.4rem', borderRadius: '16px', border: '1px solid #e5e7eb' }}>
                   <span style={{ fontSize: '0.82rem', color: '#6b7280' }}>Điểm đến đang hiển thị</span>
                   <strong style={{ fontSize: '2rem', color: '#133e2f', display: 'block', margin: '0.35rem 0' }}>{places.length}</strong>
-                  <span style={{ fontSize: '0.75rem', color: '#059669' }}>Phủ 8 phân vùng QT-01 → QT-08</span>
+                  <span style={{ fontSize: '0.75rem', color: '#059669' }}>Phủ {zones.length} phân vùng</span>
                 </div>
                 <div style={{ background: '#fff', padding: '1.4rem', borderRadius: '16px', border: '1px solid #e5e7eb' }}>
                   <span style={{ fontSize: '0.82rem', color: '#6b7280' }}>Đối tác & Lượt kết nối</span>
@@ -782,6 +839,9 @@ export default function AdminClient() {
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                   <button onClick={() => openAddModal('banners')} style={{ padding: '0.65rem 1.15rem', borderRadius: '10px', background: '#133e2f', color: '#fff', border: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
                     🖼️ Thêm Slide Banner Top
+                  </button>
+                  <button onClick={() => setActiveTab('zones')} style={{ padding: '0.65rem 1.15rem', borderRadius: '10px', background: '#f3f4f6', color: '#1f2937', border: '1px solid #d1d5db', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
+                    🧭 Quản lý Khu vực & Thời tiết
                   </button>
                   <button onClick={() => openAddModal('threads')} style={{ padding: '0.65rem 1.15rem', borderRadius: '10px', background: '#f3f4f6', color: '#1f2937', border: '1px solid #d1d5db', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
                     ✍️ Soạn bài viết mới
@@ -855,6 +915,100 @@ export default function AdminClient() {
                             ✏️ Sửa
                           </button>
                           <button onClick={() => handleDelete('banners', slide.id, slide.title)} style={{ padding: '0.35rem 0.65rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
+                            🗑️ Xóa
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: ZONES & WEATHER CONFIG */}
+          {activeTab === 'zones' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#133e2f', margin: '0 0 0.25rem' }}>
+                    Quản Lý Khu Vực & Tọa Độ Thời Tiết ({filteredZones.length})
+                  </h2>
+                  <p style={{ color: '#6b7280', fontSize: '0.85rem', margin: 0 }}>
+                    Cập nhật tên vùng, đặc sản, ảnh nền và tọa độ GPS (Lat/Lon) để Widget Thời tiết trang Top lấy dữ liệu Open-Meteo thực tế.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Tìm mã QT hoặc tên vùng..."
+                    style={{ padding: '0.55rem 0.85rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.85rem' }}
+                  />
+                  <button
+                    onClick={() => openAddModal('zones')}
+                    style={{ padding: '0.6rem 1.15rem', borderRadius: '10px', background: '#059669', color: '#fff', border: 'none', fontWeight: 700, fontSize: '0.86rem', cursor: 'pointer' }}
+                  >
+                    + Thêm Khu Vực Mới
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #e5e7eb', overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.86rem' }}>
+                  <thead style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                    <tr>
+                      <th style={{ padding: '0.85rem 1rem' }}>Ảnh</th>
+                      <th style={{ padding: '0.85rem 1rem' }}>Mã</th>
+                      <th style={{ padding: '0.85rem 1rem' }}>Tên khu vực & Tagline</th>
+                      <th style={{ padding: '0.85rem 1rem' }}>Đặc sản</th>
+                      <th style={{ padding: '0.85rem 1rem' }}>Thời tiết (GPS)</th>
+                      <th style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredZones.map((z) => (
+                      <tr key={z.code} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          <img src={z.heroImage} alt={z.name} style={{ width: '64px', height: '42px', borderRadius: '6px', objectFit: 'cover' }} />
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          <span style={{ background: '#133e2f', color: '#fde047', padding: '0.25rem 0.55rem', borderRadius: '6px', fontSize: '0.76rem', fontWeight: 800 }}>
+                            {z.code}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', maxWidth: '240px' }}>
+                          <strong style={{ color: '#133e2f', display: 'block' }}>{z.name}</strong>
+                          <span style={{ fontSize: '0.78rem', color: '#6b7280' }}>{z.tagline}</span>
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', maxWidth: '200px', color: '#4b5563', fontSize: '0.82rem' }}>
+                          {z.specialty}
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          <div style={{ fontSize: '0.78rem', color: '#1e293b', fontWeight: 600 }}>
+                            {typeof z.lat === 'number' ? z.lat.toFixed(2) : '--'}°N, {typeof z.lon === 'number' ? z.lon.toFixed(2) : '--'}°E
+                          </div>
+                          <span
+                            style={{
+                              display: 'inline-block',
+                              marginTop: '0.2rem',
+                              padding: '0.15rem 0.5rem',
+                              borderRadius: '10px',
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              background: z.showInWeather !== false ? '#ecfdf5' : '#f3f4f6',
+                              color: z.showInWeather !== false ? '#047857' : '#6b7280',
+                            }}
+                          >
+                            {z.showInWeather !== false ? '🌤️ Đang bật' : 'Tắt'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                          <button onClick={() => openEditModal('zones', z)} style={{ padding: '0.35rem 0.65rem', marginRight: '0.4rem', borderRadius: '6px', background: '#f3f4f6', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
+                            ✏️ Sửa
+                          </button>
+                          <button onClick={() => handleDelete('zones', z.code, z.name)} style={{ padding: '0.35rem 0.65rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
                             🗑️ Xóa
                           </button>
                         </td>

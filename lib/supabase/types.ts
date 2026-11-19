@@ -147,6 +147,13 @@ export interface Zone {
   description: string;
   desc?: string;
   featuredCount?: string;
+  specialty?: string;
+  typeTag?: string;
+  typeGroup?: 'history' | 'mountain' | 'coastal';
+  lat?: number;
+  lon?: number;
+  showInWeather?: boolean;
+  weatherRegionLabel?: string;
 }
 
 export interface BannerSlide {
@@ -375,6 +382,13 @@ export interface Database {
           hero_image: string | null;
           description: string | null;
           featured_count: string | null;
+          specialty: string | null;
+          type_tag: string | null;
+          type_group: string | null;
+          lat: number | null;
+          lon: number | null;
+          show_in_weather: boolean | null;
+          weather_region_label: string | null;
           created_at: string;
         };
         Insert: Partial<Omit<Database['public']['Tables']['zones']['Row'], 'created_at'>> & {

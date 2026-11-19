@@ -5348,3 +5348,97 @@ img {
     height: 300px !important;
   }
 }
+
+/* ==========================================================================
+   Live Open-Meteo Weather Widget Enhancements
+   ========================================================================== */
+.weather-live-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.weather-refresh-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.weather-refresh-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.weather-now-hero {
+  background: rgba(19, 62, 47, 0.05);
+  border: 1px solid rgba(19, 62, 47, 0.09);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.85rem;
+}
+
+.weather-hourly-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.weather-hour-chip {
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(27, 42, 34, 0.08);
+  border-radius: 9px;
+  padding: 0.38rem 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.12rem;
+  text-align: center;
+}
+
+.weather-hour-chip .hour-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.weather-hour-chip .hour-icon {
+  font-size: 0.95rem;
+  line-height: 1.1;
+}
+
+.weather-hour-chip .hour-temp {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.weather-hour-chip .hour-rain {
+  font-size: 0.62rem;
+  color: #0284c7;
+  font-weight: 600;
+}
+
+.weather-detail-metrics-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+@media (max-width: 520px) {
+  .weather-hourly-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .weather-detail-metrics-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

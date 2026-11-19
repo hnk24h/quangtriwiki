@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 
 export type CmsEntityType =
   | 'banners'
+  | 'zones'
   | 'places'
   | 'services'
   | 'foods'
@@ -65,6 +66,7 @@ export default function AdminEditorModal({
 
   const titleLabel: Record<CmsEntityType, string> = {
     banners: 'Slide Trang Top (Banner)',
+    zones: 'Khu Vực & Tọa Độ Thời Tiết',
     places: 'Điểm Đến / Danh Thắng',
     services: 'Dịch Vụ & Đối Tác',
     foods: 'Món Ăn Đặc Sản',
@@ -432,6 +434,101 @@ export default function AdminEditorModal({
               <div>
                 <label style={labelStyle}>Lưu ý tiếp nhiên liệu</label>
                 <input name="tip" defaultValue={editingItem?.tip || 'Nên đổ đầy bình trước khi lên đèo'} style={inputStyle} />
+              </div>
+            </>
+          )}
+
+          {editingType === 'zones' && (
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1rem' }}>
+                <div>
+                  <label style={labelStyle}>Mã khu vực (QT-01...QT-09) *</label>
+                  <input
+                    name="code"
+                    defaultValue={editingItem?.code || ''}
+                    required
+                    readOnly={Boolean(editingItem?.code)}
+                    placeholder="QT-09"
+                    style={{
+                      ...inputStyle,
+                      background: editingItem?.code ? '#f3f4f6' : '#fff',
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Tên khu vực *</label>
+                  <input name="name" defaultValue={editingItem?.name || ''} required placeholder="Hướng Hóa & Khe Sanh" style={inputStyle} />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={labelStyle}>Đường dẫn Slug *</label>
+                  <input name="slug" defaultValue={editingItem?.slug || ''} required placeholder="huong-hoa-khe-sanh" style={inputStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Điểm nổi bật ngắn</label>
+                  <input name="featuredCount" defaultValue={editingItem?.featuredCount || ''} placeholder="9 điểm check-in · Cafe" style={inputStyle} />
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>Tagline mô tả nhanh</label>
+                <input name="tagline" defaultValue={editingItem?.tagline || ''} style={inputStyle} />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Đặc sản địa phương nổi bật</label>
+                <input name="specialty" defaultValue={editingItem?.specialty || ''} placeholder="Ví dụ: Cà phê Arabica Khe Sanh & Thịt trâu lá trơng" style={inputStyle} />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={labelStyle}>Nhãn loại hình (Badge)</label>
+                  <input name="typeTag" defaultValue={editingItem?.typeTag || '🏛️ Di tích lịch sử'} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Nhóm phân loại</label>
+                  <select name="typeGroup" defaultValue={editingItem?.typeGroup || 'history'} style={inputStyle}>
+                    <option value="history">Di tích lịch sử & Tâm linh</option>
+                    <option value="mountain">Núi cao & Săn mây</option>
+                    <option value="coastal">Biển đảo & Sinh thái</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>URL Ảnh nền khu vực *</label>
+                <input name="heroImage" defaultValue={editingItem?.heroImage || ''} required style={inputStyle} />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Mô tả chi tiết khu vực</label>
+                <textarea name="description" defaultValue={editingItem?.description || editingItem?.desc || ''} rows={3} style={inputStyle} />
+              </div>
+
+              <div style={{ padding: '1rem', background: '#f0fdf4', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
+                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#133e2f', marginBottom: '0.65rem' }}>
+                  🌤️ Cấu Hình Thời Tiết Thực Tế (Open-Meteo GPS)
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.65rem' }}>
+                  <div>
+                    <label style={labelStyle}>Vĩ độ (Latitude)</label>
+                    <input name="lat" type="number" step="any" defaultValue={editingItem?.lat ?? 16.8163} required style={inputStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Kinh độ (Longitude)</label>
+                    <input name="lon" type="number" step="any" defaultValue={editingItem?.lon ?? 107.1003} required style={inputStyle} />
+                  </div>
+                </div>
+                <div style={{ marginBottom: '0.65rem' }}>
+                  <label style={labelStyle}>Nhãn vùng hiển thị trên Widget Thời tiết</label>
+                  <input name="weatherRegionLabel" defaultValue={editingItem?.weatherRegionLabel || ''} placeholder="VÙNG CAO · ĐÈO SA MÙ" style={inputStyle} />
+                </div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 700, color: '#047857', cursor: 'pointer' }}>
+                  <input type="checkbox" name="showInWeather" defaultChecked={editingItem?.showInWeather ?? true} />
+                  Hiển thị trong hộp Thời tiết trang Top
+                </label>
               </div>
             </>
           )}
