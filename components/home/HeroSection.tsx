@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
+import ClockCalendarWidget from '@/components/home/ClockCalendarWidget';
 import WeatherWidget from '@/components/home/WeatherWidget';
 import type { BannerSlide, Food, Itinerary, Place, Service } from '@/lib/supabase/types';
 import type { WeatherLocationData } from '@/lib/weather';
@@ -52,6 +53,14 @@ export default function HeroSection({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedForecastDate, setSelectedForecastDate] = useState<string | null>(null);
+
+  const forecastIsoDates = useMemo(() => {
+    const sample = weatherData?.['QT-05'] || Object.values(weatherData || {})[0];
+    return Array.isArray(sample?.forecast)
+      ? sample.forecast.map((d) => d.isoDate).filter(Boolean)
+      : [];
+  }, [weatherData]);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchWrapRef = useRef<HTMLDivElement>(null);
@@ -360,7 +369,18 @@ export default function HeroSection({
         </div>
 
         <div className="hagiang-hero-right">
-          <WeatherWidget weatherData={weatherData} />
+          <div className="hero-glass-stack">
+            <ClockCalendarWidget
+              forecastIsoDates={forecastIsoDates}
+              selectedIsoDate={selectedForecastDate}
+              onSelectIsoDate={setSelectedForecastDate}
+            />
+            <WeatherWidget
+              weatherData={weatherData}
+              selectedIsoDate={selectedForecastDate}
+              onSelectIsoDate={setSelectedForecastDate}
+            />
+          </div>
         </div>
       </div>
 

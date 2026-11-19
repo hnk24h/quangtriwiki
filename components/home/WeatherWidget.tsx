@@ -10,6 +10,8 @@ import {
 
 interface WeatherWidgetProps {
   weatherData: Record<string, WeatherLocationData>;
+  selectedIsoDate?: string | null;
+  onSelectIsoDate?: (isoDate: string) => void;
 }
 
 function getWeatherEmoji(icon?: string): string {
@@ -33,7 +35,11 @@ function formatVnTime(isoString?: string): string {
   }
 }
 
-export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
+export default function WeatherWidget({
+  weatherData,
+  selectedIsoDate,
+  onSelectIsoDate,
+}: WeatherWidgetProps) {
   const [liveWeather, setLiveWeather] = useState<Record<string, WeatherLocationData>>(weatherData || {});
   const keys = useMemo(() => Object.keys(liveWeather), [liveWeather]);
 
@@ -41,6 +47,16 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
     weatherData?.['QT-05'] ? 'QT-05' : Object.keys(weatherData || {})[0] || 'QT-05'
   );
   const [weatherDayIdx, setWeatherDayIdx] = useState(0);
+
+  useEffect(() => {
+    if (!selectedIsoDate) return;
+    const loc = liveWeather[weatherLocKey] || liveWeather[keys[0]];
+    if (!loc?.forecast) return;
+    const idx = loc.forecast.findIndex((fc) => fc.isoDate === selectedIsoDate);
+    if (idx >= 0) {
+      setWeatherDayIdx(idx);
+    }
+  }, [selectedIsoDate, weatherLocKey, liveWeather, keys]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const didAutoRefresh = useRef(false);
   const liveWeatherRef = useRef(liveWeather);
@@ -139,7 +155,7 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
               {currentLoc.source === 'open-meteo' ? '● Open-Meteo Live' : 'Dự báo khu vực'}
               {updatedTime ? ` · ${updatedTime}` : ''}
             </span>
-            <span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>
+            <span className="weather-coords-tag">
               {currentLoc.lat.toFixed(2)}°N, {currentLoc.lon.toFixed(2)}°E
             </span>
           </div>
@@ -188,16 +204,16 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
           <span style={{ fontSize: '2.1rem', lineHeight: 1 }}>{getWeatherEmoji(displayIcon)}</span>
           <div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.45rem' }}>
-              <strong style={{ fontSize: '1.65rem', color: 'var(--primary)', fontWeight: 800, lineHeight: 1 }}>
+              <strong className="weather-now-temp">
                 {isToday ? `${currentLoc.current?.temp ?? 22}°C` : `${selectedDay?.low}°–${selectedDay?.high}°C`}
               </strong>
-              <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              <span className="weather-now-sub">
                 {isToday
                   ? `Cảm giác ${currentLoc.current?.feelsLike ?? currentLoc.current?.temp}°C · Mây ${currentLoc.current?.cloudCover || '40%'}`
                   : `${selectedDay?.day} (${selectedDay?.date})`}
               </span>
             </div>
-            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginTop: '0.15rem' }}>
+            <div className="weather-now-condition">
               {displayCondition}
             </div>
           </div>
@@ -210,7 +226,10 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
           <button
             type="button"
             key={fc.isoDate || idx}
-            onClick={() => setWeatherDayIdx(idx)}
+            onClick={() => {
+              setWeatherDayIdx(idx);
+              if (fc.isoDate) onSelectIsoDate?.(fc.isoDate);
+            }}
             className={`weather-day-card ${idx === weatherDayIdx ? 'active' : ''}`}
             style={{ cursor: 'pointer', textAlign: 'center', font: 'inherit', color: 'inherit' }}
           >
