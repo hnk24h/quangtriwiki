@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuangTri.wiki · Cẩm nang & Khám phá cung đường Quảng Trị</title>
+  <meta name="description" content="Nền tảng cẩm nang du lịch và khám phá cung đường Quảng Trị: Vĩ tuyến 17, Thành Cổ, Đèo Sa Mù, Khe Sanh, Địa đạo Vịnh Mốc và Huyện đảo Cồn Cỏ." />
+  <meta property="og:title" content="QuangTri.wiki · Khám phá cung đường Quảng Trị" />
+  <meta property="og:description" content="Khám phá các cung đường di sản, miền đất lửa và đại ngàn Trường Sơn tại Quảng Trị." />
+  <meta property="og:type" content="website" />
+
+  <!-- Google Fonts: Playfair Display & Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Favicon: Cầu Hiền Lương & Cánh chim hòa bình Quảng Trị -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 13C16 8 20.5 4.5 25.5 4.5C23 8.5 19.5 10.5 16 13Z' fill='%23133e2f' fill-opacity='0.25' stroke='%23133e2f' stroke-width='1.6'/%3E%3Cpath d='M16 13C16 8 11.5 4.5 6.5 4.5C9 8.5 12.5 10.5 16 13Z' fill='%23133e2f' fill-opacity='0.25' stroke='%23133e2f' stroke-width='1.6'/%3E%3Ccircle cx='16' cy='6.2' r='1.3' fill='%23133e2f'/%3E%3Cpath d='M4 22C9.5 15.5 22.5 15.5 28 22' stroke='%23133e2f' stroke-width='1.8' stroke-linecap='round' fill='none'/%3E%3Cpath d='M3 22.5H29' stroke='%23133e2f' stroke-width='1.8' stroke-linecap='round'/%3E%3Cline x1='9.5' y1='22' x2='9.5' y2='18.2' stroke='%23133e2f' stroke-width='1.4'/%3E%3Cline x1='16' y1='22' x2='16' y2='16.5' stroke='%23133e2f' stroke-width='1.5'/%3E%3Cline x1='22.5' y1='22' x2='22.5' y2='18.2' stroke='%23133e2f' stroke-width='1.4'/%3E%3Cpath d='M6 26.5C10 24.8 14 27.5 18 25.8C22 24.2 25 26.8 28 26' stroke='%23133e2f' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E" />
+
+  <!-- Leaflet Map CSS & JS: Hỗ trợ Bản đồ Google Maps thực tế & Địa hình vệ tinh Việt Nam -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Site Header (Hagiang.wiki Style) -->
+  <header class="site-header">
+    <div class="header-inner">
+      <!-- Brand -->
+      <a href="#" class="brand" title="Quangtri Wiki · Đôi bờ Hiền Lương & Cánh chim hòa bình">
+        <div class="brand-logo-icon">
+          <!-- Biểu tượng đặc trưng Quảng Trị: Cầu Hiền Lương (Vĩ Tuyến 17), Cánh chim Hòa Bình & Sóng nước Bến Hải -->
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Cánh chim hòa bình (Biểu tượng Thành phố Vì Hòa Bình - Quảng Trị) -->
+            <path d="M16 13C16 7.8 20.8 4.2 25.8 4.2C23.2 8.4 19.6 10.5 16 13Z" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M16 13C16 7.8 11.2 4.2 6.2 4.2C8.8 8.4 12.4 10.5 16 13Z" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            <circle cx="16" cy="6.2" r="1.3" fill="currentColor"/>
+            
+            <!-- Nhịp vòm thép Cầu Hiền Lương lịch sử bắc qua Vĩ Tuyến 17 -->
+            <path d="M4 22C9.5 15.2 22.5 15.2 28 22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M3 22.5H29" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <!-- Các thanh giàn thép nối kết cấu nhịp cầu -->
+            <line x1="9.5" y1="22" x2="9.5" y2="18.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="16" y1="22" x2="16" y2="16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="22.5" y1="22" x2="22.5" y2="18.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            
+            <!-- Dòng sông Bến Hải & Thạch Hãn hiền hòa -->
+            <path d="M6 26.5C10 24.8 14 27.5 18 25.8C22 24.2 25 26.8 28 26" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">Quangtri Wiki</div>
+          <span class="brand-subtitle">ĐI CHẬM · KHÁM PHÁ</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav matching Hagiang.wiki -->
+      <nav class="main-nav">
+        <a href="#cung-duong" class="nav-link active">Khám phá cung đường</a>
+        <a href="#am-thuc" class="nav-link">Ăn uống</a>
+        <a href="#dich-vu" class="nav-link">Lưu trú & Dịch vụ</a>
+        <a href="#lich-trinh" class="nav-link">Hành trình</a>
+        <a href="#dien-dan" class="nav-link">Diễn đàn</a>
+        <a href="#tien-ich" class="nav-link">Cây xăng & Trạm sạc</a>
+        <a href="#ban-do" class="nav-link">Chi Phí</a>
+        <a href="javascript:void(0)" id="header-notebook-link" class="nav-link">Sổ tay của tôi</a>
+      </nav>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <!-- Language selector pill -->
+        <div class="lang-selector">
+          <span class="lang-flag">🇻🇳</span>
+          <span class="lang-code">VN</span>
+        </div>
+
+        <!-- Dark green CTA button -->
+        <a href="#tien-ich" class="header-contact-btn">
+          <span>Kết nối với chúng tôi</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+
+        <!-- Notebook badge trigger -->
+        <button id="notebook-toggle-btn" class="notebook-trigger-btn" title="Mở Sổ tay phượt">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <span id="bookmark-count-badge" class="badge-counter" style="display: none;">0</span>
+        </button>
+
+        <!-- Dark / Light mode toggle -->
+        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Chuyển chế độ giao diện">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="mobile-menu-btn" title="Menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Sub-header thin motto strip -->
+    <div class="sub-header-strip">
+      <span>Lên lịch trình · Trải nghiệm · Lưu nhật ký</span>
+    </div>
+
+    <!-- Mobile Navigation Dropdown -->
+    <div id="mobile-nav-menu" style="display: none; flex-direction: column; padding: 1rem 1.25rem; background: var(--bg-card); border-bottom: 1px solid var(--border); gap: 0.5rem;">
+      <a href="#cung-duong" class="nav-link">🗺️ Khám phá cung đường (QT-01 - QT-08)</a>
+      <a href="#am-thuc" class="nav-link">🍜 Ăn uống & Đặc sản</a>
+      <a href="#dich-vu" class="nav-link">🏨 Lưu trú, Homestay & Dịch vụ</a>
+      <a href="#lich-trinh" class="nav-link">🧭 Hành trình mẫu</a>
+      <a href="#dien-dan" class="nav-link">💬 Diễn đàn & Kinh nghiệm</a>
+      <a href="#tien-ich" class="nav-link">⛽ Cây xăng & Trạm sạc</a>
+      <a href="#ban-do" class="nav-link">💰 Chi Phí & Bản đồ</a>
+      <a href="javascript:void(0)" id="mobile-notebook-trigger" class="nav-link">🎒 Sổ tay của tôi</a>
+    </div>
+  </header>
+
+  <!-- Full-Bleed Hero Banner (Style Hagiang.wiki) -->
+  <section class="hagiang-hero-section">
+    <!-- Full-bleed background slideshow track with misty left gradient -->
+    <div class="hagiang-hero-bg-track" id="hagiang-hero-bg-track">
+      <!-- Injected via app.js -->
+    </div>
+    <div class="hagiang-hero-mist-overlay"></div>
+
+    <div class="container hagiang-hero-content">
+      <!-- Left Editorial Column -->
+      <div class="hagiang-hero-left">
+        <div class="hagiang-kicker">MIỀN TRUNG VIỆT NAM · GÓC NHÌN ĐỊA PHƯƠNG</div>
+
+        <h1 class="hagiang-main-title">
+          Gần hơn với Quảng<br />
+          Trị chân thật.
+        </h1>
+
+        <p class="hagiang-main-subtitle">
+          Đèo núi. Miền đất thiêng yên bình. Hành trình đáng để đi chậm.
+        </p>
+
+        <!-- Search Bar -->
+        <div class="hagiang-search-box">
+          <svg class="hagiang-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            type="text"
+            id="hero-search"
+            class="hagiang-search-input search-input"
+            placeholder="Tìm cung đường, Thành Cổ, Đèo Sa Mù, Vịnh Mốc, bánh lọc... (Ctrl+K)"
+          />
+        </div>
+
+        <!-- Quick Tags -->
+        <div class="hagiang-quick-tags">
+          <span class="hagiang-tag-label">Gợi ý tìm nhanh:</span>
+          <button class="hagiang-tag-chip" data-tag="Thành Cổ">Thành Cổ Quảng Trị</button>
+          <button class="hagiang-tag-chip" data-tag="Sa Mù">Đèo Sa Mù</button>
+          <button class="hagiang-tag-chip" data-tag="Hiền Lương">Cầu Hiền Lương</button>
+          <button class="hagiang-tag-chip" data-tag="Vịnh Mốc">Địa đạo Vịnh Mốc</button>
+          <button class="hagiang-tag-chip" data-tag="Cồn Cỏ">Đảo Cồn Cỏ</button>
+          <button class="hagiang-tag-chip" data-tag="Cháo vạt giường">Cháo vạt giường</button>
+        </div>
+      </div>
+
+      <!-- Right Frosted Glass Weather Card ("Thời tiết sắp tới") -->
+      <div class="hagiang-hero-right">
+        <div class="weather-card-glass" id="weather-card-widget">
+          <!-- Header of Weather Card -->
+          <div class="weather-card-header">
+            <div>
+              <span class="weather-region-tag" id="weather-region-tag">VÙNG CAO QUẢNG TRỊ</span>
+              <h3 class="weather-card-title">Thời tiết sắp tới</h3>
+              <p class="weather-card-meta">7 ngày · °C · Giờ Việt Nam<br />Bản tin chung · Cập nhật mỗi giờ</p>
+            </div>
+            <div>
+              <select id="weather-district-select" class="weather-district-dropdown">
+                <option value="huong-hoa" selected>Hướng Hóa</option>
+                <option value="dong-ha">TP Đông Hà</option>
+                <option value="con-co">Đảo Cồn Cỏ</option>
+                <option value="vinh-linh">Vĩnh Linh</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 7-Day Forecast Row -->
+          <div class="weather-days-row" id="weather-days-row">
+            <!-- Dynamic 7 days rendered via app.js -->
+          </div>
+
+          <!-- Hourly / Detailed Box -->
+          <div class="weather-detail-box" id="weather-detail-box">
+            <div class="weather-detail-time" id="weather-hourly-title">Dự báo theo giờ · 07:00 · Hướng Hóa</div>
+            <div class="weather-detail-condition">
+              <span class="weather-detail-icon" id="weather-detail-icon">🌧️</span>
+              <strong id="weather-condition-text">Mưa phùn & Sương mây</strong>
+            </div>
+
+            <div class="weather-detail-metrics">
+              <div class="metric-col">
+                <div class="metric-label">Mưa</div>
+                <div class="metric-value" id="metric-rain-pct">47%</div>
+                <div class="metric-sub" id="metric-rain-note">Có thể có mưa</div>
+              </div>
+              <div class="metric-col">
+                <div class="metric-label">Độ ẩm</div>
+                <div class="metric-value" id="metric-humidity-pct">96%</div>
+                <div class="metric-sub" id="metric-humidity-note">Độ ẩm cao</div>
+              </div>
+              <div class="metric-col">
+                <div class="metric-label">Gió</div>
+                <div class="metric-value" id="metric-wind-speed">4 km/h</div>
+                <div class="metric-sub" id="metric-wind-note">Gió nhẹ · Giật 9 km/h</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Advisory Tips -->
+          <div class="weather-advisories">
+            <div class="advisory-item" id="advisory-rain-item">
+              <span>🌧️</span>
+              <span id="advisory-rain-text">Trời có thể mưa, nhớ mang áo mưa nhé!</span>
+            </div>
+            <div class="advisory-item" id="advisory-vibe-item">
+              <span>☕</span>
+              <span id="advisory-vibe-text">Lạnh quá, ghé Khe Sanh nhâm nhi ly cà phê cho ấm!</span>
+            </div>
+          </div>
+
+          <!-- Weather Card Footer -->
+          <div class="weather-card-footer">
+            <div class="weather-note-disclaimer">
+              Thời tiết có thể khác giữa thung lũng và đèo núi. Kiểm tra lại trước khi đi các ngày xa kém chắc chắn hơn.
+            </div>
+            <div class="weather-footer-sub">
+              <span class="weather-source">Thời tiết Open-Meteo ↗</span>
+              <span class="weather-updated">Cập nhật: 07:00 19.11</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Capsule slider dots at bottom-center of the hero banner -->
+    <div class="hagiang-capsule-dots" id="hagiang-capsule-dots"></div>
+  </section>
+
+  <!-- Full-Width Bottom Forest Green Ribbon Bar (Exact Hagiang.wiki style) -->
+  <div class="hagiang-bottom-bar">
+    <div class="container hagiang-bottom-bar-inner">
+      <div class="bottom-bar-text">
+        Bắt đầu từ toàn cảnh. Chọn nơi muốn đến.
+      </div>
+      <a href="#cung-duong" class="bottom-bar-select-btn" id="bottom-bar-zone-btn">
+        <span>Chọn vùng</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats & Overview Section -->
+  <section class="section-padding" style="padding-top: 3.5rem; padding-bottom: 2rem;">
+    <div class="container">
+      <!-- Stats Ribbon -->
+      <div class="stats-ribbon" style="margin-top: 0;">
+      <div class="stats-ribbon">
+        <div class="stat-item">
+          <div class="stat-icon red">🏛️</div>
+          <div>
+            <div class="stat-value">500+</div>
+            <div class="stat-label">Di tích lịch sử hào hùng</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon green">🏔️</div>
+          <div>
+            <div class="stat-value">1.617m</div>
+            <div class="stat-label">Độ cao đỉnh đèo Sa Mù</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon amber">🌊</div>
+          <div>
+            <div class="stat-value">75 km</div>
+            <div class="stat-label">Bờ biển cát trắng & Đảo ngọc</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon green">🗺️</div>
+          <div>
+            <div class="stat-value">8 Vùng</div>
+            <div class="stat-label">Hệ thống tuyến đường QT-01 -> QT-08</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Soft Curved Wave Divider for smooth transition -->
+    <div class="hero-curved-wave">
+      <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,24 C320,60 560,0 720,25 C920,55 1200,8 1440,30 L1440,60 L0,60 Z" fill="var(--bg-card-subtle)" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- Interactive Map Section (Real Google Maps / Leaflet Engine) -->
+  <section id="ban-do" class="section-padding" style="background: var(--bg-card-subtle);">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-badge">Bản đồ vệ tinh & địa hình thực tế</span>
+          <h2 class="section-title">Khám Phá Bản Đồ Cung Đường Quảng Trị</h2>
+          <p class="section-subtitle">
+            Bản đồ số định vị 14 điểm đến huyền thoại và 4 tuyến huyết mạch từ duyên hải Vĩ tuyến 17 đến dãy Trường Sơn. Chuyển đổi giữa chế độ <strong>Google Bản Đồ</strong>, <strong>Google Địa Hình 3D</strong> và <strong>Google Vệ Tinh</strong>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Route Pills Filter -->
+      <div class="map-pills-bar">
+        <button class="map-pill-btn active" data-view="all">🗺️ Toàn cảnh Quảng Trị</button>
+        <button class="map-pill-btn" data-view="QT-01">🏙️ QT-01: Đông Hà</button>
+        <button class="map-pill-btn" data-view="QT-02">🏛️ QT-02: Thành Cổ</button>
+        <button class="map-pill-btn" data-view="QT-03">🕊️ QT-03: Cầu Hiền Lương & DMZ</button>
+        <button class="map-pill-btn" data-view="QT-05">☁️ QT-05: Khe Sanh & Đèo Sa Mù</button>
+        <button class="map-pill-btn" data-view="QT-07">🏝️ QT-07: Đảo Cồn Cỏ</button>
+      </div>
+
+      <div class="map-explorer-wrapper">
+        <!-- Real Leaflet / Google Maps Container -->
+        <div class="map-display-col">
+          <div id="real-travel-map" class="real-map-container"></div>
+          
+          <div class="map-legend-bar">
+            <span class="legend-title"><strong>Chú giải:</strong></span>
+            <span class="legend-item"><span class="legend-dot" style="background:#b91c1c;"></span> Di tích lịch sử & DMZ</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#059669;"></span> Phượt đèo & Săn mây</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#0284c7;"></span> Biển đảo & Suối nước</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#d97706;"></span> Thắng cảnh & Văn hóa</span>
+          </div>
+        </div>
+
+        <!-- Side panel -->
+        <div class="map-side-panel">
+          <div id="map-side-zone-info" class="map-panel-card">
+            <span class="zone-code-badge" style="position: static; display: inline-block; margin-bottom: 0.5rem;">QT-03</span>
+            <h4 id="side-panel-title" style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.35rem;">Vĩnh Linh & Vĩ Tuyến 17</h4>
+            <p id="side-panel-tagline" style="font-size: 0.85rem; color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">Cầu Hiền Lương, Địa đạo Vịnh Mốc & Cửa Tùng</p>
+            <p id="side-panel-desc" style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+              Tâm điểm của vùng phi quân sự DMZ lịch sử với biểu tượng Cầu Hiền Lương - Sông Bến Hải chia cắt hai miền suốt 20 năm, kỳ quan ngầm Địa đạo Vịnh Mốc và bãi biển Cửa Tùng thơ mộng.
+            </p>
+            <div style="display: flex; gap: 0.5rem;">
+              <button id="view-zone-default-btn" style="flex: 1; padding: 0.55rem; background: var(--primary); color: white; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.85rem;">
+                Xem danh sách điểm
+              </button>
+              <a id="side-panel-gmap-btn" href="https://www.google.com/maps/place/C%E1%BA%A7u+Hi%E1%BB%81n+L%C6%B0%C6%A1ng+-+S%C3%B4ng+B%E1%BA%BFn+H%E1%BA%A3i" target="_blank" rel="noopener noreferrer" style="padding: 0.55rem 0.85rem; background: #ea4335; color: white; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem;" title="Mở trên Google Maps">
+                <span>Google Maps</span> ↗
+              </a>
+            </div>
+          </div>
+
+          <div class="map-panel-card">
+            <div class="map-panel-title">Tuyến huyết mạch chính:</div>
+            <div class="route-step-list">
+              <div class="route-step-item" style="cursor: pointer;" id="route-btn-dmz">
+                <span class="route-step-dot" style="background: #dc2626;">1</span>
+                <div>
+                  <strong style="color: #dc2626;">Tuyến Di Sản DMZ & Vĩ Tuyến 17:</strong> Quốc lộ 1A kết nối Cầu Hiền Lương, Địa đạo Vịnh Mốc và Mũi Trèo.
+                </div>
+              </div>
+              <div class="route-step-item" style="cursor: pointer;" id="route-btn-truongson">
+                <span class="route-step-dot" style="background: #059669;">2</span>
+                <div>
+                  <strong style="color: #059669;">Đường Hồ Chí Minh Tây:</strong> Cung đường phượt đại ngàn đèo Sa Mù, thác Chênh Vênh và điện gió Hướng Linh.
+                </div>
+              </div>
+              <div class="route-step-item" style="cursor: pointer;" id="route-btn-ql9">
+                <span class="route-step-dot" style="background: #d97706;">3</span>
+                <div>
+                  <strong style="color: #d97706;">Quốc Lộ 9 Xuyên Á:</strong> Đông Hà - Cam Lộ - Cầu treo Đakrông - Khe Sanh - Cửa khẩu Lao Bảo (83 km).
+                </div>
+              </div>
+              <div class="route-step-item" style="cursor: pointer;" id="route-btn-conco">
+                <span class="route-step-dot" style="background: #0284c7;">4</span>
+                <div>
+                  <strong style="color: #0284c7;">Hải trình Đảo Cồn Cỏ:</strong> Tàu cao tốc từ Cảng Cửa Việt / Cửa Tùng ra huyện đảo tiền tiêu.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Zones Section (QT-01 -> QT-08) -->
+  <section id="cung-duong" class="section-padding">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-badge">Hệ thống phân vùng du lịch</span>
+          <h2 class="section-title">8 Cung Đường Khám Phá Quảng Trị</h2>
+          <p class="section-subtitle">
+            Tương tự mô hình loop của Hagiang.wiki, Quảng Trị được chia thành 8 phân khu lộ trình độc đáo giúp bạn dễ dàng lên kế hoạch từng chặng.
+          </p>
+        </div>
+      </div>
+
+      <!-- Zone Grid -->
+      <div id="zones-container" class="zone-grid"></div>
+    </div>
+  </section>
+
+  <!-- Places Section -->
+  <section id="diem-den" class="section-padding" style="background: var(--bg-card-subtle);">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-badge">Danh mục điểm đến</span>
+          <h2 class="section-title">Những Tọa Độ Không Thể Bỏ Lỡ</h2>
+          <p class="section-subtitle">
+            Khám phá trọn vẹn di tích lịch sử linh thiêng, biển đảo hoang sơ và núi rừng đại ngàn.
+          </p>
+        </div>
+      </div>
+
+      <!-- Zone active alert banner -->
+      <div id="zone-filter-banner" style="display: none; align-items: center; justify-content: space-between; padding: 0.75rem 1.25rem; background: var(--primary-light); color: var(--primary); border-radius: var(--radius-md); margin-bottom: 1.5rem; font-size: 0.9rem;"></div>
+
+      <!-- Category Filter Bar -->
+      <div class="filter-bar">
+        <button class="filter-btn active" data-category="all">
+          <span>✨ Tất cả điểm đến</span>
+        </button>
+        <button class="filter-btn" data-category="history">
+          <span>🏛️ Di tích lịch sử & Tâm linh</span>
+        </button>
+        <button class="filter-btn" data-category="adventure">
+          <span>🏔️ Săn mây & Phượt đèo</span>
+        </button>
+        <button class="filter-btn" data-category="beach">
+          <span>🏖️ Bãi biển cát trắng</span>
+        </button>
+        <button class="filter-btn" data-category="island">
+          <span>🏝️ Biển đảo Cồn Cỏ</span>
+        </button>
+        <button class="filter-btn" data-category="nature">
+          <span>🌲 Sinh thái & Thác suối</span>
+        </button>
+      </div>
+
+      <!-- Places Grid -->
+      <div id="places-container" class="places-grid"></div>
+    </div>
+  </section>
+
+  <!-- Local Services & Verified Partners Section (Monetization & Booking) -->
+  <section id="dich-vu" class="section-padding">
+    <div class="container">
+      <div class="section-head" style="justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.25rem;">
+        <div>
+          <span class="section-badge">Dịch vụ & Đối tác bản địa</span>
+          <h2 class="section-title">Homestay, Thuê Xe Máy & Tour Bản Địa</h2>
+          <p class="section-subtitle">
+            Hệ sinh thái dịch vụ được bảo chứng bởi QuangTri.wiki: Cam kết giá chuẩn, hỗ trợ nhiệt tình, kết nối trực tiếp không qua trung gian.
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
+          <button id="open-partner-reg-btn" class="partner-reg-trigger-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Đưa dịch vụ lên web</span>
+          </button>
+          <button id="open-admin-metrics-btn" class="admin-metrics-btn" title="Báo cáo kinh doanh">
+            📊 Doanh thu & Leads
+          </button>
+        </div>
+      </div>
+
+      <!-- Services Category Filter -->
+      <div class="service-filter-bar">
+        <button class="service-filter-pill active" data-category="all">Tất cả dịch vụ</button>
+        <button class="service-filter-pill" data-category="homestay">🏡 Homestay & Glamping</button>
+        <button class="service-filter-pill" data-category="bike">🛵 Thuê xe máy</button>
+        <button class="service-filter-pill" data-category="boat">🚢 Vé tàu Cồn Cỏ</button>
+        <button class="service-filter-pill" data-category="tour">🧭 Hướng dẫn viên</button>
+      </div>
+
+      <!-- Services Grid Container -->
+      <div id="services-container" class="services-grid">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Food & Specialties Section -->
+  <section id="am-thuc" class="section-padding">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-badge">Mỹ vị miền Trung</span>
+          <h2 class="section-title">Ẩm Thực Đặc Sản Quảng Trị</h2>
+          <p class="section-subtitle">
+            Hương vị đậm đà, cay nồng và mộc mạc làm say lòng bao du khách phương xa.
+          </p>
+        </div>
+      </div>
+
+      <!-- Food Grid -->
+      <div id="food-container" class="food-grid"></div>
+    </div>
+  </section>
+
+  <!-- Itineraries Section -->
+  <section id="lich-trinh" class="section-padding" style="background: var(--bg-card-subtle);">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-badge">Lộ trình phượt tự túc</span>
+          <h2 class="section-title">Lịch Trình Trải Nghiệm Gợi Ý</h2>
+          <p class="section-subtitle">
+            Các cung đường được thiết kế chi tiết từng mốc giờ, quãng đường và kinh nghiệm thực tế.
+          </p>
+        </div>
+      </div>
+
+      <!-- Itinerary Tabs -->
+      <div id="itinerary-tabs" class="itinerary-tabs"></div>
+
+      <!-- Itinerary Detail Card -->
+      <div id="itinerary-content"></div>
+    </div>
+  </section>
+
+  <!-- Community Forum Section ("Diễn Đàn & Chia Sẻ Chuyến Đi") -->
+  <section id="dien-dan" class="section-padding" style="background: var(--bg-card-subtle);">
+    <div class="container">
+      <div class="section-head" style="justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.25rem;">
+        <div>
+          <span class="section-badge">Cộng đồng du khách & Phượt thủ</span>
+          <h2 class="section-title">Diễn Đàn Chia Sẻ & Trải Nghiệm Chuyến Đi</h2>
+          <p class="section-subtitle">
+            Nơi du khách đã đi chia sẻ bài review, góc ảnh chân thật, giải đáp thắc mắc và cập nhật kinh nghiệm thực tế cho người đi sau.
+          </p>
+        </div>
+        <button id="open-create-thread-btn" class="create-thread-trigger-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Đăng bài chia sẻ</span>
+        </button>
+      </div>
+
+      <!-- Forum Filter Bar -->
+      <div class="forum-filter-bar">
+        <button class="forum-filter-pill active" data-category="all">Tất cả bài viết</button>
+        <button class="forum-filter-pill" data-category="Săn mây">☁️ Săn mây Sa Mù</button>
+        <button class="forum-filter-pill" data-category="Lịch sử DMZ">🕊️ Lịch sử Vĩ Tuyến 17</button>
+        <button class="forum-filter-pill" data-category="Ẩm thực">🍜 Review ăn uống</button>
+        <button class="forum-filter-pill" data-category="Đảo Cồn Cỏ">🏝️ Đảo Cồn Cỏ</button>
+      </div>
+
+      <!-- Forum Feed / Thread List Container -->
+      <div id="forum-threads-feed" class="forum-threads-feed">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Utilities, Weather & SOS Section -->
+  <section id="tien-ich" class="section-padding">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-badge">Cẩm nang & An toàn chuyến đi</span>
+          <h2 class="section-title">Tiện Ích, Cây Xăng & Hotline Cứu Hộ</h2>
+          <p class="section-subtitle">
+            Những thông tin thiết yếu giúp chuyến đi của bạn an toàn và chủ động trên mọi nẻo đường.
+          </p>
+        </div>
+      </div>
+
+      <div class="utilities-grid">
+        <!-- Weather & Seasons -->
+        <div class="util-card">
+          <div class="util-card-header">
+            <div class="util-icon amber">☀️</div>
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight: 800;">Thời điểm lý tưởng</h3>
+              <p style="font-size: 0.75rem; color: var(--text-muted);">Mùa hoa, săn mây & tắm biển</p>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.85rem;">
+            <div>
+              <strong style="color: var(--primary);">Tháng 11 - Tháng 2:</strong>
+              <div style="color: var(--text-muted); margin-top: 0.2rem;">Mùa săn mây đỉnh đèo Sa Mù, hoa dã quỳ nở rực rỡ, thời tiết se lạnh mát mẻ như Đà Lạt.</div>
+            </div>
+            <div>
+              <strong style="color: var(--secondary);">Tháng 3 - Tháng 8:</strong>
+              <div style="color: var(--text-muted); margin-top: 0.2rem;">Mùa đẹp nhất để đi đảo Cồn Cỏ, tắm biển Cửa Việt và viếng các cụm di tích DMZ.</div>
+            </div>
+            <div>
+              <strong style="color: var(--accent);">Tháng 5 - Tháng 7 (Gió Lào):</strong>
+              <div style="color: var(--text-muted); margin-top: 0.2rem;">Gió phơn Tây Nam khô nóng vào giữa trưa, nên sắp xếp đi sáng sớm và chiều tà.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency Hotlines -->
+        <div class="util-card">
+          <div class="util-card-header">
+            <div class="util-icon red">🚨</div>
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight: 800;">Hotline SOS Khẩn Cấp</h3>
+              <p style="font-size: 0.75rem; color: var(--text-muted);">Cứu hộ xe máy & Y tế</p>
+            </div>
+          </div>
+          <div id="hotlines-list"></div>
+        </div>
+
+        <!-- Gas Stations -->
+        <div class="util-card">
+          <div class="util-card-header">
+            <div class="util-icon green">⛽</div>
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight: 800;">Trạm xăng quan trọng</h3>
+              <p style="font-size: 0.75rem; color: var(--text-muted);">Đặc biệt lưu ý khi đi đèo Sa Mù</p>
+            </div>
+          </div>
+          <div id="gas-stations-list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trip Notebook Drawer ("Sổ tay của tôi") -->
+  <div id="notebook-overlay" class="notebook-overlay">
+    <div id="notebook-drawer" class="notebook-drawer">
+      <div class="notebook-header">
+        <div class="notebook-title">
+          <span>🎒 Sổ Tay Của Tôi</span>
+        </div>
+        <button id="close-drawer-btn" class="drawer-close-btn" title="Đóng">✕</button>
+      </div>
+
+      <div class="notebook-body">
+        <!-- Saved Places Section -->
+        <div>
+          <div class="notebook-section-title">
+            <span>🔖 Địa điểm đã lưu</span>
+          </div>
+          <div id="saved-places-container" class="saved-places-list"></div>
+        </div>
+
+        <!-- Budget Calculator -->
+        <div>
+          <div class="notebook-section-title">
+            <span>💰 Ước tính chi phí chuyến đi</span>
+          </div>
+          <div class="budget-calc-box">
+            <div class="calc-row">
+              <span>Số ngày đi:</span>
+              <input type="number" id="calc-days" class="calc-input" value="2" min="1" max="10" />
+            </div>
+            <div class="calc-row">
+              <span>Số người:</span>
+              <input type="number" id="calc-people" class="calc-input" value="2" min="1" max="20" />
+            </div>
+            <div class="calc-row">
+              <span>Xăng xe (đ/xe):</span>
+              <input type="number" id="calc-gas" class="calc-input" value="250000" step="50000" />
+            </div>
+            <div class="calc-row">
+              <span>Khách sạn/đêm:</span>
+              <input type="number" id="calc-hotel" class="calc-input" value="400000" step="50000" />
+            </div>
+            <div class="calc-row">
+              <span>Ăn uống (đ/người/ngày):</span>
+              <input type="number" id="calc-food" class="calc-input" value="250000" step="50000" />
+            </div>
+            <div class="calc-total">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <span>Tổng kinh phí dự tính:</span>
+                <span id="calc-total-val">0 đ</span>
+              </div>
+              <div id="calc-per-person" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500; text-align: right; margin-top: 0.25rem;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Packing Checklist -->
+        <div>
+          <div class="notebook-section-title">
+            <span>📋 Checklist chuẩn bị đồ</span>
+          </div>
+          <div id="packing-checklist-items" style="display: flex; flex-direction: column; gap: 0.65rem; background: var(--bg-card-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border);"></div>
+        </div>
+
+        <!-- Offline Trip Notes -->
+        <div>
+          <div class="notebook-section-title">
+            <span>📝 Ghi chú cá nhân</span>
+          </div>
+          <textarea
+            id="trip-notes-textarea"
+            class="trip-notes-area"
+            placeholder="Ghi chú riêng tư về khách sạn đã đặt, số điện thoại người quen, món nhất định phải ăn... (Dữ liệu lưu tự động trong trình duyệt của bạn)"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detail-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog">
+      <button id="modal-close-btn" class="modal-close-btn" title="Đóng">✕</button>
+      <div id="detail-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Create Thread Modal (Diễn đàn) -->
+  <div id="create-thread-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 620px;">
+      <button id="close-thread-modal-btn" class="modal-close-btn" title="Đóng">✕</button>
+      <div class="modal-header-banner" style="padding: 1.5rem 1.5rem 0.5rem;">
+        <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--text-title); display: flex; align-items: center; gap: 0.5rem;">
+          <span>✍️ Đăng Bài Chia Sẻ Kinh Nghiệm</span>
+        </h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+          Chia sẻ cảm nhận, lịch trình hoặc mẹo phượt thực tế để hỗ trợ cộng đồng du khách đi sau.
+        </p>
+      </div>
+      <form id="create-thread-form" style="padding: 1rem 1.5rem 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem;">Họ tên / Biệt danh của bạn *</label>
+          <input type="text" id="thread-author-input" required placeholder="Ví dụ: Hoàng Tuấn (Phượt thủ Hà Nội)" style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);" />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem;">Chủ đề *</label>
+            <select id="thread-tag-input" style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);">
+              <option value="Săn mây">☁️ Săn mây Sa Mù</option>
+              <option value="Lịch sử DMZ">🕊️ Lịch sử Vĩ Tuyến 17</option>
+              <option value="Ẩm thực">🍜 Review ăn uống</option>
+              <option value="Đảo Cồn Cỏ">🏝️ Đảo Cồn Cỏ</option>
+              <option value="Kinh nghiệm">🧭 Kinh nghiệm phượt chung</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem;">Cung đường / Vùng</label>
+            <select id="thread-zone-input" style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);">
+              <option value="QT-05">QT-05: Khe Sanh & Đèo Sa Mù</option>
+              <option value="QT-03">QT-03: Vĩ Tuyến 17 & Vịnh Mốc</option>
+              <option value="QT-01">QT-01: Đông Hà & Trung Tâm</option>
+              <option value="QT-02">QT-02: Thị Xã & Thành Cổ</option>
+              <option value="QT-04">QT-04: Gio Linh & Cửa Việt</option>
+              <option value="QT-06">QT-06: Cầu Treo Đakrông</option>
+              <option value="QT-07">QT-07: Huyện Đảo Cồn Cỏ</option>
+              <option value="QT-08">QT-08: Cam Lộ & Tân Sở</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem;">Tiêu đề bài viết *</label>
+          <input type="text" id="thread-title-input" required placeholder="Ví dụ: Lịch trình 2N1Đ săn mây đèo Sa Mù và tắm thác Chênh Vênh..." style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);" />
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem;">Nội dung chia sẻ, kinh nghiệm & lưu ý *</label>
+          <textarea id="thread-content-input" required rows="5" placeholder="Chia sẻ kinh nghiệm đường đi, ăn uống, địa điểm chụp ảnh hoặc lưu ý cho mọi người..." style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main); resize: vertical;"></textarea>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem;">Link ảnh chụp thực tế (tùy chọn)</label>
+          <input type="url" id="thread-image-input" placeholder="https://images.unsplash.com/... (để trống nếu chưa có)" style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);" />
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+          <button type="button" id="cancel-thread-modal-btn" style="padding: 0.6rem 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer;">Hủy</button>
+          <button type="submit" style="padding: 0.6rem 1.5rem; border-radius: var(--radius-sm); border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+            <span>Đăng bài</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Đăng ký đối tác dịch vụ bản địa (Homestay, Xe máy, Tour) -->
+  <div id="partner-reg-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 640px;">
+      <button id="close-partner-modal-btn" class="modal-close-btn" title="Đóng">✕</button>
+      <div class="modal-header-banner" style="padding: 1.5rem 1.5rem 0.5rem;">
+        <span class="section-badge" style="margin-bottom: 0.35rem; display: inline-block;">Hợp tác cùng phát triển</span>
+        <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-title);">
+          Đưa Dịch Vụ Của Bạn Lên QuangTri.wiki
+        </h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+          Tiếp cận hàng ngàn du khách chuẩn bị phượt Quảng Trị mỗi tháng. Miễn phí niêm yết trong giai đoạn khởi động!
+        </p>
+      </div>
+      <form id="partner-reg-form" style="padding: 1rem 1.5rem 1.5rem; display: flex; flex-direction: column; gap: 0.85rem;">
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem;">Tên cơ sở kinh doanh / Dịch vụ *</label>
+          <input type="text" id="reg-business-name" required placeholder="Ví dụ: Homestay Mây Ngàn Sa Mù" style="width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);" />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem;">Loại hình dịch vụ *</label>
+            <select id="reg-category" style="width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);">
+              <option value="homestay">🏡 Homestay / Glamping</option>
+              <option value="bike">🛵 Cho thuê xe máy phượt</option>
+              <option value="boat">🚢 Vé tàu cao tốc Cồn Cỏ</option>
+              <option value="tour">🧭 Hướng dẫn viên / Tour DMZ</option>
+              <option value="food">🍜 Quán ăn đặc sản</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem;">Khu vực hoạt động *</label>
+            <select id="reg-zone" style="width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);">
+              <option value="QT-05">QT-05: Khe Sanh & Đèo Sa Mù</option>
+              <option value="QT-01">QT-01: TP Đông Hà</option>
+              <option value="QT-02">QT-02: Thị Xã & Thành Cổ</option>
+              <option value="QT-03">QT-03: Vĩnh Linh & Vĩ Tuyến 17</option>
+              <option value="QT-04">QT-04: Gio Linh & Cửa Việt</option>
+              <option value="QT-06">QT-06: Cầu Treo Đakrông</option>
+              <option value="QT-07">QT-07: Huyện Đảo Cồn Cỏ</option>
+              <option value="QT-08">QT-08: Cam Lộ & Tân Sở</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem;">Số điện thoại Hotline *</label>
+            <input type="tel" id="reg-phone" required placeholder="09xx xxx xxx" style="width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);" />
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem;">Số Zalo tư vấn</label>
+            <input type="tel" id="reg-zalo" placeholder="09xx xxx xxx" style="width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);" />
+          </div>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem;">Địa chỉ cụ thể *</label>
+          <input type="text" id="reg-address" required placeholder="Số nhà, đường, thôn/bản, huyện..." style="width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);" />
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem;">Mức giá dịch vụ tham khảo</label>
+          <input type="text" id="reg-price" placeholder="Ví dụ: Từ 350.000đ/đêm hoặc 120.000đ/ngày" style="width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main);" />
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem;">Mô tả tiện ích nổi bật</label>
+          <textarea id="reg-desc" rows="3" placeholder="Phòng có view săn mây 360 độ, xe mới chạy êm, hỗ trợ giao xe tận nơi miễn phí..." style="width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; background: var(--bg-card); color: var(--text-main); resize: vertical;"></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+          <button type="button" id="cancel-partner-modal-btn" style="padding: 0.6rem 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer;">Hủy</button>
+          <button type="submit" style="padding: 0.6rem 1.5rem; border-radius: var(--radius-sm); border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer;">
+            Gửi hồ sơ đối tác
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Báo cáo Doanh Thu & Leads (Admin Monetization Metrics) -->
+  <div id="admin-metrics-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 580px;">
+      <button id="close-admin-metrics-btn" class="modal-close-btn" title="Đóng">✕</button>
+      <div style="padding: 1.5rem 1.5rem 0.5rem;">
+        <span class="section-badge" style="margin-bottom: 0.35rem; display: inline-block;">Báo cáo số liệu thời gian thực</span>
+        <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-title);">
+          📊 Trung Tâm Kiếm Tiền & Hiệu Suất Nền Tảng
+        </h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+          Số liệu đo lường lượt kết nối du khách, đơn đăng ký đối tác và ước tính doanh thu.
+        </p>
+      </div>
+      <div style="padding: 1.25rem 1.5rem 1.75rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+          <div style="padding: 1rem; background: var(--bg-card-subtle); border-radius: var(--radius-md); border: 1px solid var(--border);">
+            <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">TỔNG SỐ ĐỐI TÁC</div>
+            <div id="metric-partners-count" style="font-size: 1.8rem; font-weight: 900; color: var(--primary); margin: 0.25rem 0;">4</div>
+            <div style="font-size: 0.75rem; color: #10b981;">● Đang hoạt động trên web</div>
+          </div>
+          <div style="padding: 1rem; background: var(--bg-card-subtle); border-radius: var(--radius-md); border: 1px solid var(--border);">
+            <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">HỒ SƠ MỚI CHỜ DUYỆT</div>
+            <div id="metric-registrations-count" style="font-size: 1.8rem; font-weight: 900; color: var(--accent-terracotta); margin: 0.25rem 0;">0</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Đơn đối tác gửi lên</div>
+          </div>
+          <div style="padding: 1rem; background: var(--bg-card-subtle); border-radius: var(--radius-md); border: 1px solid var(--border);">
+            <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">KHÁCH KẾT NỐI (LEADS)</div>
+            <div id="metric-leads-count" style="font-size: 1.8rem; font-weight: 900; color: #0284c7; margin: 0.25rem 0;">0</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Bấm gọi Zalo / Đặt chỗ</div>
+          </div>
+          <div style="padding: 1rem; background: var(--bg-card-subtle); border-radius: var(--radius-md); border: 1px solid var(--border);">
+            <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">DOANH THU ƯỚC TÍNH</div>
+            <div id="metric-revenue-estimate" style="font-size: 1.35rem; font-weight: 900; color: #10b981; margin: 0.45rem 0;">0 VNĐ</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Affiliate + Gói bảo chứng</div>
+          </div>
+        </div>
+
+        <div style="padding: 1rem; background: var(--primary-light); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--primary); line-height: 1.5;">
+          <strong>💡 Cơ chế kiếm tiền:</strong> Khi du khách bấm "Gọi Hotline", "Liên hệ Zalo" hoặc "Đặt phòng", hệ thống tự động ghi nhận 1 Lead. Chủ website có thể thu phí hoa hồng 10-15% hoặc bán gói thành viên Bảo chứng uy tín 1.000.000đ/năm.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand">
+            <div class="brand-logo-icon" style="color: var(--primary);">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 13C16 7.8 20.8 4.2 25.8 4.2C23.2 8.4 19.6 10.5 16 13Z" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M16 13C16 7.8 11.2 4.2 6.2 4.2C8.8 8.4 12.4 10.5 16 13Z" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <circle cx="16" cy="6.2" r="1.3" fill="currentColor"/>
+                <path d="M4 22C9.5 15.2 22.5 15.2 28 22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M3 22.5H29" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <line x1="9.5" y1="22" x2="9.5" y2="18.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <line x1="16" y1="22" x2="16" y2="16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="22.5" y1="22" x2="22.5" y2="18.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <path d="M6 26.5C10 24.8 14 27.5 18 25.8C22 24.2 25 26.8 28 26" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="brand-title">QuangTri<span class="wiki-dot">.wiki</span></div>
+              <span class="brand-subtitle">Khám phá cung đường di sản</span>
+            </div>
+          </div>
+          <p class="footer-brand-desc">
+            Nền tảng cẩm nang mở độc lập về du lịch và văn hóa tỉnh Quảng Trị, Việt Nam. Lấy cảm hứng từ tinh thần chia sẻ cung đường của Hagiang.wiki nhằm tôn vinh vẻ đẹp lịch sử hào hùng và thiên nhiên hùng vĩ.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Cung đường chính</h4>
+          <ul class="footer-links">
+            <li><a href="#cung-duong">QT-01: TP Đông Hà</a></li>
+            <li><a href="#cung-duong">QT-02: Thành Cổ & Hải Lăng</a></li>
+            <li><a href="#cung-duong">QT-03: Vĩ Tuyến 17 & Vịnh Mốc</a></li>
+            <li><a href="#cung-duong">QT-05: Khe Sanh & Sa Mù</a></li>
+            <li><a href="#cung-duong">QT-07: Đảo Cồn Cỏ</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Ẩm thực nổi tiếng</h4>
+          <ul class="footer-links">
+            <li><a href="#am-thuc">Cháo vạt giường</a></li>
+            <li><a href="#am-thuc">Bánh lọc Mỹ Chánh</a></li>
+            <li><a href="#am-thuc">Bún hến Mai Xá</a></li>
+            <li><a href="#am-thuc">Thịt trâu lá trơng</a></li>
+            <li><a href="#am-thuc">Cà phê Khe Sanh</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Hỗ trợ & Bản quyền</h4>
+          <ul class="footer-links">
+            <li><a href="#tien-ich">Hotline cứu hộ SOS</a></li>
+            <li><a href="#ban-do">Bản đồ lộ trình</a></li>
+            <li><a href="#lich-trinh">Lịch trình mẫu 1-3 ngày</a></li>
+            <li><a href="https://hagiang.wiki/" target="_blank" rel="noopener">Tham khảo Hagiang.wiki</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 QuangTri.wiki · Miền đất lửa kiên cường & Đại ngàn Trường Sơn.</div>
+        <div style="display: flex; gap: 1rem;">
+          <span>Quyền riêng tư: Dữ liệu sổ tay lưu trực tiếp trên thiết bị của bạn.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

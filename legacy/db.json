@@ -1,0 +1,217 @@
+{
+  "threads": [
+    {
+      "id": "thread-1",
+      "author": "Hoàng Nam (Phượt thủ Đà Nẵng)",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
+      "badge": "Đã đi 5 lần",
+      "time": "Hôm qua lúc 08:30",
+      "zoneCode": "QT-05",
+      "zoneName": "Đèo Sa Mù & Khe Sanh",
+      "tag": "Săn mây",
+      "title": "Kinh nghiệm săn mây đèo Sa Mù 2N1Đ - Bồng bềnh cổng trời nóc nhà Quảng Trị",
+      "content": "Vừa hoàn thành chuyến độc hành săn mây đèo Sa Mù cuối tuần qua. Mình xuất phát từ Đông Hà lúc 5h sáng theo QL9 lên Khe Sanh rồi rẽ vào đường mòn Hồ Chí Minh Tây. Tầm 6h30 sáng tới đỉnh đèo ở độ cao gần 1.400m, biển mây cuồn cuộn như thác đổ qua thung lũng! Nhiệt độ lúc sáng sớm chỉ tầm 15°C, lạnh buốt nhưng cảnh tượng thì xứng đáng điểm 10. Mẹo nhỏ cho anh em: Đèo thường có sương mù dày sau 8h sáng, nhớ kiểm tra phanh xe máy kỹ trước khi lên dốc và mang áo ấm chống gió.",
+      "images": [
+        "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+      ],
+      "likes": 42,
+      "comments": [
+        {
+          "author": "Minh Trang",
+          "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80",
+          "time": "Hôm qua lúc 10:15",
+          "text": "Ảnh đẹp quá anh ơi! Cho em hỏi đường đèo Sa Mù xe tay ga đi ổn không ạ?"
+        },
+        {
+          "author": "Hoàng Nam",
+          "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80",
+          "time": "Hôm qua lúc 11:00",
+          "text": "Xe tay ga đi được nhưng nên chọn xe khỏe từ 125cc trở lên và không rà phanh liên tục lúc đổ dốc nha em, tốt nhất vẫn là xe số hoặc côn tay."
+        }
+      ]
+    },
+    {
+      "id": "thread-2",
+      "author": "Hương Giang (Hà Nội)",
+      "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80",
+      "badge": "Du lịch gia đình",
+      "time": "2 ngày trước",
+      "zoneCode": "QT-03",
+      "zoneName": "Vĩ Tuyến 17 & Vịnh Mốc",
+      "tag": "Lịch sử DMZ",
+      "title": "Lắng đọng bước chân nơi đôi bờ Hiền Lương và làng hầm Vịnh Mốc",
+      "content": "Đưa cả gia đình về thăm vùng đất lửa Quảng Trị sau bao năm ấp ủ. Đứng giữa nhịp cầu Hiền Lương chia cắt hai nửa màu sơn, nghe tiếng gió thổi qua dòng Bến Hải mà rưng rưng xúc động. Xuống địa đạo Vịnh Mốc thì thực sự khâm phục ý chí của cha ông: dưới lòng đất sâu 3 tầng mát rượi, có cả phòng sinh nở nơi 17 đứa trẻ chào đời an toàn. Một chuyến đi giáo dục truyền thống vô cùng ý nghĩa cho các con.",
+      "images": [
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=800&q=80"
+      ],
+      "likes": 58,
+      "comments": [
+        {
+          "author": "Bác Lâm (Cựu chiến binh)",
+          "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80",
+          "time": "1 ngày trước",
+          "text": "Cảm ơn cháu đã chia sẻ. Chiến trường xưa nay đã xanh ngắt một màu bình yên, thế hệ trẻ nhớ về cội nguồn là điều quý báu nhất."
+        }
+      ]
+    },
+    {
+      "id": "thread-3",
+      "author": "Thanh Tùng (Sài Gòn)",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80",
+      "badge": "Tín đồ ẩm thực",
+      "time": "3 ngày trước",
+      "zoneCode": "QT-01",
+      "zoneName": "Đông Hà & Hải Lăng",
+      "tag": "Ẩm thực",
+      "title": "Hành trình càn quét ẩm thực Quảng Trị: Cháo vạt giường, Bún hến Mai Xá và Thịt luộc rau rừng",
+      "content": "Ẩm thực Quảng Trị mang vị cay tê nồng nàn đặc trưng của miền Trung gió Lào. Đã tới đây thì nhất định phải ăn tô Bánh canh cá lóc (cháo vạt giường) sợi bột gạo dẻo dai kèm đầu cá béo ngậy ở ngã ba Hải Lăng. Sang Mai Xá thì chén liền 2 tô Bún chắt chắt xào thơm lừng cay xé lưỡi mà ngọt thanh từ nước luộc chắt chắt. Giá cả cực kỳ bình dân, chỉ từ 25k - 40k/tô mà no ứ ự!",
+      "images": [
+        "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80"
+      ],
+      "likes": 37,
+      "comments": [
+        {
+          "author": "Kim Ngân",
+          "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80",
+          "time": "2 ngày trước",
+          "text": "Nhìn thèm quá anh ơi! Cho em xin địa chỉ quán bún hến Mai Xá chuẩn vị nhất với ạ."
+        },
+        {
+          "author": "Thanh Tùng",
+          "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80",
+          "time": "2 ngày trước",
+          "text": "Em ghé quán Bún Hến Mai Xá bên làng Mai Xá, xã Gio Mai nha, quán mộc mạc bên bờ sông mà ngon đỉnh luôn."
+        }
+      ]
+    },
+    {
+      "id": "thread-4",
+      "author": "Lê Hải (Trekker)",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=150&q=80",
+      "badge": "Khám phá biển đảo",
+      "time": "4 ngày trước",
+      "zoneCode": "QT-07",
+      "zoneName": "Huyện Đảo Cồn Cỏ",
+      "tag": "Đảo Cồn Cỏ",
+      "title": "Kinh nghiệm đi đảo Cồn Cỏ 2N1Đ tự túc: Lịch tàu, thuê xe máy và lặn ngắm san hô",
+      "content": "Đảo Cồn Cỏ được ví như viên ngọc xanh giữa Biển Đông. Từ cảng Cửa Việt đi tàu cao tốc Chính Nghĩa chỉ mất tầm 45-60 phút. Ra đảo không khí trong lành tuyệt đối, biển xanh màu ngọc bích nhìn thấy tận đáy san hô. Anh em nhớ mang theo CMND/CCCD để trình biên phòng, thuê xe máy chạy quanh đảo chỉ 150k/ngày ngắm ngọn hải đăng và rừng nguyên sinh bao phủ.",
+      "images": [
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80"
+      ],
+      "likes": 49,
+      "comments": []
+    }
+  ],
+  "partners": [
+    {
+      "id": "partner-1",
+      "name": "Sa Mù Cloud Glamping & Homestay",
+      "category": "homestay",
+      "categoryName": "Homestay & Glamping",
+      "zoneCode": "QT-05",
+      "zoneName": "Khe Sanh & Đèo Sa Mù",
+      "address": "Bản Chênh Vênh, Hướng Phùng, Hướng Hóa, Quảng Trị",
+      "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80",
+      "price": "450.000 VNĐ / đêm",
+      "rating": 4.9,
+      "reviewsCount": 86,
+      "phone": "0982 123 456",
+      "zalo": "0982123456",
+      "verified": true,
+      "badge": "Đối tác Bảo chứng",
+      "highlights": [
+        "View săn mây 360 độ ngắm đỉnh đèo",
+        "Lều glamping ấm áp có máy sưởi",
+        "Phục vụ cơm lam cá suối nướng"
+      ]
+    },
+    {
+      "id": "partner-2",
+      "name": "Dịch Vụ Thuê Xe Máy Phượt Ga Đông Hà",
+      "category": "bike",
+      "categoryName": "Cho thuê xe máy",
+      "zoneCode": "QT-01",
+      "zoneName": "TP Đông Hà",
+      "address": "Đối diện Ga Đông Hà, 21 Lê Duẩn, TP Đông Hà",
+      "image": "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80",
+      "price": "120.000 VNĐ / ngày",
+      "rating": 4.9,
+      "reviewsCount": 210,
+      "phone": "0914 987 654",
+      "zalo": "0914987654",
+      "verified": true,
+      "badge": "Xe mới giao tận nơi",
+      "highlights": [
+        "Miễn phí 2 mũ bảo hiểm chuẩn + 2 áo mưa",
+        "Giao xe miễn phí tại Ga tàu & Khách sạn",
+        "Bảo hành cứu hộ 24/7 trên toàn tỉnh"
+      ]
+    },
+    {
+      "id": "partner-3",
+      "name": "Đại Lý Vé Tàu Cao Tốc Đảo Cồn Cỏ",
+      "category": "boat",
+      "categoryName": "Tàu cao tốc biển đảo",
+      "zoneCode": "QT-07",
+      "zoneName": "Cửa Việt - Đảo Cồn Cỏ",
+      "address": "Cảng Cửa Việt, Gio Linh, Quảng Trị",
+      "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80",
+      "price": "250.000 VNĐ / vé khứ hồi",
+      "rating": 4.8,
+      "reviewsCount": 140,
+      "phone": "0905 345 678",
+      "zalo": "0905345678",
+      "verified": true,
+      "badge": "Đặt vé trực tuyến",
+      "highlights": [
+        "Tàu hai thân hiện đại không say sóng",
+        "Hỗ trợ khai báo thủ tục biên phòng ra đảo",
+        "Cam kết giữ chỗ vào dịp lễ cao điểm"
+      ]
+    },
+    {
+      "id": "partner-4",
+      "name": "Hướng Dẫn Viên Bản Địa Di Sản DMZ",
+      "category": "tour",
+      "categoryName": "Tour Guide Di Sản",
+      "zoneCode": "QT-03",
+      "zoneName": "Vĩ Tuyến 17 & Vịnh Mốc",
+      "address": "Hiền Lương, Vĩnh Linh, Quảng Trị",
+      "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+      "price": "500.000 VNĐ / buổi",
+      "rating": 5,
+      "reviewsCount": 92,
+      "phone": "0977 888 999",
+      "zalo": "0977888999",
+      "verified": true,
+      "badge": "Thuyết minh chuyên sâu",
+      "highlights": [
+        "Kể chuyện lịch sử 81 ngày đêm & Vĩ tuyến 17",
+        "Được chứng nhận thuyết minh viên di tích cấp quốc gia",
+        "Dẫn tour linh hoạt theo yêu cầu cá nhân và gia đình"
+      ]
+    }
+  ],
+  "partnerRegistrations": [],
+  "leads": [
+    {
+      "id": "lead-1795052695297",
+      "type": "click_to_contact",
+      "partnerId": "general",
+      "partnerName": "Chung",
+      "source": "website_card",
+      "timestamp": "2026-11-19T01:44:55.297Z"
+    },
+    {
+      "id": "lead-1795052713039",
+      "type": "click_to_contact",
+      "partnerId": "general",
+      "partnerName": "Chung",
+      "source": "website_card",
+      "timestamp": "2026-11-19T01:45:13.039Z"
+    }
+  ]
+}
