@@ -3,9 +3,6 @@ import { supabaseServer } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
-const BASELINE_TOTAL_VIEWS = 18240;
-const BASELINE_TODAY_VIEWS = 1280;
-
 export async function GET() {
   try {
     const today = new Date();
@@ -17,21 +14,20 @@ export async function GET() {
       supabaseServer.from('page_views').select('id', { count: 'exact', head: true }).gte('created_at', startOfTodayISO),
     ]);
 
-    const dbTotal = totalRes.count || 0;
-    const dbToday = todayRes.count || 0;
+    const totalViews = totalRes.count || 0;
+    const todayViews = todayRes.count || 0;
 
     return NextResponse.json({
       success: true,
-      totalViews: BASELINE_TOTAL_VIEWS + dbTotal,
-      todayViews: BASELINE_TODAY_VIEWS + dbToday,
-      dbRecordsCount: dbTotal,
+      totalViews,
+      todayViews,
       databaseConnected: !totalRes.error,
     });
   } catch (err: any) {
     return NextResponse.json({
       success: true,
-      totalViews: BASELINE_TOTAL_VIEWS,
-      todayViews: BASELINE_TODAY_VIEWS,
+      totalViews: 0,
+      todayViews: 0,
       error: err.message,
     });
   }
@@ -58,10 +54,10 @@ export async function POST(req: NextRequest) {
     });
 
     if (insertError) {
-      console.warn('Supabase page_views insert warning (table might need creation):', insertError.message);
+      console.warn('Supabase page_views insert notice:', insertError.message);
     }
 
-    // Get current total count
+    // Get current total count from database
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const startOfTodayISO = today.toISOString();
@@ -71,20 +67,20 @@ export async function POST(req: NextRequest) {
       supabaseServer.from('page_views').select('id', { count: 'exact', head: true }).gte('created_at', startOfTodayISO),
     ]);
 
-    const dbTotal = totalRes.count || 0;
-    const dbToday = todayRes.count || 0;
+    const totalViews = totalRes.count || 0;
+    const todayViews = todayRes.count || 0;
 
     return NextResponse.json({
       success: true,
-      totalViews: BASELINE_TOTAL_VIEWS + dbTotal,
-      todayViews: BASELINE_TODAY_VIEWS + dbToday,
+      totalViews,
+      todayViews,
       savedToDatabase: !insertError,
     });
   } catch (err: any) {
     return NextResponse.json({
       success: true,
-      totalViews: BASELINE_TOTAL_VIEWS,
-      todayViews: BASELINE_TODAY_VIEWS,
+      totalViews: 0,
+      todayViews: 0,
       error: err.message,
     });
   }

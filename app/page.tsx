@@ -7,6 +7,7 @@ import {
   getZones,
   getGuides,
   getBannerSlides,
+  getSiteViews,
 } from '@/lib/get-data';
 import { QUANGTRI_DATA } from '@/lib/data';
 import HomeClient from '@/components/HomeClient';
@@ -23,6 +24,7 @@ export default async function HomePage() {
     zones,
     guides,
     bannerSlides,
+    siteViews,
   ] = await Promise.all([
     getPlaces(),
     getServices(),
@@ -32,6 +34,7 @@ export default async function HomePage() {
     getZones(),
     getGuides(),
     getBannerSlides(),
+    getSiteViews(),
   ]);
 
   return (
@@ -45,6 +48,7 @@ export default async function HomePage() {
       guides={guides || {}}
       bannerSlides={bannerSlides || []}
       weatherData={QUANGTRI_DATA.weatherData || {}}
+      initialViews={siteViews || 0}
     />
   );
 }

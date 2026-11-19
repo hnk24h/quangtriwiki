@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { QUANGTRI_DATA } from '@/lib/data';
 
-type CmsTab = 'overview' | 'analytics' | 'threads' | 'places' | 'services' | 'foods' | 'itineraries' | 'utilities';
+type CmsTab = 'overview' | 'analytics' | 'banners' | 'threads' | 'places' | 'services' | 'foods' | 'itineraries' | 'utilities';
 
 export default function AdminClient() {
   // 1. Authentication State
@@ -21,10 +21,11 @@ export default function AdminClient() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // 4. Analytics State
-  const [totalPageViews, setTotalPageViews] = useState<number>(18240);
-  const [todayPageViews, setTodayPageViews] = useState<number>(1280);
+  const [totalPageViews, setTotalPageViews] = useState<number>(0);
+  const [todayPageViews, setTodayPageViews] = useState<number>(0);
 
   // 4. Data States (Initialized from QUANGTRI_DATA and persisted in localStorage)
+  const [bannerSlides, setBannerSlides] = useState<any[]>([]);
   const [places, setPlaces] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [foods, setFoods] = useState<any[]>([]);
@@ -48,6 +49,9 @@ export default function AdminClient() {
 
     // Load data
     try {
+      const savedBanners = localStorage.getItem('qt_cms_banner_slides');
+      setBannerSlides(savedBanners ? JSON.parse(savedBanners) : QUANGTRI_DATA.bannerSlides || []);
+
       const savedPlaces = localStorage.getItem('qt_cms_places');
       setPlaces(savedPlaces ? JSON.parse(savedPlaces) : QUANGTRI_DATA.places || []);
 
@@ -68,11 +72,6 @@ export default function AdminClient() {
 
       const savedHotlines = localStorage.getItem('qt_cms_hotlines');
       setHotlines(savedHotlines ? JSON.parse(savedHotlines) : ((QUANGTRI_DATA as any).guides?.emergencyHotlines || []));
-
-      const savedViews = localStorage.getItem('qt_page_views');
-      if (savedViews) {
-        setTotalPageViews(parseInt(savedViews, 10));
-      }
     } catch (e) {
       console.warn('Error loading CMS data:', e);
     }
@@ -129,7 +128,11 @@ export default function AdminClient() {
       return;
     }
 
-    if (type === 'places') {
+    if (type === 'banners') {
+      const updated = bannerSlides.filter((b) => b.id !== id);
+      setBannerSlides(updated);
+      localStorage.setItem('qt_cms_banner_slides', JSON.stringify(updated));
+    } else if (type === 'places') {
       const updated = places.filter((p) => p.id !== id);
       setPlaces(updated);
       localStorage.setItem('qt_cms_places', JSON.stringify(updated));
@@ -170,7 +173,29 @@ export default function AdminClient() {
       dataObj[key] = value;
     });
 
-    if (editingType === 'places') {
+    if (editingType === 'banners') {
+      const newBanner = {
+        id: editingItem?.id || `slide-${Date.now()}`,
+        badge: dataObj.badge || '',
+        title: dataObj.title || '',
+        subtitle: dataObj.subtitle || '',
+        image: dataObj.image || '',
+        placeId: editingItem?.placeId || '',
+        zoneCode: dataObj.zoneCode || editingItem?.zoneCode || '',
+        statsTag: dataObj.statsTag || editingItem?.statsTag || '',
+        elevation: dataObj.elevation || editingItem?.elevation || '',
+      };
+
+      let updated;
+      if (editingItem) {
+        updated = bannerSlides.map((b) => (b.id === editingItem.id ? newBanner : b));
+      } else {
+        updated = [...bannerSlides, newBanner];
+      }
+      setBannerSlides(updated);
+      localStorage.setItem('qt_cms_banner_slides', JSON.stringify(updated));
+      showToast(editingItem ? 'Đã cập nhật slide trang chủ!' : 'Đã thêm slide trang chủ mới!');
+    } else if (editingType === 'places') {
       const newPlace = {
         id: editingItem?.id || dataObj.id || `place-${Date.now()}`,
         name: dataObj.name,
@@ -573,6 +598,7 @@ export default function AdminClient() {
           {[
             { id: 'overview', label: 'Tổng Quan Hệ Thống', icon: '📊', count: null },
             { id: 'analytics', label: 'Phân Tích Lượt Xem', icon: '📈', count: 'Live' },
+            { id: 'banners', label: 'Slide Trang Top (Banner)', icon: '🖼️', count: bannerSlides.length },
             { id: 'threads', label: 'Soạn Bài & Diễn Đàn', icon: '✍️', count: threads.length },
             { id: 'places', label: 'Điểm Đến & Danh Thắng', icon: '📍', count: places.length },
             { id: 'services', label: 'Dịch Vụ & Đối Tác', icon: '🏕️', count: services.length },
@@ -1224,6 +1250,80 @@ export default function AdminClient() {
             </div>
           )}
 
+          {/* TAB: BANNER SLIDES CRUD */}
+          {activeTab === 'banners' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#133e2f', margin: '0 0 0.25rem' }}>
+                    Quản Lý Slide Trang Top (Banner Hero)
+                  </h2>
+                  <p style={{ color: '#6b7280', fontSize: '0.85rem', margin: 0 }}>
+                    Tùy chỉnh hình ảnh, tiêu đề và lời giới thiệu từng slide trên trang chủ ({bannerSlides.length} slide).
+                  </p>
+                </div>
+                <button
+                  onClick={() => openAddModal('banners')}
+                  style={{ padding: '0.65rem 1.25rem', borderRadius: '10px', background: '#059669', color: '#fff', border: 'none', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer' }}
+                >
+                  + Thêm Slide Mới
+                </button>
+              </div>
+
+              <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
+                  <thead style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                    <tr>
+                      <th style={{ padding: '0.85rem 1rem' }}>Hình ảnh</th>
+                      <th style={{ padding: '0.85rem 1rem' }}>Thẻ nhãn</th>
+                      <th style={{ padding: '0.85rem 1rem' }}>Tiêu đề slide</th>
+                      <th style={{ padding: '0.85rem 1rem' }}>Giới thiệu ngắn</th>
+                      <th style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bannerSlides.map((slide, idx) => (
+                      <tr key={slide.id || idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          <img
+                            src={slide.image}
+                            alt={slide.title}
+                            style={{ width: '70px', height: '45px', borderRadius: '6px', objectFit: 'cover' }}
+                          />
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          <span style={{ background: '#fef3c7', color: '#92400e', padding: '0.2rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                            {slide.badge || 'Banner'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', fontWeight: 700, color: '#133e2f', maxWidth: '240px' }}>
+                          {slide.title}
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', color: '#4b5563', fontSize: '0.82rem', maxWidth: '320px' }}>
+                          {slide.subtitle}
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
+                          <button
+                            onClick={() => openEditModal('banners', slide)}
+                            style={{ padding: '0.35rem 0.65rem', marginRight: '0.4rem', borderRadius: '6px', background: '#f3f4f6', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}
+                          >
+                            ✏️ Sửa
+                          </button>
+                          <button
+                            onClick={() => handleDelete('banners', slide.id, slide.title)}
+                            style={{ padding: '0.35rem 0.65rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}
+                          >
+                            🗑️ Xóa
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {/* TAB 2: THREADS / ARTICLES CRUD */}
           {activeTab === 'threads' && (
             <div>
@@ -1646,6 +1746,7 @@ export default function AdminClient() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#133e2f', margin: 0 }}>
                 {editingItem ? '✏️ Chỉnh Sửa' : '➕ Thêm Mới'}{' '}
+                {editingType === 'banners' && 'Slide Trang Top (Banner)'}
                 {editingType === 'places' && 'Điểm Đến / Danh Thắng'}
                 {editingType === 'services' && 'Dịch Vụ & Đối Tác'}
                 {editingType === 'foods' && 'Món Ăn Đặc Sản'}
@@ -1661,6 +1762,38 @@ export default function AdminClient() {
             </div>
 
             <form onSubmit={handleSaveItem} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {/* Form fields for BANNER SLIDES */}
+              {editingType === 'banners' && (
+                <>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.25rem' }}>Tiêu đề slide</label>
+                    <input name="title" defaultValue={editingItem?.title || ''} required placeholder="Ví dụ: Biển Mây Bồng Bềnh Trên 'Cổng Trời' Trường Sơn" style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.25rem' }}>Thẻ nhãn (Badge)</label>
+                    <input name="badge" defaultValue={editingItem?.badge || ''} required placeholder="Ví dụ: 🏔️ SĂN MÂY ĐỈNH ĐÈO SA MÙ" style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.25rem' }}>Giới thiệu ngắn (Subtitle)</label>
+                    <textarea name="subtitle" defaultValue={editingItem?.subtitle || ''} required rows={3} placeholder="Mô tả ngắn gọn, súc tích hiển thị trên banner..." style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.25rem' }}>URL Hình ảnh nền</label>
+                    <input name="image" defaultValue={editingItem?.image || ''} required placeholder="https://..." style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db' }} />
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.25rem' }}>Mã vùng (Tùy chọn)</label>
+                      <input name="zoneCode" defaultValue={editingItem?.zoneCode || ''} placeholder="QT-01 ... QT-08" style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db' }} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.25rem' }}>Ghi chú thông số (Tùy chọn)</label>
+                      <input name="statsTag" defaultValue={editingItem?.statsTag || ''} placeholder="Ví dụ: 18°C · Biển mây sáng sớm" style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db' }} />
+                    </div>
+                  </div>
+                </>
+              )}
+
               {/* Form fields for PLACES */}
               {editingType === 'places' && (
                 <>

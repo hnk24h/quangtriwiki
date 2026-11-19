@@ -259,9 +259,13 @@ export async function getBannerSlides() {
 
     if (!error && data && data.length > 0) {
       return data.map((b: any) => ({
-        img: b.img || b.image,
-        caption: b.caption,
-        zone: b.zone,
+        id: b.id,
+        title: b.title,
+        subtitle: b.subtitle || b.caption,
+        badge: b.badge || b.kicker || b.zone,
+        kicker: b.badge || b.kicker || b.zone,
+        image: b.image || b.img,
+        img: b.image || b.img,
       }));
     }
   } catch (e) {
@@ -269,4 +273,21 @@ export async function getBannerSlides() {
   }
 
   return QUANGTRI_DATA.bannerSlides || [];
+}
+
+// 10. LẤY SỐ LƯỢT XEM TỪ DATABASE
+export async function getSiteViews(): Promise<number> {
+  try {
+    const { count, error } = await supabaseServer
+      .from('page_views')
+      .select('id', { count: 'exact', head: true });
+
+    if (!error && typeof count === 'number') {
+      return count;
+    }
+  } catch (e) {
+    console.warn('Supabase getSiteViews error:', e);
+  }
+
+  return 0;
 }

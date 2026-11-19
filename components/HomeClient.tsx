@@ -19,6 +19,7 @@ interface HomeClientProps {
   bannerSlides?: any[];
   weatherData?: any;
   weatherLocations?: any;
+  initialViews?: number;
 }
 
 const ZONE_METAS: Record<string, { specialty: string; typeTag: string; typeGroup: 'history' | 'mountain' | 'coastal' }> = {
@@ -78,42 +79,72 @@ export default function HomeClient({
   bannerSlides = [],
   weatherData = {},
   weatherLocations,
+  initialViews = 0,
 }: HomeClientProps) {
-  // Hero slides setup
-  const heroSlides = useMemo(() => {
-    if (Array.isArray(bannerSlides) && bannerSlides.length > 0) {
-      return bannerSlides.map((b) => ({
-        img: b.image || 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80',
-        caption: b.title || 'Quảng Trị chân thật',
-        zone: b.kicker || b.badge || 'Miền Trung Việt Nam',
-      }));
-    }
+  // Slides list state
+  const [slidesList, setSlidesList] = useState<any[]>(() => {
+    if (Array.isArray(bannerSlides) && bannerSlides.length > 0) return bannerSlides;
     return [
       {
-        img: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80',
-        caption: 'Đại ngàn Trường Sơn & Đèo Sa Mù mây ngàn',
-        zone: 'QT-05 · Hướng Hóa',
+        id: "deo-sa-mu",
+        image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=85",
+        badge: "🏔️ SĂN MÂY ĐỈNH ĐÈO SA MÙ",
+        title: "Biển Mây Bồng Bềnh Trên 'Cổng Trời' Trường Sơn",
+        subtitle: "Độ cao gần 1.400m quanh năm mát lạnh, biển mây cuộn trôi qua những tán rừng già nguyên sinh.",
       },
       {
-        img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80',
-        caption: 'Đôi Bờ Hiền Lương & Sông Bến Hải lịch sử',
-        zone: 'QT-03 · Vĩ Tuyến 17',
+        id: "dao-con-co",
+        image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=85",
+        badge: "🏝️ VIÊN NGỌC XANH TIỀN ĐỒN",
+        title: "Đảo Tiền Tiêu Cồn Cỏ Giữa Đại Dương Xanh Biếc",
+        subtitle: "Hòn đảo anh hùng hiên ngang giữa Biển Đông, rạn san hô lộng lẫy và ngọn hải đăng sừng sững đón bình minh.",
       },
       {
-        img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
-        caption: 'Biển Cửa Tùng - Nữ hoàng của các bãi tắm',
-        zone: 'QT-03 · Vĩnh Linh',
+        id: "dia-dao-vinh-moc",
+        image: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1600&q=85",
+        badge: "🏛️ KỲ QUAN LÀNG HẦM 3 TẦNG",
+        title: "Địa Đạo Vịnh Mốc - Bản Hùng Ca Trong Lòng Đất",
+        subtitle: "Hệ thống đường ngầm kỳ vĩ sâu đến 23m, nơi che chở hàng trăm người dân với cửa hầm trổ thẳng ra biển cả.",
       },
       {
-        img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1920&q=80',
-        caption: 'Đảo Cồn Cỏ - Tiền đồn kiêu hãnh giữa Biển Đông',
-        zone: 'QT-07 · Đảo Cồn Cỏ',
+        id: "thac-chenh-venh",
+        image: "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1600&q=85",
+        badge: "🌲 NGỌC BÍCH ĐẠI NGÀN",
+        title: "Thác Chênh Vênh - Hồ Nước Lục Bảo Giữa Rừng Già",
+        subtitle: "Dòng thác trong vắt đổ xuống mặt hồ xanh như ngọc, điểm cắm trại glamping lý tưởng dưới chân đèo Sa Mù.",
+      },
+      {
+        id: "canh-dong-dien-gio-huong-linh",
+        image: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1600&q=85",
+        badge: "💨 HOÀNG HÔN TRỜI ÂU",
+        title: "Cánh Đồng Quạt Gió Hướng Linh & Hướng Tân",
+        subtitle: "Những trụ tuabin gió khổng lồ vươn giữa triền đồi bazan bạt ngàn đón ráng chiều hoàng hôn rực rỡ.",
+      },
+      {
+        id: "cau-hien-luong-ben-hai",
+        image: "https://images.unsplash.com/photo-1568084680786-a84f91d1153c?auto=format&fit=crop&w=1600&q=85",
+        badge: "🇻🇳 VĨ TUYẾN 17 LỊCH SỬ",
+        title: "Đôi Bờ Hiền Lương - Sông Bến Hải",
+        subtitle: "Nhịp cầu chứng nhân lịch sử nối đôi bờ Bắc - Nam và ngày khúc khải hoàn thống nhất non sông.",
       },
     ];
-  }, [bannerSlides]);
+  });
+
+  // Hero slides setup
+  const heroSlides = useMemo(() => {
+    return slidesList.map((b) => ({
+      id: b.id,
+      img: b.image || b.img || 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80',
+      badge: b.badge || b.kicker || b.zone || 'MIỀN TRUNG VIỆT NAM · GÓC NHÌN ĐỊA PHƯƠNG',
+      title: b.title || 'Quảng Trị Chân Thật',
+      subtitle: b.subtitle || b.caption || 'Đèo núi. Miền đất thiêng yên bình. Hành trình đáng để đi chậm.',
+    }));
+  }, [slidesList]);
 
   // State
   const [currentSlide, setCurrentSlide] = useState(0);
+  const activeSlide = heroSlides[currentSlide] || heroSlides[0] || {};
+
   const [weatherLocKey, setWeatherLocKey] = useState('huong-hoa');
   const [weatherDayIdx, setWeatherDayIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
@@ -130,7 +161,7 @@ export default function HomeClient({
   const [isThreadModalOpen, setIsThreadModalOpen] = useState(false);
   const [adminStats, setAdminStats] = useState<any>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [pageViews, setPageViews] = useState<number>(18240);
+  const [pageViews, setPageViews] = useState<number>(initialViews);
 
   // Dynamic Datasets from Database (with real-time state)
   const [placesList, setPlacesList] = useState<any[]>(initialPlaces);
@@ -196,7 +227,7 @@ export default function HomeClient({
     // 1. Instant local update for fast render
     try {
       const stored = localStorage.getItem('qt_page_views');
-      const current = stored ? parseInt(stored, 10) : 18240;
+      const current = stored ? parseInt(stored, 10) : (initialViews || 0);
       const nextViews = current + 1;
       localStorage.setItem('qt_page_views', nextViews.toString());
       setPageViews(nextViews);
@@ -269,6 +300,9 @@ export default function HomeClient({
 
       const cmsThreads = localStorage.getItem('qt_cms_threads');
       if (cmsThreads) setThreads(JSON.parse(cmsThreads));
+
+      const cmsSlides = localStorage.getItem('qt_cms_banner_slides');
+      if (cmsSlides) setSlidesList(JSON.parse(cmsSlides));
     } catch (e) {}
   }, []);
 
@@ -510,8 +544,10 @@ export default function HomeClient({
 
         <div className="container hagiang-hero-content">
           <div className="hagiang-hero-left">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap', marginBottom: '0.6rem' }}>
-              <div className="hagiang-kicker" style={{ margin: 0 }}>MIỀN TRUNG VIỆT NAM · GÓC NHÌN ĐỊA PHƯƠNG</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+              <div className="hagiang-kicker" style={{ margin: 0 }}>
+                {activeSlide.badge || 'MIỀN TRUNG VIỆT NAM · GÓC NHÌN ĐỊA PHƯƠNG'}
+              </div>
               <span style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -529,47 +565,25 @@ export default function HomeClient({
                 {pageViews.toLocaleString()} lượt xem
               </span>
             </div>
-            <h1 className="hagiang-main-title">
-              Gần hơn với Quảng<br />
-              Trị chân thật.
+
+            <h1 className="hagiang-main-title" key={`title-${currentSlide}`} style={{ transition: 'all 0.3s ease' }}>
+              {activeSlide.title || 'Gần hơn với Quảng Trị chân thật.'}
             </h1>
-            <p className="hagiang-main-subtitle">
-              Đèo núi. Miền đất thiêng yên bình. Hành trình đáng để đi chậm.
+            <p className="hagiang-main-subtitle" key={`sub-${currentSlide}`} style={{ transition: 'all 0.3s ease', maxWidth: '520px', lineHeight: 1.6 }}>
+              {activeSlide.subtitle || 'Đèo núi. Miền đất thiêng yên bình. Hành trình đáng để đi chậm.'}
             </p>
 
-            <div className="hagiang-search-box">
-              <svg className="hagiang-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <div className="hagiang-search-box" style={{ position: 'relative', width: '100%', maxWidth: '520px', display: 'flex', alignItems: 'center', margin: '1.25rem 0 0' }}>
+              <svg className="hagiang-search-icon" style={{ position: 'absolute', left: '1.2rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b', pointerEvents: 'none', zIndex: 3, flexShrink: 0 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="hagiang-search-input"
+                style={{ width: '100%', boxSizing: 'border-box', padding: '0 4.5rem 0 3.25rem', height: '3.4rem', borderRadius: '9999px', border: '1px solid rgba(255, 255, 255, 0.35)', background: 'rgba(255, 255, 255, 0.95)', color: '#0f172a', fontSize: '0.92rem' }}
                 placeholder="Tìm Thành Cổ, Đèo Sa Mù, Cồn Cỏ, món ngon... (Ctrl + K)"
               />
-              <kbd className="hagiang-search-shortcut">⌘K</kbd>
-            </div>
-
-            <div className="hagiang-stats-row">
-              <div className="hagiang-stat-chip">
-                <span className="stat-chip-num">{placesList.length}</span>
-                <span className="stat-chip-label">Điểm đến</span>
-              </div>
-              <div className="hagiang-stat-chip">
-                <span className="stat-chip-num">{zoneList.length}</span>
-                <span className="stat-chip-label">Vùng cung đường</span>
-              </div>
-              <div className="hagiang-stat-chip">
-                <span className="stat-chip-num">{foodList.length}</span>
-                <span className="stat-chip-label">Món ngon</span>
-              </div>
-              <div className="hagiang-stat-chip">
-                <span className="stat-chip-num">{itineraryList.length}</span>
-                <span className="stat-chip-label">Tuyến phượt</span>
-              </div>
-              <div className="hagiang-stat-chip" style={{ border: '1px solid rgba(52, 211, 153, 0.4)', background: 'rgba(52, 211, 153, 0.12)' }}>
-                <span className="stat-chip-num" style={{ color: '#34d399' }}>{pageViews.toLocaleString()}</span>
-                <span className="stat-chip-label">Lượt xem</span>
-              </div>
+              <kbd className="hagiang-search-shortcut" style={{ position: 'absolute', right: '1.1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 3, padding: '0.2rem 0.5rem', fontSize: '0.72rem', fontWeight: 700, color: '#64748b', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px' }}>⌘K</kbd>
             </div>
           </div>
 
