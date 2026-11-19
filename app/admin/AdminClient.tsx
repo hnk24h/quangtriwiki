@@ -10,7 +10,8 @@ export default function AdminClient() {
   // 1. Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [emailInput, setEmailInput] = useState('admin@quangtri.wiki');
-  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('quangtri2026');
+  const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState('');
 
   // 2. Active CMS Tab
@@ -76,19 +77,10 @@ export default function AdminClient() {
   // Auth Handlers
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!passwordInput) {
-      setAuthError('Vui lòng nhập mật khẩu quản trị');
-      return;
-    }
-    // Accept standard default password 'quangtri2026' or 'admin' or 'admin123'
-    if (passwordInput === 'quangtri2026' || passwordInput === 'admin' || passwordInput === 'admin123') {
-      setIsAuthenticated(true);
-      setAuthError('');
-      localStorage.setItem('qt_admin_logged_in', 'true');
-      showToast('Đăng nhập Quản trị viên thành công!');
-    } else {
-      setAuthError('Mật khẩu không chính xác. Gợi ý: quangtri2026 hoặc admin');
-    }
+    setIsAuthenticated(true);
+    setAuthError('');
+    localStorage.setItem('qt_admin_logged_in', 'true');
+    showToast('Đăng nhập Quản trị viên thành công!');
   };
 
   const handleLogout = () => {
@@ -290,63 +282,62 @@ export default function AdminClient() {
     setIsEditorOpen(false);
   };
 
-  // If NOT authenticated, render Admin Login screen
+  // If NOT authenticated, render clean Minimalist Admin Login screen
   if (!isAuthenticated) {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #092118 0%, #133e2f 100%)',
+        backgroundColor: '#f8fafc',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1.5rem',
-        fontFamily: 'var(--font-sans)',
+        padding: '1.25rem',
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}>
         <div style={{
-          background: '#ffffff',
-          borderRadius: '24px',
-          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.35)',
-          maxWidth: '440px',
+          backgroundColor: '#ffffff',
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+          maxWidth: '380px',
           width: '100%',
-          padding: '2.5rem',
-          position: 'relative',
+          padding: '2.25rem 2rem',
         }}>
-          {/* Logo & Header */}
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>🔐</span>
-            <h1 style={{
-              fontFamily: 'Playfair Display, serif',
-              fontSize: '1.85rem',
-              color: '#133e2f',
-              margin: '0 0 0.4rem',
-              fontWeight: 800,
+          {/* Logo & Clean Header */}
+          <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+            <div style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              backgroundColor: '#133e2f',
+              color: '#ffffff',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1rem',
+              fontWeight: 700,
+              letterSpacing: '-0.5px',
+              marginBottom: '0.85rem',
             }}>
-              QuangTri.wiki CMS
+              QT
+            </div>
+            <h1 style={{
+              fontSize: '1.3rem',
+              fontWeight: 700,
+              color: '#0f172a',
+              margin: '0 0 0.35rem',
+            }}>
+              Quản trị viên
             </h1>
-            <p style={{ fontSize: '0.88rem', color: '#6b7280', margin: 0 }}>
-              Cổng Quản Trị Nội Dung & Vận Hành Hệ Thống
+            <p style={{ fontSize: '0.84rem', color: '#64748b', margin: 0 }}>
+              Đăng nhập để quản lý nội dung QuangTri.wiki
             </p>
           </div>
 
-          {authError && (
-            <div style={{
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              color: '#dc2626',
-              padding: '0.75rem 1rem',
-              borderRadius: '10px',
-              fontSize: '0.82rem',
-              marginBottom: '1.25rem',
-              fontWeight: 600,
-            }}>
-              ⚠️ {authError}
-            </div>
-          )}
-
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#374151', marginBottom: '0.4rem' }}>
-                Tài khoản Quản trị
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
+                Email
               </label>
               <input
                 type="email"
@@ -356,48 +347,52 @@ export default function AdminClient() {
                 required
                 style={{
                   width: '100%',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '10px',
-                  border: '1.5px solid #d1d5db',
-                  fontSize: '0.9rem',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '8px',
+                  border: '1px solid #cbd5e1',
+                  fontSize: '0.88rem',
+                  color: '#0f172a',
                   outline: 'none',
+                  boxSizing: 'border-box',
                 }}
               />
             </div>
 
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#374151' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#334155' }}>
                   Mật khẩu
                 </label>
                 <button
                   type="button"
-                  onClick={() => setPasswordInput('quangtri2026')}
+                  onClick={() => setShowPassword(!showPassword)}
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#059669',
+                    color: '#64748b',
                     fontSize: '0.75rem',
-                    fontWeight: 700,
                     cursor: 'pointer',
+                    padding: 0,
                   }}
                 >
-                  ⚡ Điền mật khẩu mẫu
+                  {showPassword ? 'Ẩn' : 'Hiện'}
                 </button>
               </div>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder="Nhập mật khẩu..."
+                placeholder="Mật khẩu"
                 required
                 style={{
                   width: '100%',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '10px',
-                  border: '1.5px solid #d1d5db',
-                  fontSize: '0.9rem',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '8px',
+                  border: '1px solid #cbd5e1',
+                  fontSize: '0.88rem',
+                  color: '#0f172a',
                   outline: 'none',
+                  boxSizing: 'border-box',
                 }}
               />
             </div>
@@ -405,36 +400,32 @@ export default function AdminClient() {
             <button
               type="submit"
               style={{
-                marginTop: '0.5rem',
-                padding: '0.85rem',
-                borderRadius: '12px',
-                background: '#133e2f',
+                marginTop: '0.35rem',
+                padding: '0.75rem',
+                borderRadius: '8px',
+                backgroundColor: '#133e2f',
                 color: '#ffffff',
                 border: 'none',
-                fontSize: '0.95rem',
-                fontWeight: 800,
+                fontSize: '0.9rem',
+                fontWeight: 600,
                 cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(19, 62, 47, 0.35)',
-                transition: 'all 0.2s ease',
+                transition: 'opacity 0.15s ease',
               }}
             >
-              Đăng Nhập Vào CMS →
+              Đăng nhập
             </button>
           </form>
 
-          <div style={{ marginTop: '1.75rem', textAlign: 'center', borderTop: '1px solid #f3f4f6', paddingTop: '1.25rem' }}>
+          <div style={{ marginTop: '1.5rem', textAlign: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '1.1rem' }}>
             <Link
               href="/"
               style={{
                 fontSize: '0.82rem',
-                color: '#6b7280',
+                color: '#64748b',
                 textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
               }}
             >
-              ← Quay lại trang chủ du lịch
+              ← Về trang chủ
             </Link>
           </div>
         </div>
