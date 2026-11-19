@@ -141,7 +141,7 @@ export default function Footer() {
             <span className="bottom-dot">·</span>
             <Link href="/tien-ich">Bảo an & Cứu hộ</Link>
             <span className="bottom-dot">·</span>
-            <Link href="/admin" className="bottom-admin-link">⚙️ Quản trị viên</Link>
+            <Link href="/chi-phi">Dự toán chuyến đi</Link>
           </div>
         </div>
       </div>
