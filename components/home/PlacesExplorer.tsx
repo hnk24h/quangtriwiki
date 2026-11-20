@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
+import { formatDualCurrency, useLanguage } from '@/lib/i18n';
 import type { Food, GuidesData, Place, Service, Zone } from '@/lib/supabase/types';
 
 const QuangTriInteractiveMap = dynamic(
@@ -80,6 +81,7 @@ export default function PlacesExplorer({
   onToggleBookmark,
   onOpenModal,
 }: PlacesExplorerProps) {
+  const { lang } = useLanguage();
   const [placesViewMode, setPlacesViewMode] = useState<'map' | 'grid'>('map');
 
   // After picking a zone: show the list right away (visible, scannable) and scroll to the results panel
@@ -103,13 +105,19 @@ export default function PlacesExplorer({
         >
           <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
             <span className="sub-title-accent">
-              BẢN ĐỒ SỐ ĐA LỚP · GHIM ĐỊA ĐIỂM CỘNG ĐỒNG
+              {lang === 'en'
+                ? 'STEP 02 / 05 · INTERACTIVE MULTI-LAYER MAP & PINS'
+                : 'BẢN ĐỒ SỐ ĐA LỚP · GHIM ĐỊA ĐIỂM CỘNG ĐỒNG'}
             </span>
             <h2 className="title-serif">
-              Bản Đồ Tương Tác & Khám Phá Quảng Trị
+              {lang === 'en'
+                ? 'Explore Quang Tri Interactive Map'
+                : 'Bản Đồ Tương Tác & Khám Phá Quảng Trị'}
             </h2>
             <p className="desc-text">
-              Chọn khu vực (QT-01 → QT-12), lọc nhanh điểm tham quan, quán ăn, khách sạn, bãi đỗ xe hoặc tự ghim tọa độ mới.
+              {lang === 'en'
+                ? 'Filter zones (QT-01 → QT-12), attractions, food, hotels, parking & fuel stations — or drop your own pin.'
+                : 'Chọn khu vực (QT-01 → QT-12), lọc nhanh điểm tham quan, quán ăn, khách sạn, bãi đỗ xe hoặc tự ghim tọa độ mới.'}
             </p>
           </div>
 
@@ -246,7 +254,9 @@ export default function PlacesExplorer({
                   <p className="card-short-desc">{p.shortDesc}</p>
                   <div className="card-footer-info">
                     <span className="card-coord">📍 {p.zoneName}</span>
-                    <span className="card-ticket-preview">{p.ticket || 'Miễn phí'}</span>
+                    <span className="card-ticket-preview">
+                      {formatDualCurrency(p.ticket || 'Miễn phí', lang)}
+                    </span>
                   </div>
                 </div>
               </article>

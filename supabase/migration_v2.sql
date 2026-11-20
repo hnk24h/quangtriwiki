@@ -43,11 +43,36 @@ CREATE TABLE IF NOT EXISTS public.guides (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS public.map_pins (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL DEFAULT 'sightseeing',
+    category_label TEXT,
+    zone_code TEXT NOT NULL DEFAULT 'QT-01',
+    zone_name TEXT,
+    lat DOUBLE PRECISION NOT NULL,
+    lng DOUBLE PRECISION NOT NULL,
+    address TEXT,
+    price_or_hours TEXT,
+    description TEXT,
+    image TEXT,
+    contributor TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_map_pins_created ON public.map_pins(created_at DESC);
+
 -- 3. Enable RLS on new tables
 ALTER TABLE public.banner_slides ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.guides ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.map_pins ENABLE ROW LEVEL SECURITY;
 
 -- 4. Recreate clean RLS policies idempotently
+DROP POLICY IF EXISTS "Public read map_pins" ON public.map_pins;
+CREATE POLICY "Public read map_pins" ON public.map_pins FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public insert map_pins" ON public.map_pins;
+CREATE POLICY "Public insert map_pins" ON public.map_pins FOR INSERT WITH CHECK (true);
 DROP POLICY IF EXISTS "Public read banner_slides" ON public.banner_slides;
 CREATE POLICY "Public read banner_slides" ON public.banner_slides FOR SELECT USING (true);
 
@@ -76,8 +101,8 @@ CREATE POLICY "Public insert registrations" ON public.partner_registrations FOR 
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM anon, authenticated;
 GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
 
-GRANT SELECT ON public.places, public.services, public.threads, public.comments, public.foods, public.itineraries, public.zones, public.banner_slides, public.guides, public.page_views TO anon, authenticated;
-GRANT INSERT ON public.threads, public.comments, public.leads, public.partner_registrations, public.page_views TO anon, authenticated;
+GRANT SELECT ON public.places, public.services, public.threads, public.comments, public.foods, public.itineraries, public.zones, public.banner_slides, public.guides, public.page_views, public.map_pins TO anon, authenticated;
+GRANT INSERT ON public.threads, public.comments, public.leads, public.partner_registrations, public.page_views, public.map_pins TO anon, authenticated;
 
 GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO service_role;

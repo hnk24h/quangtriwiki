@@ -4,9 +4,11 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getBookmarkedIds, subscribeStorageSync } from '@/lib/storage';
+import { useLanguage } from '@/lib/i18n';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { lang, toggleLang } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [bookmarkCount, setBookmarkCount] = useState(0);
 
@@ -32,12 +34,12 @@ export default function Navbar() {
   }, [mobileMenuOpen]);
 
   const navLinks = [
-    { href: '/cung-duong', label: 'Bản đồ & Cung đường' },
-    { href: '/am-thuc', label: 'Ẩm thực' },
-    { href: '/dich-vu', label: 'Lưu trú & Dịch vụ' },
-    { href: '/lich-trinh', label: 'Lịch trình' },
-    { href: '/dien-dan', label: 'Cộng đồng' },
-    { href: '/so-tay', label: 'Sổ tay của tôi' },
+    { href: '/cung-duong', label: lang === 'en' ? 'Map & Routes' : 'Bản đồ & Cung đường' },
+    { href: '/am-thuc', label: lang === 'en' ? 'Food' : 'Ẩm thực' },
+    { href: '/dich-vu', label: lang === 'en' ? 'Stays & Services' : 'Lưu trú & Dịch vụ' },
+    { href: '/lich-trinh', label: lang === 'en' ? 'Itineraries' : 'Lịch trình' },
+    { href: '/dien-dan', label: lang === 'en' ? 'Community' : 'Cộng đồng' },
+    { href: '/so-tay', label: lang === 'en' ? 'My Saved' : 'Sổ tay của tôi' },
   ];
 
   return (
@@ -62,7 +64,9 @@ export default function Navbar() {
           </div>
           <div>
             <div className="brand-title">QuangTri.wiki</div>
-            <span className="brand-subtitle">ĐI ĐẾN NƠI CÓ GIÓ</span>
+            <span className="brand-subtitle">
+              {lang === 'en' ? 'GO WHERE THE WIND BLOWS' : 'ĐI ĐẾN NƠI CÓ GIÓ'}
+            </span>
           </div>
         </Link>
 
@@ -89,8 +93,20 @@ export default function Navbar() {
 
         {/* Header Actions */}
         <div className="header-actions">
+          <button
+            type="button"
+            onClick={toggleLang}
+            className="lang-switch-btn"
+            title={lang === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt'}
+            aria-label={lang === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt'}
+          >
+            <span className={lang === 'vi' ? 'active' : ''}>VI</span>
+            <span className="lang-sep">/</span>
+            <span className={lang === 'en' ? 'active' : ''}>EN</span>
+          </button>
+
           <Link href="/dich-vu" className="header-contact-btn">
-            <span>Kết nối với chúng tôi</span>
+            <span>{lang === 'en' ? 'Local Connect' : 'Kết nối với chúng tôi'}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
               <line x1="7" y1="17" x2="17" y2="7" />
               <polyline points="7 7 17 7 17 17" />
@@ -127,7 +143,11 @@ export default function Navbar() {
       </div>
 
       <div className="sub-header-strip">
-        <span>Lên lịch trình · Trải nghiệm · Lưu nhật ký</span>
+        <span>
+          {lang === 'en'
+            ? 'Plan · Explore Phong Nha & DMZ · Save Your Trip'
+            : 'Lên lịch trình · Trải nghiệm · Lưu nhật ký'}
+        </span>
       </div>
 
       {mobileMenuOpen && (

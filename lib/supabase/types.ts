@@ -451,6 +451,31 @@ export interface Database {
         };
         Update: Partial<Database['public']['Tables']['guides']['Insert']>;
       };
+      map_pins: {
+        Row: {
+          id: string;
+          name: string;
+          category: string;
+          category_label: string | null;
+          zone_code: string;
+          zone_name: string | null;
+          lat: number;
+          lng: number;
+          address: string | null;
+          price_or_hours: string | null;
+          description: string | null;
+          image: string | null;
+          contributor: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Omit<Database['public']['Tables']['map_pins']['Row'], 'created_at'>> & {
+          id: string;
+          name: string;
+          lat: number;
+          lng: number;
+        };
+        Update: Partial<Database['public']['Tables']['map_pins']['Insert']>;
+      };
     };
   };
 }

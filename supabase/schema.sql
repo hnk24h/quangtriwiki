@@ -251,30 +251,86 @@ ALTER TABLE public.zones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.banner_slides ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.guides ENABLE ROW LEVEL SECURITY;
 
+-- -----------------------------------------------------------------------------
+-- 13b. BẢNG: map_pins (Địa điểm ghim cộng đồng trên Bản đồ)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.map_pins (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL DEFAULT 'sightseeing',
+    category_label TEXT,
+    zone_code TEXT NOT NULL DEFAULT 'QT-01',
+    zone_name TEXT,
+    lat DOUBLE PRECISION NOT NULL,
+    lng DOUBLE PRECISION NOT NULL,
+    address TEXT,
+    price_or_hours TEXT,
+    description TEXT,
+    image TEXT,
+    contributor TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_map_pins_created ON public.map_pins(created_at DESC);
+ALTER TABLE public.map_pins ENABLE ROW LEVEL SECURITY;
+
+-- Bổ sung cột mới an toàn nếu bảng cũ đã tồn tại từ bản trước
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS featured_count TEXT;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS specialty TEXT;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS type_tag TEXT;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS type_group TEXT DEFAULT 'history';
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS lon DOUBLE PRECISION;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS show_in_weather BOOLEAN DEFAULT TRUE;
+ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS weather_region_label TEXT;
+ALTER TABLE public.foods ADD COLUMN IF NOT EXISTS taste_notes TEXT;
+ALTER TABLE public.foods ADD COLUMN IF NOT EXISTS highlights TEXT[] DEFAULT '{}';
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS region TEXT;
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS device_type TEXT;
+
 -- Page views: Public ghi nhận và xem bộ đếm tổng
+DROP POLICY IF EXISTS "Public insert page_views" ON public.page_views;
 CREATE POLICY "Public insert page_views" ON public.page_views FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Public read page_views" ON public.page_views;
 CREATE POLICY "Public read page_views" ON public.page_views FOR SELECT USING (true);
 
 -- Foods, Itineraries, Zones, Banner Slides, Guides, Places, Services: Public đọc
+DROP POLICY IF EXISTS "Public read foods" ON public.foods;
 CREATE POLICY "Public read foods" ON public.foods FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read itineraries" ON public.itineraries;
 CREATE POLICY "Public read itineraries" ON public.itineraries FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read zones" ON public.zones;
 CREATE POLICY "Public read zones" ON public.zones FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read banner_slides" ON public.banner_slides;
 CREATE POLICY "Public read banner_slides" ON public.banner_slides FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read guides" ON public.guides;
 CREATE POLICY "Public read guides" ON public.guides FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read places" ON public.places;
 CREATE POLICY "Public read places" ON public.places FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read services" ON public.services;
 CREATE POLICY "Public read services" ON public.services FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read map_pins" ON public.map_pins;
+CREATE POLICY "Public read map_pins" ON public.map_pins FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public insert map_pins" ON public.map_pins;
+CREATE POLICY "Public insert map_pins" ON public.map_pins FOR INSERT WITH CHECK (true);
 
 -- Diễn đàn: Public đọc và tạo bài viết/bình luận (cập nhật/xóa qua service_role)
+DROP POLICY IF EXISTS "Public read threads" ON public.threads;
 CREATE POLICY "Public read threads" ON public.threads FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public insert threads" ON public.threads;
 CREATE POLICY "Public insert threads" ON public.threads FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Public read comments" ON public.comments;
 CREATE POLICY "Public read comments" ON public.comments FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public insert comments" ON public.comments;
 CREATE POLICY "Public insert comments" ON public.comments FOR INSERT WITH CHECK (true);
 
 -- Leads: Người dùng tạo log khi click, chỉ service_role (Admin server) xem thống kê
+DROP POLICY IF EXISTS "Public insert leads" ON public.leads;
 CREATE POLICY "Public insert leads" ON public.leads FOR INSERT WITH CHECK (true);
 
 -- Partner registrations: Chủ cơ sở gửi đơn đăng ký, chỉ service_role (Admin server) xem & duyệt
+DROP POLICY IF EXISTS "Public insert registrations" ON public.partner_registrations;
 CREATE POLICY "Public insert registrations" ON public.partner_registrations FOR INSERT WITH CHECK (true);
 
 -- -----------------------------------------------------------------------------
@@ -284,10 +340,10 @@ REVOKE ALL ON ALL TABLES IN SCHEMA public FROM anon, authenticated;
 GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
 
 -- Quyền đọc nội dung công khai
-GRANT SELECT ON public.places, public.services, public.threads, public.comments, public.foods, public.itineraries, public.zones, public.banner_slides, public.guides, public.page_views TO anon, authenticated;
+GRANT SELECT ON public.places, public.services, public.threads, public.comments, public.foods, public.itineraries, public.zones, public.banner_slides, public.guides, public.page_views, public.map_pins TO anon, authenticated;
 
 -- Quyền ghi công khai có kiểm soát qua API
-GRANT INSERT ON public.threads, public.comments, public.leads, public.partner_registrations, public.page_views TO anon, authenticated;
+GRANT INSERT ON public.threads, public.comments, public.leads, public.partner_registrations, public.page_views, public.map_pins TO anon, authenticated;
 
 -- Toàn quyền cho service_role (Server Admin API)
 GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;

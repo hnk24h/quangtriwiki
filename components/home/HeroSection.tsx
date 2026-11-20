@@ -5,6 +5,7 @@ import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
 import ClockCalendarWidget from '@/components/home/ClockCalendarWidget';
 import WeatherWidget from '@/components/home/WeatherWidget';
+import { useLanguage } from '@/lib/i18n';
 import type { BannerSlide, Food, Itinerary, Place, Service } from '@/lib/supabase/types';
 import type { WeatherLocationData } from '@/lib/weather';
 
@@ -57,6 +58,7 @@ export default function HeroSection({
   filteredPlacesCount,
   onSelectPlace,
 }: HeroSectionProps) {
+  const { lang } = useLanguage();
   const heroSlides = useMemo(() => {
     if (Array.isArray(slides) && slides.length > 0) return slides;
     return [
@@ -218,7 +220,9 @@ export default function HeroSection({
         <div className="hagiang-hero-left">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
             <div className="hagiang-kicker" style={{ margin: 0 }}>
-              {activeSlide.badge || 'MIỀN TRUNG VIỆT NAM · GÓC NHÌN ĐỊA PHƯƠNG'}
+              {lang === 'en'
+                ? 'CENTRAL VIETNAM · GO WHERE THE WIND BLOWS'
+                : activeSlide.badge || 'MIỀN TRUNG VIỆT NAM · ĐI ĐẾN NƠI CÓ GIÓ'}
             </div>
             <span
               style={{
@@ -236,15 +240,19 @@ export default function HeroSection({
               }}
             >
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399' }} />
-              {initialViews.toLocaleString('vi-VN')} lượt xem
+              {initialViews.toLocaleString('vi-VN')} {lang === 'en' ? 'views' : 'lượt xem'}
             </span>
           </div>
 
           <h1 className="hagiang-main-title" key={`title-${currentSlide}`}>
-            {activeSlide.title || 'Gần hơn với Quảng Trị chân thật.'}
+            {lang === 'en'
+              ? 'From Phong Nha Caves to DMZ & Con Co Island.'
+              : activeSlide.title || 'Gần hơn với Quảng Trị chân thật.'}
           </h1>
           <p className="hagiang-main-subtitle" key={`sub-${currentSlide}`} style={{ maxWidth: '520px', lineHeight: 1.6 }}>
-            {activeSlide.subtitle || 'Đèo núi. Miền đất thiêng yên bình. Hành trình đáng để đi chậm.'}
+            {lang === 'en'
+              ? 'An independent local travel guide to Vietnam’s Phong Nha - Ke Bang, Hien Luong 17th Parallel, Sa Mu cloud pass, and Nhat Le coast.'
+              : activeSlide.subtitle || 'Đèo núi. Miền đất thiêng yên bình. Hành trình đáng để đi chậm.'}
           </p>
 
           {/* Live Search Bar + Dropdown */}
@@ -282,8 +290,12 @@ export default function HeroSection({
                 }
               }}
               className="hagiang-search-input"
-              aria-label="Tìm kiếm điểm đến, món ngon, dịch vụ tại Quảng Trị"
-              placeholder="Tìm Thành Cổ, Đèo Sa Mù, Cồn Cỏ, món ngon... (⌘K)"
+              aria-label={lang === 'en' ? 'Search destinations, food, stays in Quang Tri' : 'Tìm kiếm điểm đến, món ngon, dịch vụ tại Quảng Trị'}
+              placeholder={
+                lang === 'en'
+                  ? 'Search Phong Nha, DMZ, Sa Mu Pass, Nhat Le... (⌘K)'
+                  : 'Tìm Phong Nha, Thành Cổ, Đèo Sa Mù, Cồn Cỏ... (⌘K)'
+              }
             />
 
             {searchQuery ? (
@@ -393,7 +405,9 @@ export default function HeroSection({
 
           {suggestedPlaces.length > 0 && (
             <div className="hero-quick-picks">
-              <span className="hero-quick-label">✨ Gợi ý hôm nay:</span>
+              <span className="hero-quick-label">
+                {lang === 'en' ? '✨ Quick picks:' : '✨ Gợi ý hôm nay:'}
+              </span>
               {suggestedPlaces.map((place) => (
                 <button
                   type="button"

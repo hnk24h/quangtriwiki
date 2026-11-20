@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLanguage } from '@/lib/i18n';
 import {
   buildOpenMeteoBatchUrl,
   parseOpenMeteoResponse,
@@ -34,6 +35,7 @@ function formatVnTime(isoString?: string): string {
 }
 
 export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
+  const { lang } = useLanguage();
   const [liveWeather, setLiveWeather] = useState<Record<string, WeatherLocationData>>(weatherData || {});
   const keys = useMemo(() => Object.keys(liveWeather), [liveWeather]);
 
@@ -144,9 +146,11 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
               {currentLoc.lat.toFixed(2)}°N, {currentLoc.lon.toFixed(2)}°E
             </span>
           </div>
-          <h3 className="weather-card-title">Thời tiết {currentLoc.zoneCode}</h3>
+          <h3 className="weather-card-title">
+            {lang === 'en' ? `Weather ${currentLoc.zoneCode}` : `Thời tiết ${currentLoc.zoneCode}`}
+          </h3>
           <p className="weather-card-meta">
-            {currentLoc.region} · 7 ngày theo giờ VN
+            {currentLoc.region} · {lang === 'en' ? '7-day Vietnam forecast' : '7 ngày theo giờ VN'}
           </p>
         </div>
 
@@ -234,7 +238,11 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
       >
         <span>
           {isExpanded
-            ? 'Thu gọn chi tiết giờ & gió/UV'
+            ? lang === 'en'
+              ? 'Hide hourly & wind/UV details'
+              : 'Thu gọn chi tiết giờ & gió/UV'
+            : lang === 'en'
+            ? `Hourly details · Rain ${displayRain} · Wind ${displayWind}`
             : `Chi tiết theo giờ · Mưa ${displayRain} · Gió ${displayWind}`}
         </span>
         <span>{isExpanded ? '▴' : '▾'}</span>

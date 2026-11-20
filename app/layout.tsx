@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import ToastProvider from '@/components/common/ToastProvider';
 import PageViewTracker from '@/components/common/PageViewTracker';
+import { LanguageProvider } from '@/lib/i18n';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -64,10 +65,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <ToastProvider>
-          <PageViewTracker />
-          {children}
-        </ToastProvider>
+        <LanguageProvider>
+          <ToastProvider>
+            <PageViewTracker />
+            {children}
+          </ToastProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

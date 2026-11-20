@@ -5,6 +5,7 @@ import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
 import { useToast } from '@/components/common/ToastProvider';
 import PlaceQuickModal from '@/components/home/PlaceQuickModal';
+import { formatDualCurrency, useLanguage } from '@/lib/i18n';
 import { DEFAULT_ZONE_META } from '@/lib/normalize';
 import type { Food, GuidesData, Place, Service, Zone } from '@/lib/supabase/types';
 
@@ -527,16 +528,17 @@ const CURATED_FUEL_POIS: MapPoiItem[] = [
 const CATEGORY_TABS: Array<{
   id: MapPoiCategory;
   label: string;
+  labelEn: string;
   icon: string;
   color: string;
 }> = [
-  { id: 'all', label: 'Tất cả', icon: '🧭', color: '#133e2f' },
-  { id: 'sightseeing', label: 'Điểm tham quan', icon: '🏛️', color: '#059669' },
-  { id: 'food', label: 'Ăn uống', icon: '🍲', color: '#ea580c' },
-  { id: 'hotel', label: 'Khách sạn & Lưu trú', icon: '🏨', color: '#2563eb' },
-  { id: 'parking', label: 'Bãi đỗ xe', icon: '🅿️', color: '#4f46e5' },
-  { id: 'fuel', label: 'Cây xăng & Cứu hộ', icon: '⛽', color: '#d97706' },
-  { id: 'user_pin', label: 'Cộng đồng ghim', icon: '📌', color: '#db2777' },
+  { id: 'all', label: 'Tất cả', labelEn: 'All', icon: '🧭', color: '#133e2f' },
+  { id: 'sightseeing', label: 'Điểm tham quan', labelEn: 'Attractions', icon: '🏛️', color: '#059669' },
+  { id: 'food', label: 'Ăn uống', labelEn: 'Food & Drink', icon: '🍲', color: '#ea580c' },
+  { id: 'hotel', label: 'Khách sạn & Lưu trú', labelEn: 'Hotels & Stays', icon: '🏨', color: '#2563eb' },
+  { id: 'parking', label: 'Bãi đỗ xe', labelEn: 'Parking', icon: '🅿️', color: '#4f46e5' },
+  { id: 'fuel', label: 'Cây xăng & Cứu hộ', labelEn: 'Fuel & Rescue', icon: '⛽', color: '#d97706' },
+  { id: 'user_pin', label: 'Cộng đồng ghim', labelEn: 'Community Pins', icon: '📌', color: '#db2777' },
 ];
 
 function parsePlaceLatLng(place: Place): { lat: number; lng: number } {
@@ -641,6 +643,7 @@ export default function QuangTriInteractiveMap({
   defaultSidebarCollapsed = false,
 }: Props) {
   const { showToast } = useToast();
+  const { lang } = useLanguage();
 
   const [activeCategory, setActiveCategory] = useState<MapPoiCategory>('all');
   const [internalZone, setInternalZone] = useState<string>('all');
@@ -677,19 +680,38 @@ export default function QuangTriInteractiveMap({
   const isPinningModeRef = useRef(isPinningMode);
   isPinningModeRef.current = isPinningMode;
 
-  // Load saved user pins from localStorage
+  // Load community pins from Supabase /api/map-pins + localStorage fallback
   useEffect(() => {
+    let localPins: MapPoiItem[] = [];
     try {
       const raw = localStorage.getItem(USER_PINS_STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          setUserPins(parsed);
-        }
+        if (Array.isArray(parsed)) localPins = parsed;
       }
     } catch {
       // ignore storage errors
     }
+    if (localPins.length > 0) setUserPins(localPins);
+
+    fetch('/api/map-pins')
+      .then((r) => r.json())
+      .then((res) => {
+        if (Array.isArray(res?.pins) && res.pins.length > 0) {
+          const seen = new Set<string>();
+          const merged: MapPoiItem[] = [];
+          for (const p of [...res.pins, ...localPins]) {
+            if (!seen.has(p.id)) {
+              seen.add(p.id);
+              merged.push(p);
+            }
+          }
+          setUserPins(merged);
+        }
+      })
+      .catch(() => {
+        // keep local pins if offline
+      });
   }, []);
 
   const saveUserPins = useCallback((nextPins: MapPoiItem[]) => {
@@ -1145,17 +1167,22 @@ export default function QuangTriInteractiveMap({
     );
   };
 
-  const handleSaveUserPin = (e: React.FormEvent) => {
+  const handleSaveUserPin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pinName.trim() || !draftPinCoords) {
-      showToast('Vui lòng nhập tên địa điểm và chọn tọa độ trên bản đồ.', 'error');
+      showToast(
+        lang === 'en'
+          ? 'Please enter a place name and pick coordinates on the map.'
+          : 'Vui lòng nhập tên địa điểm và chọn tọa độ trên bản đồ.',
+        'error'
+      );
       return;
     }
 
     const zoneObj = zoneOptions.find((z) => z.code === pinZoneCode);
     const catMeta = getCategoryMeta(pinCategory);
 
-    const newPin: MapPoiItem = {
+    const draftPin: MapPoiItem = {
       id: `user-pin-${Date.now()}`,
       name: pinName.trim(),
       category: pinCategory,
@@ -1172,14 +1199,31 @@ export default function QuangTriInteractiveMap({
         `Địa điểm được đóng góp bởi ${pinContributor.trim() || 'Phượt thủ cộng đồng'}.`,
       image:
         pinImage.trim() ||
-        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
+        '/images/phong-nha-cave.jpg',
       contributor: pinContributor.trim() || 'Phượt thủ Quảng Trị',
       isUserPin: true,
     };
 
-    const updated = [newPin, ...userPins];
+    let savedPin = draftPin;
+    let savedToServer = false;
+    try {
+      const res = await fetch('/api/map-pins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(draftPin),
+      });
+      const json = await res.json();
+      if (res.ok && json?.success && json?.pin) {
+        savedPin = json.pin;
+        savedToServer = true;
+      }
+    } catch {
+      // fallback to localStorage below
+    }
+
+    const updated = [savedPin, ...userPins.filter((p) => p.id !== savedPin.id)];
     saveUserPins(updated);
-    setSelectedPoiId(newPin.id);
+    setSelectedPoiId(savedPin.id);
     setIsPinningMode(false);
     setIsPinDrawerOpen(false);
     setDraftPinCoords(null);
@@ -1190,9 +1234,13 @@ export default function QuangTriInteractiveMap({
     setPinImage('');
 
     if (mapInstanceRef.current) {
-      mapInstanceRef.current.flyTo([newPin.lat, newPin.lng], 13, { duration: 0.8 });
+      mapInstanceRef.current.flyTo([savedPin.lat, savedPin.lng], 13, { duration: 0.8 });
     }
-    showToast(`Đã ghim "${newPin.name}" lên bản đồ!`);
+    showToast(
+      savedToServer
+        ? `Đã lưu ghim "${savedPin.name}" lên Database cộng đồng!`
+        : `Đã ghim "${savedPin.name}" lên bản đồ!`
+    );
   };
 
   const handleDeleteUserPin = (pinId: string, pinLabel: string) => {
@@ -1232,7 +1280,7 @@ export default function QuangTriInteractiveMap({
                   }
                 >
                   <span>{tab.icon}</span>
-                  <span>{tab.label}</span>
+                  <span>{lang === 'en' ? tab.labelEn : tab.label}</span>
                   <span className="gmap-cat-count">{count}</span>
                 </button>
               );
@@ -1247,8 +1295,12 @@ export default function QuangTriInteractiveMap({
                 type="text"
                 value={mapSearch}
                 onChange={(e) => setMapSearch(e.target.value)}
-                placeholder="Tìm quán ăn, khách sạn, bãi đỗ xe..."
-                aria-label="Tìm địa điểm trên bản đồ"
+                placeholder={
+                  lang === 'en'
+                    ? 'Search food, hotels, parking...'
+                    : 'Tìm quán ăn, khách sạn, bãi đỗ xe...'
+                }
+                aria-label={lang === 'en' ? 'Search map' : 'Tìm địa điểm trên bản đồ'}
               />
               {mapSearch && (
                 <button type="button" onClick={() => setMapSearch('')} aria-label="Xóa tìm kiếm">
@@ -1263,7 +1315,15 @@ export default function QuangTriInteractiveMap({
               className={`gmap-add-pin-btn ${isPinningMode ? 'active' : ''}`}
             >
               <span>📌</span>
-              <span>{isPinningMode ? 'Đang ghim (Bấm để hủy)' : '+ Ghim địa điểm mới'}</span>
+              <span>
+                {isPinningMode
+                  ? lang === 'en'
+                    ? 'Pinning (Click to cancel)'
+                    : 'Đang ghim (Bấm để hủy)'
+                  : lang === 'en'
+                  ? '+ Pin New Place'
+                  : '+ Ghim địa điểm mới'}
+              </span>
             </button>
           </div>
         </div>
@@ -1661,12 +1721,12 @@ export default function QuangTriInteractiveMap({
 
                 <div className="gmap-info-meta-grid">
                   <span>📍 {selectedPoi.address}</span>
-                  <span>🏷️ {selectedPoi.priceOrHours}</span>
+                  <span>🏷️ {formatDualCurrency(selectedPoi.priceOrHours, lang)}</span>
                   <span>
                     🧭 {selectedPoi.lat.toFixed(4)}°N, {selectedPoi.lng.toFixed(4)}°E
                   </span>
                   {selectedPoi.contributor && (
-                    <span>👤 Đóng góp: {selectedPoi.contributor}</span>
+                    <span>👤 {lang === 'en' ? 'By:' : 'Đóng góp:'} {selectedPoi.contributor}</span>
                   )}
                 </div>
 
@@ -1677,7 +1737,7 @@ export default function QuangTriInteractiveMap({
                     rel="noopener noreferrer"
                     className="gmap-action-btn primary"
                   >
-                    🧭 Chỉ đường Google Maps ↗
+                    🧭 {lang === 'en' ? 'Google Maps Directions ↗' : 'Chỉ đường Google Maps ↗'}
                   </a>
 
                   {selectedPoi.rawPlace && (

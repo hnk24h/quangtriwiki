@@ -12,6 +12,7 @@ import PlaceQuickModal from '@/components/home/PlaceQuickModal';
 import PartnerRegistrationModal from '@/components/home/PartnerRegistrationModal';
 import ThreadCreateModal from '@/components/home/ThreadCreateModal';
 import { getBookmarkedIds, subscribeStorageSync, toggleBookmarkId } from '@/lib/storage';
+import { formatDualCurrency, useLanguage } from '@/lib/i18n';
 import {
   PLACE_CATEGORY_IDS,
   matchesPlaceCategory,
@@ -55,6 +56,7 @@ export default function HomeClient({
   initialViews = 0,
 }: HomeClientProps) {
   const { showToast } = useToast();
+  const { lang } = useLanguage();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedZone, setSelectedZone] = useState('all');
@@ -245,30 +247,30 @@ export default function HomeClient({
 
       {/* Connected Journey Navigation Bar */}
       <div className="hagiang-bottom-bar">
-        <nav className="container home-quick-nav" aria-label="Hành trình khám phá Quảng Trị">
+        <nav className="container home-quick-nav" aria-label={lang === 'en' ? '5-step Quang Tri travel guide' : 'Hành trình khám phá Quảng Trị'}>
           <a href="#kham-pha">
             <span className="step-num">01</span>
-            <span>✨ Trải nghiệm biểu tượng</span>
+            <span>{lang === 'en' ? '✨ Iconic Highlights' : '✨ Trải nghiệm biểu tượng'}</span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#cung-duong">
             <span className="step-num">02</span>
-            <span>🗺️ Bản đồ đa lớp ({initialPlaces.length})</span>
+            <span>{lang === 'en' ? `🗺️ Interactive Map (${initialPlaces.length})` : `🗺️ Bản đồ đa lớp (${initialPlaces.length})`}</span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#dich-vu">
             <span className="step-num">03</span>
-            <span>🏕️ Lưu trú & Thuê xe</span>
+            <span>{lang === 'en' ? '🏕️ Stays & Transport' : '🏕️ Lưu trú & Thuê xe'}</span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#am-thuc">
             <span className="step-num">04</span>
-            <span>🍲 Ẩm thực đất lửa</span>
+            <span>{lang === 'en' ? '🍲 Local Cuisine' : '🍲 Ẩm thực đất lửa'}</span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#lich-trinh">
             <span className="step-num">05</span>
-            <span>🧭 Lộ trình & Cộng đồng</span>
+            <span>{lang === 'en' ? '🧭 Routes & Safety' : '🧭 Lộ trình & Cộng đồng'}</span>
           </a>
         </nav>
       </div>
@@ -278,14 +280,20 @@ export default function HomeClient({
         <div className="container">
           <div className="section-head-split">
             <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
-              <span className="sub-title-accent">BƯỚC 01 / 05 · CẢM HỨNG HÀNH TRÌNH</span>
-              <h2 className="title-serif">4 Mảnh Ghép Không Thể Bỏ Lỡ Tại Quảng Trị</h2>
+              <span className="sub-title-accent">
+                {lang === 'en' ? 'STEP 01 / 05 · INSPIRATION' : 'BƯỚC 01 / 05 · CẢM HỨNG HÀNH TRÌNH'}
+              </span>
+              <h2 className="title-serif">
+                {lang === 'en' ? '4 Unmissable Experiences in Quang Tri' : '4 Mảnh Ghép Không Thể Bỏ Lỡ Tại Quảng Trị'}
+              </h2>
               <p className="desc-text">
-                Từ kỳ quan hang động UNESCO phía Bắc đến đèo mây Trường Sơn, ký ức Vĩ tuyến 17 và đảo ngọc tiền tiêu giữa Biển Đông.
+                {lang === 'en'
+                  ? 'From UNESCO karst caves in Phong Nha - Ke Bang to Truong Son cloud passes, the 17th Parallel DMZ, and Con Co Island.'
+                  : 'Từ kỳ quan hang động UNESCO phía Bắc đến đèo mây Trường Sơn, ký ức Vĩ tuyến 17 và đảo ngọc tiền tiêu giữa Biển Đông.'}
               </p>
             </div>
             <a href="#cung-duong" className="journey-back-map-chip">
-              🗺️ Mở bản đồ tương tác ↓
+              {lang === 'en' ? '🗺️ Open Interactive Map ↓' : '🗺️ Mở bản đồ tương tác ↓'}
             </a>
           </div>
 
@@ -293,30 +301,42 @@ export default function HomeClient({
             {[
               {
                 slug: 'dong-phong-nha',
-                tag: 'QT-10 · DI SẢN UNESCO',
-                title: 'Vương Quốc Hang Động Phong Nha – Kẻ Bàng',
-                desc: 'Xuôi thuyền sông Son vào lòng động kỳ vĩ, khám phá Động Thiên Đường & suối Nước Moọc xanh ngọc.',
-                image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80',
+                tag: lang === 'en' ? 'QT-10 · UNESCO HERITAGE' : 'QT-10 · DI SẢN UNESCO',
+                title: lang === 'en' ? 'Phong Nha – Ke Bang Cave Kingdom' : 'Vương Quốc Hang Động Phong Nha – Kẻ Bàng',
+                desc:
+                  lang === 'en'
+                    ? 'Cruise the emerald Son River into limestone caverns, Paradise Cave & Mooc Spring.'
+                    : 'Xuôi thuyền sông Son vào lòng động kỳ vĩ, khám phá Động Thiên Đường & suối Nước Moọc xanh ngọc.',
+                image: '/images/phong-nha-cave.jpg',
               },
               {
-                slug: 'thanh-co-quang-tri',
-                tag: 'QT-02 & QT-03 · ĐẤT THIÊNG',
-                title: 'Ký Ức Thành Cổ & Vĩ Tuyến 17 Hiền Lương',
-                desc: 'Lắng đọng bên dòng Thạch Hãn, Cầu Hiền Lương – Bến Hải và kỳ quan ngầm Địa đạo Vịnh Mốc.',
-                image: 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=900&q=80',
+                slug: 'cau-hien-luong-ben-hai',
+                tag: lang === 'en' ? 'QT-03 & QT-02 · DMZ HERITAGE' : 'QT-03 & QT-02 · ĐẤT THIÊNG',
+                title: lang === 'en' ? 'Hien Luong 17th Parallel & Citadel' : 'Ký Ức Thành Cổ & Vĩ Tuyến 17 Hiền Lương',
+                desc:
+                  lang === 'en'
+                    ? 'Walk the historic two-color bridge over Ben Hai River, Vinh Moc Tunnels & Quang Tri Citadel.'
+                    : 'Lắng đọng bên dòng Thạch Hãn, Cầu Hiền Lương – Bến Hải và kỳ quan ngầm Địa đạo Vịnh Mốc.',
+                image: '/images/hien-luong-bridge.jpg',
               },
               {
                 slug: 'deo-sa-mu',
-                tag: 'QT-05 · TRƯỜNG SƠN TÂY',
-                title: 'Săn Mây Đỉnh Đèo Sa Mù & Cà Phê Khe Sanh',
-                desc: 'Chinh phục độ cao 1.400m mờ sương, cánh đồng điện gió Hướng Linh và thưởng thức Arabica vùng cao.',
-                image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=80',
+                tag: lang === 'en' ? 'QT-05 · TRUONG SON WEST' : 'QT-05 · TRƯỜNG SƠN TÂY',
+                title: lang === 'en' ? 'Sa Mu Cloud Pass & Khe Sanh Coffee' : 'Săn Mây Đỉnh Đèo Sa Mù & Cà Phê Khe Sanh',
+                desc:
+                  lang === 'en'
+                    ? 'Ride 1,400m misty mountain roads above the clouds and savor highland Arabica coffee.'
+                    : 'Chinh phục độ cao 1.400m mờ sương, cánh đồng điện gió Hướng Linh và thưởng thức Arabica vùng cao.',
+                image: '/images/deo-sa-mu-clouds.jpg',
               },
               {
                 slug: 'dao-con-co',
-                tag: 'QT-09 & QT-07 · BIỂN ĐẢO',
-                title: 'Biển Nhật Lệ, Cửa Việt & Đảo Ngọc Cồn Cỏ',
-                desc: 'Đón bình minh đồi cát Quang Phú, dạo biển Cửa Việt và lặn ngắm san hô tại đảo tiền tiêu Cồn Cỏ.',
+                tag: lang === 'en' ? 'QT-09 & QT-07 · COAST & ISLAND' : 'QT-09 & QT-07 · BIỂN ĐẢO',
+                title: lang === 'en' ? 'Nhat Le Coast & Con Co Island' : 'Biển Nhật Lệ, Cửa Việt & Đảo Ngọc Cồn Cỏ',
+                desc:
+                  lang === 'en'
+                    ? 'Catch sunrise on Quang Phu sand dunes and snorkel pristine coral reefs off Con Co Island.'
+                    : 'Đón bình minh đồi cát Quang Phú, dạo biển Cửa Việt và lặn ngắm san hô tại đảo tiền tiêu Cồn Cỏ.',
                 image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80',
               },
             ].map((item) => (
@@ -332,7 +352,9 @@ export default function HomeClient({
                   <span className="inspire-card-tag">{item.tag}</span>
                   <h3 className="inspire-card-title">{item.title}</h3>
                   <p className="inspire-card-desc">{item.desc}</p>
-                  <span className="inspire-card-cta">Khám phá ngay →</span>
+                  <span className="inspire-card-cta">
+                    {lang === 'en' ? 'Explore guide →' : 'Khám phá ngay →'}
+                  </span>
                 </div>
               </Link>
             ))}
@@ -457,8 +479,12 @@ export default function HomeClient({
                   <p className="cservice-address">{srv.address}</p>
 
                   <div className="cservice-price-block">
-                    <span className="cservice-price-label">Giá niêm yết:</span>
-                    <strong className="cservice-price-val">{srv.price}</strong>
+                    <span className="cservice-price-label">
+                      {lang === 'en' ? 'Listed rate:' : 'Giá niêm yết:'}
+                    </span>
+                    <strong className="cservice-price-val">
+                      {formatDualCurrency(srv.price, lang)}
+                    </strong>
                   </div>
 
                   <div className="cservice-actions">
@@ -517,7 +543,7 @@ export default function HomeClient({
                 <div className="cfood-media" style={{ position: 'relative', overflow: 'hidden' }}>
                   <SafeImage src={f.image} alt={f.name} fill sizes="(max-width: 768px) 100vw, 320px" />
                   <span className="cfood-zone">{f.origin || 'Quảng Trị'}</span>
-                  <span className="cfood-price">{f.priceRange || 'Bình dân'}</span>
+                  <span className="cfood-price">{formatDualCurrency(f.priceRange || 'Bình dân', lang)}</span>
                 </div>
                 <div className="cfood-body">
                   <h3 className="cfood-title">{f.name}</h3>
