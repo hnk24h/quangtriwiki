@@ -5,6 +5,7 @@ import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
 import ScrollReveal from '@/components/common/ScrollReveal';
+import SubpageHero from '@/components/common/SubpageHero';
 import type { Food } from '@/lib/supabase/types';
 
 interface AmThucClientProps {
@@ -43,27 +44,37 @@ export default function AmThucClient({ initialFoods }: AmThucClientProps) {
       <Navbar />
 
       <main style={{ paddingBottom: '4rem' }}>
-        {/* Hero Section */}
-        <div
-          style={{
-            backgroundColor: '#133e2f',
-            color: '#fff',
-            padding: '4rem 1.5rem 3.5rem',
-            textAlign: 'center',
-          }}
-        >
-          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
-            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
-              HƯƠNG VỊ XỨ GIÓ LÀO CÁT TRẮNG
-            </span>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
-              Ẩm Thực & Món Ngon Quảng Trị
-            </h1>
-            <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: 0 }}>
-              Đậm đà, cay nồng và mộc mạc như chính con người miền Trung kiên cường. Từ cháo vạt giường nóng hổi đến thịt trâu lá trơng đại ngàn Trường Sơn.
-            </p>
-          </div>
-        </div>
+        <SubpageHero
+          kicker="HƯƠNG VỊ XỨ GIÓ LÀO CÁT TRẮNG"
+          kickerIcon="bi-cup-hot"
+          title="Ẩm Thực & Món Ngon Quảng Trị"
+          subtitle="Đậm đà, cay nồng và mộc mạc như chính con người miền Trung kiên cường. Từ cháo vạt giường nóng hổi đến thịt trâu lá trơng đại ngàn Trường Sơn."
+          highlights={[
+            { icon: 'bi-fire', label: `${initialFoods.length} đặc sản bản địa` },
+            { icon: 'bi-geo-alt-fill', label: 'Địa chỉ quán ngon thực tế' },
+            { icon: 'bi-cash-coin', label: 'Giá niêm yết bình dân' },
+          ]}
+          slides={[
+            {
+              image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80',
+              tag: 'ĐẶC SẢN HẢI LĂNG',
+              title: 'Cháo Vạt Giường & Bún Hến Mai Xá',
+              caption: 'Nước dùng cá lóc đồng ngọt thanh hòa quyện cùng vị thơm nồng của củ nén phi.',
+            },
+            {
+              image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80',
+              tag: 'ẨM THỰC ĐẠI NGÀN',
+              title: 'Thịt Trâu Lá Trơng Hướng Hóa',
+              caption: 'Thịt trâu bản địa nướng thơm kết hợp thảo mộc rừng Trường Sơn đặc trưng.',
+            },
+            {
+              image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80',
+              tag: 'NÔNG SẢN KHE SANH',
+              title: 'Cà Phê Arabica Khe Sanh',
+              caption: 'Hạt Arabica Catimor trồng trên cao độ 600–800m mang hương hoa quả thanh dịu.',
+            },
+          ]}
+        />
 
         {/* Search & Filter Bar */}
         <ScrollReveal variant="fade-in">

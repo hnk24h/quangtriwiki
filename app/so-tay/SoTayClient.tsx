@@ -6,6 +6,7 @@ import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
 import ScrollReveal from '@/components/common/ScrollReveal';
+import SubpageHero from '@/components/common/SubpageHero';
 import { useToast } from '@/components/common/ToastProvider';
 import {
   ChecklistItem,
@@ -128,26 +129,37 @@ export default function SoTayClient({
       <Navbar />
 
       <main style={{ paddingBottom: '4rem' }}>
-        <div
-          style={{
-            backgroundColor: '#133e2f',
-            color: '#fff',
-            padding: '4rem 1.5rem 3.5rem',
-            textAlign: 'center',
-          }}
-        >
-          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
-            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
-              SỔ TAY CÁ NHÂN CỦA BẠN
-            </span>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
-              Sổ Tay Hành Trình Quảng Trị
-            </h1>
-            <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: 0 }}>
-              Lưu giữ điểm đến yêu thích, lịch trình đã chọn, danh mục hành trang và ghi chú chuyến đi hoàn toàn riêng tư trên trình duyệt.
-            </p>
-          </div>
-        </div>
+        <SubpageHero
+          kicker="SỔ TAY CÁ NHÂN CỦA BẠN"
+          kickerIcon="bi-journal-bookmark"
+          title="Sổ Tay Hành Trình Quảng Trị"
+          subtitle="Lưu giữ điểm đến yêu thích, lịch trình đã chọn, danh mục hành trang và ghi chú chuyến đi hoàn toàn riêng tư trên trình duyệt."
+          highlights={[
+            { icon: 'bi-geo-alt-fill', label: `${bookmarkedPlaces.length} điểm đến đã lưu` },
+            { icon: 'bi-calendar3', label: `${bookmarkedItineraries.length} lịch trình đã chọn` },
+            { icon: 'bi-printer', label: 'Hỗ trợ in / lưu PDF' },
+          ]}
+          slides={[
+            {
+              image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80',
+              tag: 'LƯU TRỮ RIÊNG TƯ',
+              title: 'Checklist Hành Trang Chuẩn Cung Đèo',
+              caption: 'Đánh dấu áo ấm, giấy tờ xe, thuốc men và pin dự phòng trước khi lên đường.',
+            },
+            {
+              image: '/images/phong-nha-cave.jpg',
+              tag: 'ĐIỂM ĐẾN YÊU THÍCH',
+              title: 'Gom Gọn Điểm Đến & Lộ Trình',
+              caption: 'Lưu nhanh các tọa độ muốn ghé để mở xem ngay cả khi di chuyển qua vùng sóng yếu.',
+            },
+            {
+              image: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=900&q=80',
+              tag: 'GHI CHÚ CÁ NHÂN',
+              title: 'Lưu Số Tài Xế & Homestay Đã Hẹn',
+              caption: 'Tự động lưu trên trình duyệt của bạn, có thể in ra bản PDF cầm tay tiện lợi.',
+            },
+          ]}
+        />
 
         {/* Summary Bar */}
         <ScrollReveal variant="fade-in">

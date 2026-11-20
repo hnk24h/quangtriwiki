@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { getPlaces, getZones } from '@/lib/get-data';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
+import SubpageHero from '@/components/common/SubpageHero';
 import CungDuongClient from './CungDuongClient';
 
 export const revalidate = 60;
@@ -20,28 +21,37 @@ export default async function CungDuongPage() {
       <Navbar />
 
       <main style={{ paddingBottom: '4rem' }}>
-        <div
-          style={{
-            backgroundColor: '#133e2f',
-            color: '#fff',
-            padding: '4rem 1.5rem 3.5rem',
-            textAlign: 'center',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <div className="subpage-hero-animate" style={{ maxWidth: '800px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
-              HỆ THỐNG MÃ CUNG ĐƯỜNG QT-01 → QT-12
-            </span>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
-              Khám Phá Cung Đường Quảng Trị
-            </h1>
-            <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: 0 }}>
-              Hành trình xuyên suốt từ Di sản thiên nhiên thế giới Phong Nha - Kẻ Bàng, biển Nhật Lệ đến Vĩ tuyến 17, đèo mây Sa Mù và đảo ngọc Cồn Cỏ.
-            </p>
-          </div>
-        </div>
+        <SubpageHero
+          kicker="HỆ THỐNG MÃ CUNG ĐƯỜNG QT-01 → QT-12"
+          kickerIcon="bi-map"
+          title="Khám Phá Cung Đường Quảng Trị"
+          subtitle="Hành trình xuyên suốt từ Di sản thiên nhiên thế giới Phong Nha - Kẻ Bàng, biển Nhật Lệ đến Vĩ tuyến 17, đèo mây Sa Mù và đảo ngọc Cồn Cỏ."
+          highlights={[
+            { icon: 'bi-geo-alt-fill', label: `${places.length} tọa độ thực địa` },
+            { icon: 'bi-signpost-split', label: `${zones.length} phân vùng di sản` },
+            { icon: 'bi-pin-angle-fill', label: 'Ghim địa điểm cộng đồng' },
+          ]}
+          slides={[
+            {
+              image: '/images/phong-nha-cave.jpg',
+              tag: 'QT-09 · PHONG NHA - KẺ BÀNG',
+              title: 'Kỳ Quan Hang Động UNESCO',
+              caption: 'Hệ thống hang động đá vôi hùng vĩ và sông Son xanh ngọc bích phía Bắc tỉnh.',
+            },
+            {
+              image: '/images/hien-luong-bridge.jpg',
+              tag: 'QT-03 · VĨ TUYẾN 17',
+              title: 'Cầu Hiền Lương & Sông Bến Hải',
+              caption: 'Dấu ấn lịch sử chia cắt hai miền và biểu tượng khát vọng thống nhất.',
+            },
+            {
+              image: '/images/deo-sa-mu-clouds.jpg',
+              tag: 'QT-05 · ĐÈO SA MÙ 1.400M',
+              title: 'Biển Mây Đại Ngàn Trường Sơn',
+              caption: 'Cung đèo săn mây, cánh đồng điện gió Hướng Linh và thung lũng cà phê Khe Sanh.',
+            },
+          ]}
+        />
 
         <CungDuongClient places={places} zones={zones} />
       </main>

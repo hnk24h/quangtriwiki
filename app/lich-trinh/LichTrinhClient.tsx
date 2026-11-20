@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import ScrollReveal from '@/components/common/ScrollReveal';
+import SubpageHero from '@/components/common/SubpageHero';
 import { useToast } from '@/components/common/ToastProvider';
 import { STORAGE_KEYS } from '@/lib/storage';
 import type { Itinerary } from '@/lib/supabase/types';
@@ -48,26 +49,37 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
       <Navbar />
 
       <main style={{ paddingBottom: '4rem' }}>
-        <div
-          style={{
-            backgroundColor: '#133e2f',
-            color: '#fff',
-            padding: '4rem 1.5rem 3.5rem',
-            textAlign: 'center',
-          }}
-        >
-          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
-            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
-              GỢI Ý LỘ TRÌNH KHÁM PHÁ QUẢNG TRỊ
-            </span>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
-              Lịch Trình Hành Trình Bản Địa
-            </h1>
-            <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: 0 }}>
-              Được tối ưu cự ly di chuyển, thời gian đón bình minh săn mây và ghé thăm các di tích thiêng liêng nhất của Quảng Trị.
-            </p>
-          </div>
-        </div>
+        <SubpageHero
+          kicker="GỢI Ý LỘ TRÌNH KHÁM PHÁ QUẢNG TRỊ"
+          kickerIcon="bi-compass"
+          title="Lịch Trình Hành Trình Bản Địa"
+          subtitle="Được tối ưu cự ly di chuyển, thời gian đón bình minh săn mây và ghé thăm các di tích thiêng liêng nhất của Quảng Trị."
+          highlights={[
+            { icon: 'bi-calendar3', label: `${initialItineraries.length} lộ trình đi chậm` },
+            { icon: 'bi-clock', label: 'Chia chặng theo khung giờ' },
+            { icon: 'bi-bookmark-check', label: 'Lưu vào Sổ tay cá nhân' },
+          ]}
+          slides={[
+            {
+              image: '/images/deo-sa-mu-clouds.jpg',
+              tag: '2 NGÀY 1 ĐÊM · ĐẠI NGÀN',
+              title: 'Săn Mây Sa Mù & Khe Sanh',
+              caption: 'Đón bình minh biển mây trên đèo 1.400m, ghé sân bay Tà Cơn và thác Chênh Vênh.',
+            },
+            {
+              image: '/images/hien-luong-bridge.jpg',
+              tag: '1 NGÀY · KÝ ỨC DMZ',
+              title: 'Vĩ Tuyến 17 – Thành Cổ – Vịnh Mốc',
+              caption: 'Hành trình tri ân qua các địa danh lịch sử hào hùng bên đôi bờ sông Bến Hải.',
+            },
+            {
+              image: '/images/phong-nha-cave.jpg',
+              tag: '3 NGÀY 2 ĐÊM · DI SẢN',
+              title: 'Xuyên Tỉnh Phong Nha – Nhật Lệ – Quảng Trị',
+              caption: 'Kết hợp kỳ quan hang động UNESCO, biển Nhật Lệ và cung đường Hồ Chí Minh Tây.',
+            },
+          ]}
+        />
 
         {/* Tab Selection */}
         <ScrollReveal variant="fade-in">

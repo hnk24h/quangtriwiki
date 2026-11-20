@@ -5,6 +5,7 @@ import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
 import ScrollReveal from '@/components/common/ScrollReveal';
+import SubpageHero from '@/components/common/SubpageHero';
 import PartnerRegistrationModal from '@/components/home/PartnerRegistrationModal';
 import type { Service } from '@/lib/supabase/types';
 
@@ -50,42 +51,54 @@ export default function DichVuClient({ initialServices }: DichVuClientProps) {
       <Navbar />
 
       <main style={{ paddingBottom: '4rem' }}>
-        <div
-          style={{
-            backgroundColor: '#133e2f',
-            color: '#fff',
-            padding: '4rem 1.5rem 3.5rem',
-            textAlign: 'center',
-          }}
+        <SubpageHero
+          kicker="KẾT NỐI TRỰC TIẾP VỚI NGƯỜI BẢN ĐỊA"
+          kickerIcon="bi-building"
+          title="Lưu Trú & Dịch Vụ Du Lịch Quảng Trị"
+          subtitle="Tất cả đối tác đều được đội ngũ khảo sát thực tế, cam kết đúng giá niêm yết, không chèo kéo, hỗ trợ tận tình cho phượt thủ."
+          highlights={[
+            { icon: 'bi-patch-check', label: `${initialServices.length} đối tác xác minh` },
+            { icon: 'bi-telephone-fill', label: 'Gọi Hotline / Zalo trực tiếp' },
+            { icon: 'bi-shield-check', label: '100% đúng giá niêm yết' },
+          ]}
+          slides={[
+            {
+              image: 'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=900&q=80',
+              tag: 'GLAMPING & HOMESTAY',
+              title: 'Nghỉ Dưỡng Giữa Thiên Nhiên Khe Sanh',
+              caption: 'Cabin gỗ, lều glamping săn mây buổi sớm và vườn cà phê yên tĩnh.',
+            },
+            {
+              image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=900&q=80',
+              tag: 'THUÊ XE MÁY PHƯỢT',
+              title: 'Xe Số & Tay Côn Chuẩn Cung Đèo',
+              caption: 'Giao xe tận ga Đông Hà, kèm mũ bảo hiểm, áo mưa và hỗ trợ kỹ thuật dọc tuyến.',
+            },
+            {
+              image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=80',
+              tag: 'TÀU CAO TỐC CỒN CỎ',
+              title: 'Hành Trình Ra Đảo Tiền Tiêu',
+              caption: 'Đặt vé tàu khứ hồi Cửa Việt – Cồn Cỏ và tour lặn ngắm san hô bản địa.',
+            },
+          ]}
         >
-          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
-            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
-              KẾT NỐI TRỰC TIẾP VỚI NGƯỜI BẢN ĐỊA
-            </span>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
-              Lưu Trú & Dịch Vụ Du Lịch Quảng Trị
-            </h1>
-            <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: '0 0 1.5rem' }}>
-              Tất cả đối tác đều được đội ngũ khảo sát thực tế, cam kết đúng giá niêm yết, không chèo kéo, hỗ trợ tận tình cho phượt thủ.
-            </p>
-            <button
-              type="button"
-              onClick={() => setIsPartnerModalOpen(true)}
-              style={{
-                background: '#fbbf24',
-                color: '#092118',
-                padding: '0.7rem 1.4rem',
-                borderRadius: '999px',
-                border: 'none',
-                fontWeight: 700,
-                fontSize: '0.92rem',
-                cursor: 'pointer',
-              }}
-            >
-              + Đăng ký trở thành đối tác bản địa
-            </button>
-          </div>
-        </div>
+          <button
+            type="button"
+            onClick={() => setIsPartnerModalOpen(true)}
+            style={{
+              background: '#fbbf24',
+              color: '#092118',
+              padding: '0.7rem 1.4rem',
+              borderRadius: '999px',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '0.92rem',
+              cursor: 'pointer',
+            }}
+          >
+            + Đăng ký trở thành đối tác bản địa
+          </button>
+        </SubpageHero>
 
         {/* Search & Filters */}
         <ScrollReveal variant="fade-in">

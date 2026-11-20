@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import ScrollReveal from '@/components/common/ScrollReveal';
+import SubpageHero from '@/components/common/SubpageHero';
 import { useToast } from '@/components/common/ToastProvider';
 import { STORAGE_KEYS } from '@/lib/storage';
 
@@ -74,26 +75,37 @@ export default function ChiPhiClient() {
       <Navbar />
 
       <main style={{ paddingBottom: '4rem' }}>
-        <div
-          style={{
-            backgroundColor: '#133e2f',
-            color: '#fff',
-            padding: '4rem 1.5rem 3.5rem',
-            textAlign: 'center',
-          }}
-        >
-          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
-            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
-              DỰ TOÁN MINH BẠCH · KHÔNG PHÁT SINH
-            </span>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
-              Dự Toán Chi Phí Chuyến Đi
-            </h1>
-            <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: 0 }}>
-              Tùy chỉnh số ngày, số lượng người, phương tiện và phong cách trải nghiệm để nhận bảng dự toán ngân sách chi tiết nhất.
-            </p>
-          </div>
-        </div>
+        <SubpageHero
+          kicker="DỰ TOÁN MINH BẠCH · KHÔNG PHÁT SINH"
+          kickerIcon="bi-calculator"
+          title="Dự Toán Chi Phí Chuyến Đi"
+          subtitle="Tùy chỉnh số ngày, số lượng người, phương tiện và phong cách trải nghiệm để nhận bảng dự toán ngân sách chi tiết nhất."
+          highlights={[
+            { icon: 'bi-bicycle', label: 'Xe máy · Ô tô · Tàu xe' },
+            { icon: 'bi-house-heart', label: 'Homestay đến Resort' },
+            { icon: 'bi-bookmark-check', label: 'Lưu dự toán vào Sổ tay' },
+          ]}
+          slides={[
+            {
+              image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=900&q=80',
+              tag: 'PHƯỢT TỰ TÚC · TIẾT KIỆM',
+              title: 'Từ 650.000đ / Người / Ngày',
+              caption: 'Chi phí hợp lý cho nhóm bạn đi xe máy, nghỉ homestay bản địa và thưởng thức đặc sản chợ địa phương.',
+            },
+            {
+              image: '/images/phong-nha-cave.jpg',
+              tag: 'KHÁM PHÁ HANG ĐỘNG & ĐẢO',
+              title: 'Dự Phòng Vé Tham Quan & Tàu Biển',
+              caption: 'Tự động cộng thêm vé động Phong Nha, Thiên Đường hoặc tàu cao tốc khứ hồi Cồn Cỏ.',
+            },
+            {
+              image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80',
+              tag: 'NGHỈ DƯỠNG BIỂN NHẬT LỆ',
+              title: 'Linh Hoạt Theo Nhóm Gia Đình',
+              caption: 'Tính nhanh ngân sách thuê xe tự lái, khách sạn ven biển và bữa tối hải sản tươi sống.',
+            },
+          ]}
+        />
 
         <div style={{ maxWidth: '1150px', margin: '2.5rem auto 0', padding: '0 1.5rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>

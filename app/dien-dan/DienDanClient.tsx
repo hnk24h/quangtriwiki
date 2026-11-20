@@ -5,6 +5,7 @@ import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
 import ScrollReveal from '@/components/common/ScrollReveal';
+import SubpageHero from '@/components/common/SubpageHero';
 import { useToast } from '@/components/common/ToastProvider';
 import ThreadCreateModal from '@/components/home/ThreadCreateModal';
 import type { Comment, Thread } from '@/lib/supabase/types';
@@ -151,42 +152,54 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
       <Navbar />
 
       <main style={{ paddingBottom: '4rem' }}>
-        <div
-          style={{
-            backgroundColor: '#133e2f',
-            color: '#fff',
-            padding: '4rem 1.5rem 3.5rem',
-            textAlign: 'center',
-          }}
+        <SubpageHero
+          kicker="CỘNG ĐỒNG NHỮNG NGƯỜI ĐI CHẬM"
+          kickerIcon="bi-chat-dots"
+          title="Nhật Ký & Thảo Luận Quảng Trị"
+          subtitle="Nơi du khách chia sẻ góc nhìn chân thật về cung đường, săn mây Sa Mù, ẩm thực và kinh nghiệm thực địa."
+          highlights={[
+            { icon: 'bi-journal-richtext', label: `${threads.length} bài chia sẻ thực tế` },
+            { icon: 'bi-chat-left-text', label: 'Hỏi đáp & bình luận nhanh' },
+            { icon: 'bi-cloud-sun', label: 'Cập nhật thời tiết đường đèo' },
+          ]}
+          slides={[
+            {
+              image: '/images/deo-sa-mu-clouds.jpg',
+              tag: 'REVIEW SĂN MÂY',
+              title: 'Kinh Nghiệm Săn Mây Đèo Sa Mù 5h30 Sáng',
+              caption: 'Chia sẻ thực tế về nhiệt độ, trang phục giữ ấm và góc chụp đẹp nhất trên đèo.',
+            },
+            {
+              image: '/images/hien-luong-bridge.jpg',
+              tag: 'HÀNH TRÌNH DI SẢN',
+              title: 'Cảm Xúc Khi Ghé Thành Cổ & Vĩ Tuyến 17',
+              caption: 'Những dòng nhật ký lắng đọng từ các bạn trẻ lần đầu đặt chân đến vùng đất thiêng.',
+            },
+            {
+              image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=900&q=80',
+              tag: 'REVIEW QUÁN NGON',
+              title: 'Bản Đồ Quán Ăn Ngon Giá Bình Dân',
+              caption: 'Tổng hợp đánh giá chân thực từ cộng đồng phượt thủ vừa trở về từ Quảng Trị.',
+            },
+          ]}
         >
-          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
-            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
-              CỘNG ĐỒNG NHỮNG NGƯỜI ĐI CHẬM
-            </span>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
-              Nhật Ký & Thảo Luận Quảng Trị
-            </h1>
-            <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: '0 0 1.5rem' }}>
-              Nơi du khách chia sẻ góc nhìn chân thật về cung đường, săn mây Sa Mù, ẩm thực và kinh nghiệm thực địa.
-            </p>
-            <button
-              type="button"
-              onClick={() => setIsCreateOpen(true)}
-              style={{
-                background: '#fbbf24',
-                color: '#092118',
-                padding: '0.75rem 1.5rem',
-                borderRadius: '999px',
-                border: 'none',
-                fontWeight: 700,
-                fontSize: '0.95rem',
-                cursor: 'pointer',
-              }}
-            >
-              <i className="bi bi-pencil-square" aria-hidden="true" /> Chia sẻ chuyến đi của bạn
-            </button>
-          </div>
-        </div>
+          <button
+            type="button"
+            onClick={() => setIsCreateOpen(true)}
+            style={{
+              background: '#fbbf24',
+              color: '#092118',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '999px',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+              cursor: 'pointer',
+            }}
+          >
+            <i className="bi bi-pencil-square" aria-hidden="true" /> Chia sẻ chuyến đi của bạn
+          </button>
+        </SubpageHero>
 
         {/* Filter & Search Bar */}
         <ScrollReveal variant="fade-in">

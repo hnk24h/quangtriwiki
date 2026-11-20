@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import ScrollReveal from '@/components/common/ScrollReveal';
+import SubpageHero from '@/components/common/SubpageHero';
 import { getGuides } from '@/lib/get-data';
 
 export const revalidate = 60;
@@ -21,26 +22,37 @@ export default async function TienIchPage() {
       <Navbar />
 
       <main style={{ paddingBottom: '4rem' }}>
-        <div
-          style={{
-            backgroundColor: '#133e2f',
-            color: '#fff',
-            padding: '4rem 1.5rem 3.5rem',
-            textAlign: 'center',
-          }}
-        >
-          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
-            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
-              AN TOÀN TRÊN MỌI CUNG ĐƯỜNG
-            </span>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
-              Cây Xăng, Cứu Hộ & Tiện Ích
-            </h1>
-            <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: 0 }}>
-              Cẩm nang tra cứu trạm nhiên liệu, danh bạ cứu hộ giao thông 24/7 và lời khuyên theo mùa cho chuyến phượt Quảng Trị an toàn.
-            </p>
-          </div>
-        </div>
+        <SubpageHero
+          kicker="AN TOÀN TRÊN MỌI CUNG ĐƯỜNG"
+          kickerIcon="bi-shield-check"
+          title="Cây Xăng, Cứu Hộ & Tiện Ích"
+          subtitle="Cẩm nang tra cứu trạm nhiên liệu, danh bạ cứu hộ giao thông 24/7 và lời khuyên theo mùa cho chuyến phượt Quảng Trị an toàn."
+          highlights={[
+            { icon: 'bi-telephone-fill', label: `${emergencyHotlines.length} hotline cứu hộ 24/7` },
+            { icon: 'bi-fuel-pump-fill', label: `${gasStations.length} trạm xăng trọng yếu` },
+            { icon: 'bi-cloud-sun', label: 'Dự báo thời điểm lý tưởng' },
+          ]}
+          slides={[
+            {
+              image: '/images/deo-sa-mu-clouds.jpg',
+              tag: 'CỨU HỘ ĐÈO SA MÙ 24/7',
+              title: 'Hỗ Trợ Kéo Xe & Vá Vỏ Lưu Động',
+              caption: 'Lưu sẵn số cứu hộ Khe Sanh – Hướng Hóa trước khi chạy cung đường Hồ Chí Minh Tây.',
+            },
+            {
+              image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=900&q=80',
+              tag: 'TRẠM NHIÊN LIỆU CHỐT CHẶN',
+              title: 'Đổ Đầy Bình Trước Khi Lên Đèo',
+              caption: 'Xác định các điểm Petrolimex cửa ngõ Cam Lộ, Đakrông, Khe Sanh và Phong Nha.',
+            },
+            {
+              image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=80',
+              tag: 'THỜI TIẾT THEO MÙA',
+              title: 'Mùa Biển Đẹp & Mùa Săn Mây',
+              caption: 'Tháng 4–8 biển êm đi Cồn Cỏ; tháng 10–3 se lạnh thích hợp săn mây đại ngàn.',
+            },
+          ]}
+        />
 
         <div style={{ maxWidth: '1150px', margin: '2.5rem auto 0', padding: '0 1.5rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
           {/* Emergency Hotlines */}
