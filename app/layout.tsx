@@ -6,7 +6,7 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://quangtri.wiki'),
   title: {
-    default: 'QuangTri.wiki · Cẩm Nang Du Lịch & Cung Đường Quảng Trị',
+    default: 'QuangTri.wiki · Đi đến nơi có gió',
     template: '%s · QuangTri.wiki',
   },
   description:
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'QuangTri Wiki Team' }],
   openGraph: {
-    title: 'QuangTri.wiki · Đi Chậm Để Cảm Nhận Vùng Đất Ký Ức',
+    title: 'QuangTri.wiki · Đi đến nơi có gió',
     description:
       'Cẩm nang du lịch và cung đường di sản Quảng Trị độc lập, chi tiết và chân thật nhất.',
     url: 'https://quangtri.wiki',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         url: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80',
         width: 1200,
         height: 630,
-        alt: 'QuangTri.wiki',
+        alt: 'QuangTri.wiki · Đi đến nơi có gió',
       },
     ],
     locale: 'vi_VN',
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'QuangTri.wiki · Du Lịch Đi Chậm & Cung Đường Di Sản',
+    title: 'QuangTri.wiki · Đi đến nơi có gió',
     description: 'Cẩm nang du lịch và cung đường di sản Quảng Trị độc lập.',
     images: [
       'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80',

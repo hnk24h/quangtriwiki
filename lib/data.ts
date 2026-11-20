@@ -6,7 +6,7 @@
 export const QUANGTRI_DATA = {
   provinceInfo: {
     name: "Quảng Trị",
-    slogan: "Từ Di sản Phong Nha - Kẻ Bàng đến Thành Cổ, Vĩ tuyến 17 & Biển đảo Cồn Cỏ",
+    slogan: "Đi đến nơi có gió",
     description: "Tỉnh Quảng Trị mới (sau hợp nhất Quảng Bình & Quảng Trị) trải dài từ Đèo Ngang - Vũng Chùa đến Hải Lăng - Đakrông, hội tụ Di sản thiên nhiên thế giới Phong Nha - Kẻ Bàng, Hang Sơn Đoòng, biển Nhật Lệ, Vĩ tuyến 17, Thành Cổ Quảng Trị, đèo Sa Mù và đảo ngọc Cồn Cỏ.",
     stats: {
       districts: 12,

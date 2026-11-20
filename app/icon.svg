@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="qtBg" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#174d3a" />
+      <stop offset="100%" stop-color="#0b261c" />
+    </linearGradient>
+    <linearGradient id="qtWind" x1="12" y1="20" x2="52" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#a7f3d0" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#qtBg)" />
+  <rect x="2" y="2" width="60" height="60" rx="14" stroke="#6ee7b7" stroke-opacity="0.28" stroke-width="1.5" />
+  <circle cx="44" cy="18" r="5.5" fill="#fde047" />
+  <path d="M12 43L25.5 24.5L35 36L42.5 27.5L52 43H12Z" fill="#ffffff" fill-opacity="0.16" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" />
+  <path d="M11 23C18 18.5 26 26.5 34.5 21.5C37.5 19.8 39 17.2 37.5 15.2C36 13.4 33.2 14.2 32.5 16.3" stroke="url(#qtWind)" stroke-width="2.6" stroke-linecap="round" />
+  <path d="M9 30.5C17 26.5 25.5 33.5 34 29.5" stroke="#fde047" stroke-width="2.3" stroke-linecap="round" />
+  <path d="M12 49C18 46.2 24 51.8 30.5 49C37 46.2 43 51.8 52 48.5" stroke="#6ee7b7" stroke-width="2.4" stroke-linecap="round" />
+</svg>

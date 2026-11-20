@@ -45,23 +45,26 @@ export default function Navbar() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link href="/" className="brand" title="Quangtri Wiki · Đôi bờ Hiền Lương & Cánh chim hòa bình">
+        <Link href="/" className="brand" title="QuangTri.wiki · Đi đến nơi có gió">
           <div className="brand-logo-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-              <path d="M16 13C16 7.8 20.8 4.2 25.8 4.2C23.2 8.4 19.6 10.5 16 13Z" fill="currentColor" fillOpacity="0.18" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-              <path d="M16 13C16 7.8 11.2 4.2 6.2 4.2C8.8 8.4 12.4 10.5 16 13Z" fill="currentColor" fillOpacity="0.18" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-              <circle cx="16" cy="6.2" r="1.3" fill="currentColor" />
-              <path d="M4 22C9.5 15.2 22.5 15.2 28 22" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              <path d="M3 22.5H29" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              <line x1="9.5" y1="22" x2="9.5" y2="18.2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-              <line x1="16" y1="22" x2="16" y2="16.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              <line x1="22.5" y1="22" x2="22.5" y2="18.2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-              <path d="M6 26.5C10 24.8 14 27.5 18 25.8C22 24.2 25 26.8 28 26" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <svg width="36" height="36" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="navQtBg" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#174d3a" />
+                  <stop offset="100%" stopColor="#0b261c" />
+                </linearGradient>
+              </defs>
+              <rect width="64" height="64" rx="16" fill="url(#navQtBg)" />
+              <circle cx="44" cy="18" r="5.5" fill="#fde047" />
+              <path d="M12 43L25.5 24.5L35 36L42.5 27.5L52 43H12Z" fill="#ffffff" fillOpacity="0.16" stroke="#ffffff" strokeWidth="2.4" strokeLinejoin="round" />
+              <path d="M11 23C18 18.5 26 26.5 34.5 21.5C37.5 19.8 39 17.2 37.5 15.2C36 13.4 33.2 14.2 32.5 16.3" stroke="#6ee7b7" strokeWidth="2.8" strokeLinecap="round" />
+              <path d="M9 30.5C17 26.5 25.5 33.5 34 29.5" stroke="#fde047" strokeWidth="2.4" strokeLinecap="round" />
+              <path d="M12 49C18 46.2 24 51.8 30.5 49C37 46.2 43 51.8 52 48.5" stroke="#6ee7b7" strokeWidth="2.5" strokeLinecap="round" />
             </svg>
           </div>
           <div>
-            <div className="brand-title">Quangtri Wiki</div>
-            <span className="brand-subtitle">ĐI CHẬM · KHÁM PHÁ</span>
+            <div className="brand-title">QuangTri.wiki</div>
+            <span className="brand-subtitle">ĐI ĐẾN NƠI CÓ GIÓ</span>
           </div>
         </Link>
 

@@ -47,9 +47,16 @@ export default function Footer() {
             {/* Col 1: Brand & Editorial Philosophy */}
             <div className="footer-col-brand">
               <Link href="/" className="footer-brand-logo">
-                <span className="logo-pin">📍</span>
+                <svg width="28" height="28" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                  <rect width="64" height="64" rx="16" fill="#0f2f23" stroke="#6ee7b7" strokeOpacity="0.4" strokeWidth="2" />
+                  <circle cx="44" cy="18" r="5.5" fill="#fde047" />
+                  <path d="M12 43L25.5 24.5L35 36L42.5 27.5L52 43H12Z" fill="#ffffff" fillOpacity="0.16" stroke="#ffffff" strokeWidth="2.4" strokeLinejoin="round" />
+                  <path d="M11 23C18 18.5 26 26.5 34.5 21.5C37.5 19.8 39 17.2 37.5 15.2C36 13.4 33.2 14.2 32.5 16.3" stroke="#6ee7b7" strokeWidth="2.8" strokeLinecap="round" />
+                  <path d="M9 30.5C17 26.5 25.5 33.5 34 29.5" stroke="#fde047" strokeWidth="2.4" strokeLinecap="round" />
+                  <path d="M12 49C18 46.2 24 51.8 30.5 49C37 46.2 43 51.8 52 48.5" stroke="#6ee7b7" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
                 <span className="logo-text">QuangTri.wiki</span>
-                <span className="logo-badge">2026</span>
+                <span className="logo-badge">Đi đến nơi có gió</span>
               </Link>
               <p className="footer-tagline">
                 Nền tảng cẩm nang du lịch và cung đường di sản Quảng Trị độc lập. Đi chậm để cảm nhận vùng đất thiêng anh hùng, từ đèo mây Sa Mù đại ngàn đến đảo ngọc Cồn Cỏ tiền tiêu.
