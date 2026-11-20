@@ -83,22 +83,22 @@ export default function PlaceQuickModal({
                 marginBottom: '1rem',
               }}
             >
-              <strong>💡 Lời khuyên phượt thủ:</strong> {place.tips}
+              <strong><i className="bi bi-lightbulb" aria-hidden="true" /> Lời khuyên phượt thủ:</strong> {place.tips}
             </div>
           )}
 
           <div className="modal-meta-grid">
             <div>
-              <strong>📍 Địa chỉ:</strong> {place.address}
+              <strong><i className="bi bi-geo-alt-fill" aria-hidden="true" /> Địa chỉ:</strong> {place.address}
             </div>
             <div>
-              <strong>🕒 Giờ mở cửa:</strong> {place.openHours || '07:00 - 17:30'}
+              <strong><i className="bi bi-clock" aria-hidden="true" /> Giờ mở cửa:</strong> {place.openHours || '07:00 - 17:30'}
             </div>
             <div>
-              <strong>🎟️ Giá vé:</strong> {place.ticket || 'Miễn phí'}
+              <strong><i className="bi bi-ticket-perforated" aria-hidden="true" /> Giá vé:</strong> {place.ticket || 'Miễn phí'}
             </div>
             <div>
-              <strong>🧭 Tọa độ:</strong> {place.coordinates}
+              <strong><i className="bi bi-compass" aria-hidden="true" /> Tọa độ:</strong> {place.coordinates}
             </div>
           </div>
 
@@ -131,7 +131,7 @@ export default function PlaceQuickModal({
                   border: '1px solid #d1d5db',
                 }}
               >
-                {isBookmarked ? '★ Đã lưu sổ tay' : '☆ Lưu sổ tay'}
+                {isBookmarked ? <><i className="bi bi-star-fill" aria-hidden="true" /> Đã lưu sổ tay</> : <><i className="bi bi-star" aria-hidden="true" /> Lưu sổ tay</>}
               </button>
             )}
           </div>

@@ -35,7 +35,7 @@ export default function AdminPartnersTab({
           onClick={onRefresh}
           style={{ padding: '0.6rem 1rem', borderRadius: '8px', background: '#f3f4f6', border: '1px solid #d1d5db', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}
         >
-          🔄 Tải lại danh sách
+          <i className="bi bi-arrow-clockwise" aria-hidden="true" /> Tải lại danh sách
         </button>
       </div>
 

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import type { Food } from '@/lib/supabase/types';
 
 interface AmThucClientProps {
@@ -51,7 +52,7 @@ export default function AmThucClient({ initialFoods }: AmThucClientProps) {
             textAlign: 'center',
           }}
         >
-          <div style={{ maxWidth: '850px', margin: '0 auto' }}>
+          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
               HƯƠNG VỊ XỨ GIÓ LÀO CÁT TRẮNG
             </span>
@@ -65,6 +66,7 @@ export default function AmThucClient({ initialFoods }: AmThucClientProps) {
         </div>
 
         {/* Search & Filter Bar */}
+        <ScrollReveal variant="fade-in">
         <div style={{ maxWidth: '1200px', margin: '2rem auto 0', padding: '0 1.5rem' }}>
           <div
             style={{
@@ -134,6 +136,7 @@ export default function AmThucClient({ initialFoods }: AmThucClientProps) {
             </div>
           </div>
         </div>
+        </ScrollReveal>
 
         {/* Food List Grid */}
         <div style={{ maxWidth: '1200px', margin: '2.5rem auto 0', padding: '0 1.5rem' }}>
@@ -153,10 +156,11 @@ export default function AmThucClient({ initialFoods }: AmThucClientProps) {
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem' }}>
-              {filteredFoods.map((food) => (
+              {filteredFoods.map((food, idx) => (
+                <ScrollReveal key={food.id} delayMs={(idx % 3) * 80} style={{ display: 'flex' }}>
                 <div
-                  key={food.id}
                   style={{
+                    flex: 1,
                     background: '#fff',
                     borderRadius: '14px',
                     overflow: 'hidden',
@@ -203,13 +207,13 @@ export default function AmThucClient({ initialFoods }: AmThucClientProps) {
                         zIndex: 2,
                       }}
                     >
-                      💰 {food.priceRange}
+                      <i className="bi bi-cash-coin" aria-hidden="true" /> {food.priceRange}
                     </div>
                   </div>
 
                   <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', color: '#d97706', fontSize: '0.85rem', fontWeight: 600 }}>
-                      <span>📍 {food.origin}</span>
+                      <span><i className="bi bi-geo-alt-fill" aria-hidden="true" /> {food.origin}</span>
                     </div>
 
                     <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.45rem', color: '#133e2f', margin: '0 0 0.8rem 0' }}>
@@ -249,12 +253,14 @@ export default function AmThucClient({ initialFoods }: AmThucClientProps) {
                     </div>
                   </div>
                 </div>
+                </ScrollReveal>
               ))}
             </div>
           )}
         </div>
 
         {/* Culinary Tips Section */}
+        <ScrollReveal>
         <div style={{ maxWidth: '1200px', margin: '4rem auto 0', padding: '0 1.5rem' }}>
           <div style={{ background: '#fff', borderRadius: '16px', padding: '2.5rem', border: '1px solid rgba(27,42,34,0.08)' }}>
             <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#133e2f', marginBottom: '1.2rem' }}>
@@ -262,19 +268,19 @@ export default function AmThucClient({ initialFoods }: AmThucClientProps) {
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem', color: '#4b5563', fontSize: '0.95rem', lineHeight: 1.7 }}>
               <div>
-                <strong style={{ color: '#133e2f' }}>🔥 Hành tăm (Củ nén) & Ớt hiểm:</strong>
+                <strong style={{ color: '#133e2f' }}><i className="bi bi-fire" aria-hidden="true" /> Hành tăm (Củ nén) & Ớt hiểm:</strong>
                 <p style={{ margin: '0.4rem 0 0' }}>
                   Hầu hết các món ăn Quảng Trị như cháo vạt giường, bún hến đều phi thơm củ nén với dầu phụng, tạo nên mùi hương thơm nồng đặc trưng.
                 </p>
               </div>
               <div>
-                <strong style={{ color: '#133e2f' }}>🌿 Lá trơng rừng đại ngàn:</strong>
+                <strong style={{ color: '#133e2f' }}><i className="bi bi-tree" aria-hidden="true" /> Lá trơng rừng đại ngàn:</strong>
                 <p style={{ margin: '0.4rem 0 0' }}>
                   Lá trơng là thảo mộc rừng miền Tây Hướng Hóa giúp cân bằng hương vị khi nướng hoặc xào cùng thịt trâu bản địa.
                 </p>
               </div>
               <div>
-                <strong style={{ color: '#133e2f' }}>☕ Cà phê Arabica Khe Sanh:</strong>
+                <strong style={{ color: '#133e2f' }}><i className="bi bi-cup-hot" aria-hidden="true" /> Cà phê Arabica Khe Sanh:</strong>
                 <p style={{ margin: '0.4rem 0 0' }}>
                   Thung lũng Khe Sanh có khí hậu mát lạnh cho ra hạt Arabica Catimor có vị chua thanh trái cây và hậu vị ngọt sâu.
                 </p>
@@ -282,6 +288,7 @@ export default function AmThucClient({ initialFoods }: AmThucClientProps) {
             </div>
           </div>
         </div>
+        </ScrollReveal>
       </main>
 
       <Footer />

@@ -21,14 +21,15 @@ interface VnClockParts {
   second: string;
   weekdayLabel: string;
   sessionLabel: string;
+  sessionIcon: string;
 }
 
-function getVnSessionLabel(hour: number): string {
-  if (hour >= 5 && hour <= 10) return '🌅 Buổi sáng';
-  if (hour >= 11 && hour <= 13) return '☀️ Buổi trưa';
-  if (hour >= 14 && hour <= 17) return '🌤️ Buổi chiều';
-  if (hour >= 18 && hour <= 21) return '🌆 Buổi tối';
-  return '🌙 Đêm khuya';
+function getVnSessionInfo(hour: number): { label: string; icon: string } {
+  if (hour >= 5 && hour <= 10) return { label: 'Buổi sáng', icon: 'bi-sunrise' };
+  if (hour >= 11 && hour <= 13) return { label: 'Buổi trưa', icon: 'bi-sun' };
+  if (hour >= 14 && hour <= 17) return { label: 'Buổi chiều', icon: 'bi-cloud-sun' };
+  if (hour >= 18 && hour <= 21) return { label: 'Buổi tối', icon: 'bi-sunset' };
+  return { label: 'Đêm khuya', icon: 'bi-moon-stars' };
 }
 
 function getVnClockParts(date: Date): VnClockParts {
@@ -59,6 +60,8 @@ function getVnClockParts(date: Date): VnClockParts {
   const second = String(partsMap.second || '00').padStart(2, '0');
   const weekdayIndex = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
 
+  const session = getVnSessionInfo(hourNum);
+
   return {
     year,
     month,
@@ -67,7 +70,8 @@ function getVnClockParts(date: Date): VnClockParts {
     minute,
     second,
     weekdayLabel: VN_WEEKDAYS[weekdayIndex],
-    sessionLabel: getVnSessionLabel(hourNum),
+    sessionLabel: session.label,
+    sessionIcon: session.icon,
   };
 }
 
@@ -93,7 +97,8 @@ export default function ClockCalendarWidget() {
       <div className="clock-cal-top">
         <div className="clock-live-block">
           <div className="clock-session-kicker">
-            {vn ? `${vn.sessionLabel} · GMT+7` : '🕒 Giờ Việt Nam · GMT+7'}
+            <i className={`bi ${vn ? vn.sessionIcon : 'bi-clock'}`} aria-hidden="true" />{' '}
+            {vn ? `${vn.sessionLabel} · GMT+7` : 'Giờ Việt Nam · GMT+7'}
           </div>
           <div className="clock-time-readout" aria-live="off">
             {vn ? (

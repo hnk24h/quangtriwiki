@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import { getGuides } from '@/lib/get-data';
 
 export const revalidate = 60;
@@ -28,7 +29,7 @@ export default async function TienIchPage() {
             textAlign: 'center',
           }}
         >
-          <div style={{ maxWidth: '850px', margin: '0 auto' }}>
+          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
               AN TOÀN TRÊN MỌI CUNG ĐƯỜNG
             </span>
@@ -45,7 +46,7 @@ export default async function TienIchPage() {
           {/* Emergency Hotlines */}
           <section>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.2rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>🚨</span>
+              <span style={{ fontSize: '1.35rem', color: '#991b1b' }}><i className="bi bi-exclamation-triangle-fill" aria-hidden="true" /></span>
               <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#991b1b', margin: 0 }}>
                 Đường Dây Nóng & Cứu Hộ Khẩn Cấp 24/7
               </h2>
@@ -56,9 +57,10 @@ export default async function TienIchPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
               {emergencyHotlines.map((hl, idx) => (
+                <ScrollReveal key={idx} delayMs={(idx % 3) * 70} style={{ display: 'flex' }}>
                 <div
-                  key={idx}
                   style={{
+                    flex: 1,
                     background: '#fff',
                     borderRadius: '12px',
                     padding: '1.5rem',
@@ -94,9 +96,10 @@ export default async function TienIchPage() {
                       fontSize: '0.95rem',
                     }}
                   >
-                    <span>📞 Gọi: {hl.phone}</span>
+                    <span><i className="bi bi-telephone-fill" aria-hidden="true" /> Gọi: {hl.phone}</span>
                   </a>
                 </div>
+                </ScrollReveal>
               ))}
             </div>
           </section>
@@ -104,7 +107,7 @@ export default async function TienIchPage() {
           {/* Gas Stations */}
           <section>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.2rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>⛽</span>
+              <span style={{ fontSize: '1.35rem', color: '#133e2f' }}><i className="bi bi-fuel-pump-fill" aria-hidden="true" /></span>
               <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#133e2f', margin: 0 }}>
                 Trạm Xăng & Nhiên Liệu Cốt Lõi
               </h2>
@@ -115,9 +118,10 @@ export default async function TienIchPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
               {gasStations.map((gas, idx) => (
+                <ScrollReveal key={idx} delayMs={(idx % 3) * 70} style={{ display: 'flex' }}>
                 <div
-                  key={idx}
                   style={{
+                    flex: 1,
                     background: '#fff',
                     borderRadius: '12px',
                     padding: '1.5rem',
@@ -132,9 +136,10 @@ export default async function TienIchPage() {
                     {gas.name}
                   </h3>
                   <p style={{ fontSize: '0.9rem', color: '#4b5563', margin: 0, lineHeight: 1.6 }}>
-                    💡 <strong>Lời khuyên:</strong> {gas.tip}
+                    <i className="bi bi-lightbulb" aria-hidden="true" /> <strong>Lời khuyên:</strong> {gas.tip}
                   </p>
                 </div>
+                </ScrollReveal>
               ))}
             </div>
           </section>
@@ -142,7 +147,7 @@ export default async function TienIchPage() {
           {/* Best Time To Visit */}
           <section>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.2rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>🌤️</span>
+              <span style={{ fontSize: '1.35rem', color: '#133e2f' }}><i className="bi bi-cloud-sun" aria-hidden="true" /></span>
               <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#133e2f', margin: 0 }}>
                 Thời Tiết & Thời Điểm Lý Tưởng
               </h2>
@@ -150,9 +155,10 @@ export default async function TienIchPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
               {bestTimeToVisit.map((season, idx) => (
+                <ScrollReveal key={idx} delayMs={(idx % 3) * 70} style={{ display: 'flex' }}>
                 <div
-                  key={idx}
                   style={{
+                    flex: 1,
                     background: '#fff',
                     borderRadius: '12px',
                     padding: '1.5rem',
@@ -167,10 +173,12 @@ export default async function TienIchPage() {
                     {season.desc}
                   </p>
                 </div>
+                </ScrollReveal>
               ))}
             </div>
           </section>
 
+          <ScrollReveal variant="scale-up">
           <div
             style={{
               background: '#133e2f',
@@ -207,6 +215,7 @@ export default async function TienIchPage() {
               Mở Sổ tay của tôi →
             </Link>
           </div>
+          </ScrollReveal>
         </div>
       </main>
 

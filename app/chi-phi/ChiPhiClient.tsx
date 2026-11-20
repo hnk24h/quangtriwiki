@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import { useToast } from '@/components/common/ToastProvider';
 import { STORAGE_KEYS } from '@/lib/storage';
 
@@ -81,7 +82,7 @@ export default function ChiPhiClient() {
             textAlign: 'center',
           }}
         >
-          <div style={{ maxWidth: '850px', margin: '0 auto' }}>
+          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
               DỰ TOÁN MINH BẠCH · KHÔNG PHÁT SINH
             </span>
@@ -97,6 +98,7 @@ export default function ChiPhiClient() {
         <div style={{ maxWidth: '1150px', margin: '2.5rem auto 0', padding: '0 1.5rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
             {/* Control Form */}
+            <ScrollReveal delayMs={40}>
             <div
               style={{
                 background: '#fff',
@@ -152,9 +154,9 @@ export default function ChiPhiClient() {
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.6rem' }}>
                   {[
-                    { id: 'motorbike', label: '🛵 Xe máy phượt', note: '150k/xe/ngày' },
-                    { id: 'car', label: '🚗 Thuê ô tô tự lái', note: '800k/ngày' },
-                    { id: 'bus', label: '🚌 Xe khách / Tàu', note: '350k/người' },
+                    { id: 'motorbike', icon: 'bi-bicycle', label: 'Xe máy phượt', note: '150k/xe/ngày' },
+                    { id: 'car', icon: 'bi-car-front', label: 'Thuê ô tô tự lái', note: '800k/ngày' },
+                    { id: 'bus', icon: 'bi-bus-front', label: 'Xe khách / Tàu', note: '350k/người' },
                   ].map((v) => (
                     <button
                       type="button"
@@ -170,7 +172,7 @@ export default function ChiPhiClient() {
                         fontWeight: vehicle === v.id ? 600 : 400,
                       }}
                     >
-                      <div style={{ fontSize: '0.9rem', color: '#133e2f' }}>{v.label}</div>
+                      <div style={{ fontSize: '0.9rem', color: '#133e2f' }}><i className={`bi ${v.icon}`} aria-hidden="true" /> {v.label}</div>
                       <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '2px' }}>{v.note}</div>
                     </button>
                   ))}
@@ -183,9 +185,9 @@ export default function ChiPhiClient() {
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.6rem' }}>
                   {[
-                    { id: 'homestay', label: '🏡 Homestay / Glamping', note: '200k/người/đêm' },
-                    { id: 'hotel', label: '🏨 Khách sạn 2-3 sao', note: '350k/người/đêm' },
-                    { id: 'resort', label: '✨ Khách sạn cao cấp', note: '750k/người/đêm' },
+                    { id: 'homestay', icon: 'bi-house-heart', label: 'Homestay / Glamping', note: '200k/người/đêm' },
+                    { id: 'hotel', icon: 'bi-building', label: 'Khách sạn 2-3 sao', note: '350k/người/đêm' },
+                    { id: 'resort', icon: 'bi-stars', label: 'Khách sạn cao cấp', note: '750k/người/đêm' },
                   ].map((s) => (
                     <button
                       type="button"
@@ -201,7 +203,7 @@ export default function ChiPhiClient() {
                         fontWeight: stayType === s.id ? 600 : 400,
                       }}
                     >
-                      <div style={{ fontSize: '0.9rem', color: '#133e2f' }}>{s.label}</div>
+                      <div style={{ fontSize: '0.9rem', color: '#133e2f' }}><i className={`bi ${s.icon}`} aria-hidden="true" /> {s.label}</div>
                       <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '2px' }}>{s.note}</div>
                     </button>
                   ))}
@@ -214,9 +216,9 @@ export default function ChiPhiClient() {
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.6rem' }}>
                   {[
-                    { id: 'saving', label: '🍜 Tiết kiệm', note: '160k/người/ngày' },
-                    { id: 'standard', label: '🍲 Chuẩn đặc sản', note: '300k/người/ngày' },
-                    { id: 'seafood', label: '🦀 Hải sản / Rừng', note: '500k/người/ngày' },
+                    { id: 'saving', icon: 'bi-cup-straw', label: 'Tiết kiệm', note: '160k/người/ngày' },
+                    { id: 'standard', icon: 'bi-cup-hot', label: 'Chuẩn đặc sản', note: '300k/người/ngày' },
+                    { id: 'seafood', icon: 'bi-award', label: 'Hải sản / Rừng', note: '500k/người/ngày' },
                   ].map((f) => (
                     <button
                       type="button"
@@ -232,7 +234,7 @@ export default function ChiPhiClient() {
                         fontWeight: foodLevel === f.id ? 600 : 400,
                       }}
                     >
-                      <div style={{ fontSize: '0.9rem', color: '#133e2f' }}>{f.label}</div>
+                      <div style={{ fontSize: '0.9rem', color: '#133e2f' }}><i className={`bi ${f.icon}`} aria-hidden="true" /> {f.label}</div>
                       <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '2px' }}>{f.note}</div>
                     </button>
                   ))}
@@ -261,8 +263,10 @@ export default function ChiPhiClient() {
                 </label>
               </div>
             </div>
+            </ScrollReveal>
 
             {/* Cost Breakdown Display */}
+            <ScrollReveal variant="scale-up" delayMs={120}>
             <div
               style={{
                 background: '#fff',
@@ -293,23 +297,23 @@ export default function ChiPhiClient() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', fontSize: '0.92rem', color: '#4b5563', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>🛵 Phương tiện & Xăng cộ:</span>
+                  <span><i className="bi bi-bicycle" aria-hidden="true" /> Phương tiện & Xăng cộ:</span>
                   <strong style={{ color: '#1e293b' }}>{formatVND(vehicleCost)}</strong>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>🏡 Lưu trú ({nights} đêm):</span>
+                  <span><i className="bi bi-house-heart" aria-hidden="true" /> Lưu trú ({nights} đêm):</span>
                   <strong style={{ color: '#1e293b' }}>{formatVND(stayCost)}</strong>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>🍲 Ẩm thực ({days} ngày):</span>
+                  <span><i className="bi bi-cup-hot" aria-hidden="true" /> Ẩm thực ({days} ngày):</span>
                   <strong style={{ color: '#1e293b' }}>{formatVND(foodCost)}</strong>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>🎟️ Vé tham quan & Tàu biển:</span>
+                  <span><i className="bi bi-ticket-perforated" aria-hidden="true" /> Vé tham quan & Tàu biển:</span>
                   <strong style={{ color: '#1e293b' }}>{formatVND(ticketCost)}</strong>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: '#94a3b8' }}>
-                  <span>🛡️ Dự phòng phát sinh (10%):</span>
+                  <span><i className="bi bi-shield-check" aria-hidden="true" /> Dự phòng phát sinh (10%):</span>
                   <strong>{formatVND(contingency)}</strong>
                 </div>
               </div>
@@ -352,6 +356,7 @@ export default function ChiPhiClient() {
                 </Link>
               </div>
             </div>
+            </ScrollReveal>
           </div>
         </div>
       </main>

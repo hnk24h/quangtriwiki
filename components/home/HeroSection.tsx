@@ -66,7 +66,7 @@ export default function HeroSection({
         id: 'deo-sa-mu',
         image:
           'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=85',
-        badge: '🏔️ SĂN MÂY ĐỈNH ĐÈO SA MÙ',
+        badge: 'SĂN MÂY ĐỈNH ĐÈO SA MÙ',
         title: "Biển Mây Bồng Bềnh Trên 'Cổng Trời' Trường Sơn",
         subtitle:
           'Độ cao gần 1.400m quanh năm mát lạnh, biển mây cuộn trôi qua những tán rừng già nguyên sinh.',
@@ -323,7 +323,7 @@ export default function HeroSection({
                 aria-label="Xóa từ khóa tìm kiếm"
                 className="hagiang-search-clear"
               >
-                ✕
+                <i className="bi bi-x-lg" aria-hidden="true" />
               </button>
             ) : (
               <kbd className="hagiang-search-shortcut">⌘K</kbd>
@@ -339,7 +339,7 @@ export default function HeroSection({
                   <>
                     {searchResults.matchedPlaces.length > 0 && (
                       <div className="qt-search-group">
-                        <div className="qt-search-group-label">📍 Điểm đến ({searchResults.matchedPlaces.length})</div>
+                        <div className="qt-search-group-label"><i className="bi bi-geo-alt-fill" aria-hidden="true" /> Điểm đến ({searchResults.matchedPlaces.length})</div>
                         {searchResults.matchedPlaces.map((p) => (
                           <div key={p.id} className="qt-search-row">
                             <Link
@@ -369,7 +369,7 @@ export default function HeroSection({
 
                     {searchResults.matchedFoods.length > 0 && (
                       <div className="qt-search-group">
-                        <div className="qt-search-group-label">🍲 Ẩm thực ({searchResults.matchedFoods.length})</div>
+                        <div className="qt-search-group-label"><i className="bi bi-cup-hot" aria-hidden="true" /> Ẩm thực ({searchResults.matchedFoods.length})</div>
                         {searchResults.matchedFoods.map((f) => (
                           <div key={f.id} className="qt-search-row">
                             <Link href="/am-thuc" onClick={() => setIsSearchOpen(false)} className="qt-search-link">
@@ -383,7 +383,7 @@ export default function HeroSection({
 
                     {searchResults.matchedServices.length > 0 && (
                       <div className="qt-search-group">
-                        <div className="qt-search-group-label">🏕️ Dịch vụ ({searchResults.matchedServices.length})</div>
+                        <div className="qt-search-group-label"><i className="bi bi-building" aria-hidden="true" /> Dịch vụ ({searchResults.matchedServices.length})</div>
                         {searchResults.matchedServices.map((s) => (
                           <div key={s.id} className="qt-search-row">
                             <Link href="/dich-vu" onClick={() => setIsSearchOpen(false)} className="qt-search-link">
@@ -397,7 +397,7 @@ export default function HeroSection({
 
                     {searchResults.matchedItineraries.length > 0 && (
                       <div className="qt-search-group">
-                        <div className="qt-search-group-label">🧭 Lịch trình ({searchResults.matchedItineraries.length})</div>
+                        <div className="qt-search-group-label"><i className="bi bi-compass" aria-hidden="true" /> Lịch trình ({searchResults.matchedItineraries.length})</div>
                         {searchResults.matchedItineraries.map((it) => (
                           <div key={it.id} className="qt-search-row">
                             <Link href="/lich-trinh" onClick={() => setIsSearchOpen(false)} className="qt-search-link">
@@ -421,7 +421,8 @@ export default function HeroSection({
           {suggestedPlaces.length > 0 && (
             <div className="hero-quick-picks">
               <span className="hero-quick-label">
-                {lang === 'en' ? '✨ Quick picks:' : lang === 'ja' ? '✨ おすすめ:' : '✨ Gợi ý hôm nay:'}
+                <i className="bi bi-stars" aria-hidden="true" />{' '}
+                {lang === 'en' ? 'Quick picks:' : lang === 'ja' ? 'おすすめ:' : 'Gợi ý hôm nay:'}
               </span>
               {suggestedPlaces.map((place) => (
                 <button
@@ -441,7 +442,7 @@ export default function HeroSection({
                   title="Đổi gợi ý điểm đến"
                   aria-label="Đổi gợi ý điểm đến"
                 >
-                  🎲
+                  <i className="bi bi-shuffle" aria-hidden="true" />
                 </button>
               )}
             </div>

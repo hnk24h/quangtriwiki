@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import type { Food, Itinerary, Place, Thread } from '@/lib/supabase/types';
 import type { NearbyPlace, RouteEstimate, TransportTip } from '@/lib/place-guide';
 
@@ -37,9 +38,10 @@ export default function PlaceGuideSections({
   return (
     <>
       {/* 1. Cách đi & phương tiện */}
+      <ScrollReveal>
       <section id="cach-di" className="pg-section">
         <div className="pg-section-head">
-          <span className="pg-kicker">🧭 Cách đi</span>
+          <span className="pg-kicker"><i className="bi bi-compass" aria-hidden="true" /> Cách đi</span>
           <h2 className="pg-title">Đi đến {place.name} như thế nào?</h2>
         </div>
 
@@ -50,8 +52,8 @@ export default function PlaceGuideSections({
                 <div className="pg-route-from">Từ {r.origin.label}</div>
                 <div className="pg-route-km">~{Math.round(r.roadKm)} km</div>
                 <div className="pg-route-times">
-                  <span>🏍️ {r.motorbike}</span>
-                  <span>🚗 {r.car}</span>
+                  <span><i className="bi bi-bicycle" aria-hidden="true" /> {r.motorbike}</span>
+                  <span><i className="bi bi-car-front" aria-hidden="true" /> {r.car}</span>
                 </div>
               </div>
             ))}
@@ -77,12 +79,14 @@ export default function PlaceGuideSections({
           Chỉ đường từ Đông Hà bằng Google Maps ↗
         </a>
       </section>
+      </ScrollReveal>
 
       {/* 2. Nên ăn gì */}
       {foods.length > 0 && (
+        <ScrollReveal>
         <section id="an-gi" className="pg-section">
           <div className="pg-section-head">
-            <span className="pg-kicker">🍲 Ẩm thực</span>
+            <span className="pg-kicker"><i className="bi bi-cup-hot" aria-hidden="true" /> Ẩm thực</span>
             <h2 className="pg-title">
               {foodsAreGeneral ? 'Đặc sản nên thử khi đến Quảng Trị' : `Nên ăn gì quanh ${place.name}?`}
             </h2>
@@ -96,10 +100,10 @@ export default function PlaceGuideSections({
                 <div className="pg-food-body">
                   <span className="pg-food-type">{food.type}</span>
                   <h3>{food.name}</h3>
-                  <div className="pg-food-price">💰 {food.priceRange}</div>
+                  <div className="pg-food-price"><i className="bi bi-cash-coin" aria-hidden="true" /> {food.priceRange}</div>
                   {food.tasteNotes && <p className="pg-food-taste">{excerpt(food.tasteNotes, 110)}</p>}
                   {Array.isArray(food.addressRecs) && food.addressRecs.length > 0 && (
-                    <div className="pg-food-where">📍 {food.addressRecs[0]}</div>
+                    <div className="pg-food-where"><i className="bi bi-geo-alt-fill" aria-hidden="true" /> {food.addressRecs[0]}</div>
                   )}
                 </div>
               </article>
@@ -109,13 +113,15 @@ export default function PlaceGuideSections({
             Xem tất cả đặc sản Quảng Trị →
           </Link>
         </section>
+        </ScrollReveal>
       )}
 
       {/* 3. Nên chơi ở đâu */}
       {nearest.length > 0 && (
+        <ScrollReveal>
         <section id="choi-o-dau" className="pg-section">
           <div className="pg-section-head">
-            <span className="pg-kicker">🎒 Khám phá</span>
+            <span className="pg-kicker"><i className="bi bi-backpack" aria-hidden="true" /> Khám phá</span>
             <h2 className="pg-title">Nên đi chơi ở đâu gần đây?</h2>
           </div>
           <div className="pg-nearby-list">
@@ -127,10 +133,10 @@ export default function PlaceGuideSections({
                 <span className="pg-nearby-info">
                   <span className="pg-nearby-name">{np.name}</span>
                   <span className="pg-nearby-meta">
-                    {np.categoryName} · ★ {np.rating}
+                    {np.categoryName} · <i className="bi bi-star-fill" aria-hidden="true" /> {np.rating}
                   </span>
                   <span className="pg-nearby-dist">
-                    ~{Math.max(1, Math.round(km))} km · 🏍️ {motorbike}
+                    ~{Math.max(1, Math.round(km))} km · <i className="bi bi-bicycle" aria-hidden="true" /> {motorbike}
                     {sameZone && <em>Cùng vùng</em>}
                   </span>
                 </span>
@@ -144,19 +150,21 @@ export default function PlaceGuideSections({
               <div className="pg-itin-chips">
                 {itineraries.map((it) => (
                   <Link key={it.id} href="/lich-trinh" className="pg-itin-chip">
-                    🗺️ {it.title} · {it.duration}
+                    <i className="bi bi-map" aria-hidden="true" /> {it.title} · {it.duration}
                   </Link>
                 ))}
               </div>
             </div>
           )}
         </section>
+        </ScrollReveal>
       )}
 
       {/* 4. Trải nghiệm từ người đã đi */}
+      <ScrollReveal>
       <section id="nguoi-da-di" className="pg-section">
         <div className="pg-section-head">
-          <span className="pg-kicker">💬 Cộng đồng</span>
+          <span className="pg-kicker"><i className="bi bi-chat-dots" aria-hidden="true" /> Cộng đồng</span>
           <h2 className="pg-title">Người đã đi chia sẻ gì?</h2>
         </div>
 
@@ -199,8 +207,8 @@ export default function PlaceGuideSections({
                     </div>
                   )}
                   <footer className="pg-review-foot">
-                    <span>❤️ {t.likes_count ?? t.likes ?? 0}</span>
-                    <span>💬 {(t.comments || []).length}</span>
+                    <span><i className="bi bi-heart-fill" aria-hidden="true" /> {t.likes_count ?? t.likes ?? 0}</span>
+                    <span><i className="bi bi-chat-dots" aria-hidden="true" /> {(t.comments || []).length}</span>
                     <span className="pg-review-tag">{t.tag}</span>
                   </footer>
                 </article>
@@ -217,6 +225,7 @@ export default function PlaceGuideSections({
           Xem diễn đàn &amp; chia sẻ trải nghiệm của bạn →
         </Link>
       </section>
+      </ScrollReveal>
     </>
   );
 }

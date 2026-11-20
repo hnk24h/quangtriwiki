@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import { useToast } from '@/components/common/ToastProvider';
 import HeroSection from '@/components/home/HeroSection';
 import PlacesExplorer from '@/components/home/PlacesExplorer';
@@ -260,55 +261,60 @@ export default function HomeClient({
           <a href="#kham-pha">
             <span className="step-num">01</span>
             <span>
+              <i className="bi bi-stars" aria-hidden="true" />{' '}
               {lang === 'en'
-                ? '✨ Iconic Highlights'
+                ? 'Iconic Highlights'
                 : lang === 'ja'
-                ? '✨ 定番の見どころ'
-                : '✨ Trải nghiệm biểu tượng'}
+                ? '定番の見どころ'
+                : 'Trải nghiệm biểu tượng'}
             </span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#cung-duong">
             <span className="step-num">02</span>
             <span>
+              <i className="bi bi-map" aria-hidden="true" />{' '}
               {lang === 'en'
-                ? `🗺️ Interactive Map (${initialPlaces.length})`
+                ? `Interactive Map (${initialPlaces.length})`
                 : lang === 'ja'
-                ? `🗺️ 多層マップ (${initialPlaces.length})`
-                : `🗺️ Bản đồ đa lớp (${initialPlaces.length})`}
+                ? `多層マップ (${initialPlaces.length})`
+                : `Bản đồ đa lớp (${initialPlaces.length})`}
             </span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#dich-vu">
             <span className="step-num">03</span>
             <span>
+              <i className="bi bi-house-heart" aria-hidden="true" />{' '}
               {lang === 'en'
-                ? '🏕️ Stays & Transport'
+                ? 'Stays & Transport'
                 : lang === 'ja'
-                ? '🏕️ 宿泊・バイクレンタル'
-                : '🏕️ Lưu trú & Thuê xe'}
+                ? '宿泊・バイクレンタル'
+                : 'Lưu trú & Thuê xe'}
             </span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#am-thuc">
             <span className="step-num">04</span>
             <span>
+              <i className="bi bi-cup-hot" aria-hidden="true" />{' '}
               {lang === 'en'
-                ? '🍲 Local Cuisine'
+                ? 'Local Cuisine'
                 : lang === 'ja'
-                ? '🍲 ご当地グルメ'
-                : '🍲 Ẩm thực đất lửa'}
+                ? 'ご当地グルメ'
+                : 'Ẩm thực đất lửa'}
             </span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#lich-trinh">
             <span className="step-num">05</span>
             <span>
+              <i className="bi bi-compass" aria-hidden="true" />{' '}
               {lang === 'en'
-                ? '🧭 Routes & Safety'
+                ? 'Routes & Safety'
                 : lang === 'ja'
-                ? '🧭 モデルコース・安全'
-                : '🧭 Lộ trình & Cộng đồng'}
+                ? 'モデルコース・安全'
+                : 'Lộ trình & Cộng đồng'}
             </span>
           </a>
         </nav>
@@ -317,38 +323,41 @@ export default function HomeClient({
       {/* 01. INSPIRE SHOWCASE: 4 Trải Nghiệm Không Thể Bỏ Lỡ */}
       <section className="inspire-showcase-section" id="kham-pha">
         <div className="container">
-          <div className="section-head-split">
-            <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
-              <span className="sub-title-accent">
+          <ScrollReveal>
+            <div className="section-head-split">
+              <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
+                <span className="sub-title-accent">
+                  {lang === 'en'
+                    ? 'STEP 01 / 05 · INSPIRATION'
+                    : lang === 'ja'
+                    ? 'ステップ 01 / 05 · 旅のインスピレーション'
+                    : 'BƯỚC 01 / 05 · CẢM HỨNG HÀNH TRÌNH'}
+                </span>
+                <h2 className="title-serif">
+                  {lang === 'en'
+                    ? '4 Unmissable Experiences in Quang Tri'
+                    : lang === 'ja'
+                    ? 'クアンチで外せない4つの体験'
+                    : '4 Mảnh Ghép Không Thể Bỏ Lỡ Tại Quảng Trị'}
+                </h2>
+                <p className="desc-text">
+                  {lang === 'en'
+                    ? 'From UNESCO karst caves in Phong Nha - Ke Bang to Truong Son cloud passes, the 17th Parallel DMZ, and Con Co Island.'
+                    : lang === 'ja'
+                    ? 'ユネスコ世界遺産フォンニャ＝ケバンの鍾乳洞から、雲海のチュオンソン山脈、17度線DMZ、離島コンコー島まで。'
+                    : 'Từ kỳ quan hang động UNESCO phía Bắc đến đèo mây Trường Sơn, ký ức Vĩ tuyến 17 và đảo ngọc tiền tiêu giữa Biển Đông.'}
+                </p>
+              </div>
+              <a href="#cung-duong" className="journey-back-map-chip">
+                <i className="bi bi-map" aria-hidden="true" />{' '}
                 {lang === 'en'
-                  ? 'STEP 01 / 05 · INSPIRATION'
+                  ? 'Open Interactive Map ↓'
                   : lang === 'ja'
-                  ? 'ステップ 01 / 05 · 旅のインスピレーション'
-                  : 'BƯỚC 01 / 05 · CẢM HỨNG HÀNH TRÌNH'}
-              </span>
-              <h2 className="title-serif">
-                {lang === 'en'
-                  ? '4 Unmissable Experiences in Quang Tri'
-                  : lang === 'ja'
-                  ? 'クアンチで外せない4つの体験'
-                  : '4 Mảnh Ghép Không Thể Bỏ Lỡ Tại Quảng Trị'}
-              </h2>
-              <p className="desc-text">
-                {lang === 'en'
-                  ? 'From UNESCO karst caves in Phong Nha - Ke Bang to Truong Son cloud passes, the 17th Parallel DMZ, and Con Co Island.'
-                  : lang === 'ja'
-                  ? 'ユネスコ世界遺産フォンニャ＝ケバンの鍾乳洞から、雲海のチュオンソン山脈、17度線DMZ、離島コンコー島まで。'
-                  : 'Từ kỳ quan hang động UNESCO phía Bắc đến đèo mây Trường Sơn, ký ức Vĩ tuyến 17 và đảo ngọc tiền tiêu giữa Biển Đông.'}
-              </p>
+                  ? 'インタラクティブ地図を開く ↓'
+                  : 'Mở bản đồ tương tác ↓'}
+              </a>
             </div>
-            <a href="#cung-duong" className="journey-back-map-chip">
-              {lang === 'en'
-                ? '🗺️ Open Interactive Map ↓'
-                : lang === 'ja'
-                ? '🗺️ インタラクティブ地図を開く ↓'
-                : '🗺️ Mở bản đồ tương tác ↓'}
-            </a>
-          </div>
+          </ScrollReveal>
 
           <div className="inspire-grid">
             {[
@@ -440,28 +449,30 @@ export default function HomeClient({
                     : 'Đón bình minh đồi cát Quang Phú, dạo biển Cửa Việt và lặn ngắm san hô tại đảo tiền tiêu Cồn Cỏ.',
                 image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80',
               },
-            ].map((item) => (
-              <Link key={item.slug} href={`/diem-den/${item.slug}`} className="inspire-card">
-                <SafeImage
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 25vw"
-                />
-                <div className="inspire-card-overlay" />
-                <div className="inspire-card-body">
-                  <span className="inspire-card-tag">{item.tag}</span>
-                  <h3 className="inspire-card-title">{item.title}</h3>
-                  <p className="inspire-card-desc">{item.desc}</p>
-                  <span className="inspire-card-cta">
-                    {lang === 'en'
-                      ? 'Explore guide →'
-                      : lang === 'ja'
-                      ? '詳しく見る →'
-                      : 'Khám phá ngay →'}
-                  </span>
-                </div>
-              </Link>
+            ].map((item, idx) => (
+              <ScrollReveal key={item.slug} variant="scale-up" delayMs={idx * 90}>
+                <Link href={`/diem-den/${item.slug}`} className="inspire-card">
+                  <SafeImage
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                  />
+                  <div className="inspire-card-overlay" />
+                  <div className="inspire-card-body">
+                    <span className="inspire-card-tag">{item.tag}</span>
+                    <h3 className="inspire-card-title">{item.title}</h3>
+                    <p className="inspire-card-desc">{item.desc}</p>
+                    <span className="inspire-card-cta">
+                      {lang === 'en'
+                        ? 'Explore guide →'
+                        : lang === 'ja'
+                        ? '詳しく見る →'
+                        : 'Khám phá ngay →'}
+                    </span>
+                  </div>
+                </Link>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -495,48 +506,52 @@ export default function HomeClient({
       {/* BƯỚC 02. LƯU TRÚ & DỊCH VỤ ĐỐI TÁC BẢN ĐỊA */}
       <section className="services-section-curated" id="dich-vu">
         <div className="container">
-          <div className="section-head-split">
-            <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
-              <span className="sub-title-accent">BƯỚC 02 / 05 · ĐỐI TÁC BẢN ĐỊA ĐÃ XÁC MINH</span>
-              <h2 className="title-serif">Lưu Trú, Thuê Xe & Hải Trình Cồn Cỏ</h2>
-              <p className="desc-text">
-                Sau khi chọn điểm đến trên bản đồ, kết nối trực tiếp chủ homestay Khe Sanh, dịch vụ xe máy vượt đèo Sa Mù và vé tàu Cồn Cỏ – 100% giá gốc niêm yết.
-              </p>
-            </div>
-
-            {selectedZone !== 'all' && selectedZoneObj && (
-              <div className="zone-context-pill">
-                <span>🧭 Đang ưu tiên dịch vụ gần <strong>{selectedZoneObj.code} · {selectedZoneObj.name}</strong></span>
-                <button type="button" onClick={() => setSelectedZone('all')}>
-                  Xem toàn tỉnh ✕
-                </button>
+          <ScrollReveal>
+            <div className="section-head-split">
+              <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
+                <span className="sub-title-accent">BƯỚC 02 / 05 · ĐỐI TÁC BẢN ĐỊA ĐÃ XÁC MINH</span>
+                <h2 className="title-serif">Lưu Trú, Thuê Xe & Hải Trình Cồn Cỏ</h2>
+                <p className="desc-text">
+                  Sau khi chọn điểm đến trên bản đồ, kết nối trực tiếp chủ homestay Khe Sanh, dịch vụ xe máy vượt đèo Sa Mù và vé tàu Cồn Cỏ – 100% giá gốc niêm yết.
+                </p>
               </div>
-            )}
-          </div>
 
-          <div className="services-trust-row">
+              {selectedZone !== 'all' && selectedZoneObj && (
+                <div className="zone-context-pill">
+                  <span><i className="bi bi-compass" aria-hidden="true" /> Đang ưu tiên dịch vụ gần <strong>{selectedZoneObj.code} · {selectedZoneObj.name}</strong></span>
+                  <button type="button" onClick={() => setSelectedZone('all')}>
+                    Xem toàn tỉnh <i className="bi bi-x-lg" aria-hidden="true" />
+                  </button>
+                </div>
+              )}
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delayMs={80}>
+            <div className="services-trust-row">
             <div className="trust-item">
-              <span className="trust-icon">🛡️</span>
+              <span className="trust-icon"><i className="bi bi-shield-check" aria-hidden="true" /></span>
               <div>
                 <strong>100% Giá Niêm Yết Gốc</strong>
                 <span>Không kê giá, cam kết theo giá chủ cơ sở</span>
               </div>
             </div>
             <div className="trust-item">
-              <span className="trust-icon">⚡</span>
+              <span className="trust-icon"><i className="bi bi-lightning-charge-fill" aria-hidden="true" /></span>
               <div>
                 <strong>Kết Nối Trực Tiếp Qua Hotline / Zalo</strong>
                 <span>Chủ cơ sở phản hồi nhanh chóng, hỗ trợ đặt chỗ</span>
               </div>
             </div>
             <div className="trust-item">
-              <span className="trust-icon">🤝</span>
+              <span className="trust-icon"><i className="bi bi-people-fill" aria-hidden="true" /></span>
               <div>
                 <strong>Người Bản Địa Đồng Hành</strong>
                 <span>Sẵn sàng hỗ trợ tư vấn và cứu hộ trên đường đi</span>
               </div>
             </div>
           </div>
+          </ScrollReveal>
 
           <div className="services-header-row">
             <div className="services-filter-track">
@@ -573,12 +588,12 @@ export default function HomeClient({
                 <div className="cservice-media" style={{ position: 'relative', overflow: 'hidden' }}>
                   <SafeImage src={srv.image} alt={srv.name} fill sizes="(max-width: 768px) 100vw, 320px" />
                   <span className="cservice-badge">{srv.typeLabel}</span>
-                  {srv.verified && <span className="cservice-verified">✓ Đã xác minh</span>}
+                  {srv.verified && <span className="cservice-verified"><i className="bi bi-check-lg" aria-hidden="true" /> Đã xác minh</span>}
                 </div>
                 <div className="cservice-body">
                   <div className="cservice-meta">
-                    <span className="cservice-zone">📍 {srv.zoneName}</span>
-                    <span className="cservice-rating">★ {srv.rating} ({srv.reviewsCount})</span>
+                    <span className="cservice-zone"><i className="bi bi-geo-alt-fill" aria-hidden="true" /> {srv.zoneName}</span>
+                    <span className="cservice-rating"><i className="bi bi-star-fill" aria-hidden="true" /> {srv.rating} ({srv.reviewsCount})</span>
                   </div>
                   <h3 className="cservice-title">{srv.name}</h3>
                   <p className="cservice-address">{srv.address}</p>
@@ -598,7 +613,7 @@ export default function HomeClient({
                       onClick={() => trackLead(srv.id, srv.name, 'call')}
                       className="cservice-call-btn"
                     >
-                      📞 Gọi Hotline
+                      <i className="bi bi-telephone-fill" aria-hidden="true" /> Gọi Hotline
                     </a>
                     <a
                       href={`https://zalo.me/${(srv.zalo || srv.phone || '').replace(/[^0-9]/g, '')}`}
@@ -607,7 +622,7 @@ export default function HomeClient({
                       onClick={() => trackLead(srv.id, srv.name, 'zalo')}
                       className="cservice-zalo-btn"
                     >
-                      💬 Nhắn Zalo
+                      <i className="bi bi-chat-dots-fill" aria-hidden="true" /> Nhắn Zalo
                     </a>
                   </div>
                 </div>
@@ -629,36 +644,40 @@ export default function HomeClient({
       {/* BƯỚC 03. CẨM NANG ẨM THỰC ĐẶC SẢN */}
       <section className="food-section-curated" id="am-thuc">
         <div className="container">
-          <div className="section-head-split">
-            <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
-              <span className="sub-title-accent">BƯỚC 03 / 05 · HƯƠNG VỊ ĐẤT LỬA</span>
-              <h2 className="title-serif">Ẩm Thực & Đặc Sản Nổi Tiếng</h2>
-              <p className="desc-text">
-                Nạp năng lượng trên mỗi cung đường với vị cay nồng của cháo vạt giường Hải Lăng, bún hến Mai Xá, gà đồi Cùa và cà phê Arabica Khe Sanh.
-              </p>
+          <ScrollReveal>
+            <div className="section-head-split">
+              <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
+                <span className="sub-title-accent">BƯỚC 03 / 05 · HƯƠNG VỊ ĐẤT LỬA</span>
+                <h2 className="title-serif">Ẩm Thực & Đặc Sản Nổi Tiếng</h2>
+                <p className="desc-text">
+                  Nạp năng lượng trên mỗi cung đường với vị cay nồng của cháo vạt giường Hải Lăng, bún hến Mai Xá, gà đồi Cùa và cà phê Arabica Khe Sanh.
+                </p>
+              </div>
+              <a href="#cung-duong" className="journey-back-map-chip">
+                <i className="bi bi-map" aria-hidden="true" /> Xem tọa độ quán ngon trên Bản đồ ↑
+              </a>
             </div>
-            <a href="#cung-duong" className="journey-back-map-chip">
-              🗺️ Xem tọa độ quán ngon trên Bản đồ ↑
-            </a>
-          </div>
+          </ScrollReveal>
 
           <div className="food-curated-grid">
-            {prioritizedFoods.slice(0, 4).map((f) => (
-              <Link key={f.id} href="/am-thuc" className="curated-food-card" aria-label={`Xem ${f.name} trong cẩm nang ẩm thực`}>
-                <div className="cfood-media" style={{ position: 'relative', overflow: 'hidden' }}>
-                  <SafeImage src={f.image} alt={f.name} fill sizes="(max-width: 768px) 100vw, 320px" />
-                  <span className="cfood-zone">{f.origin || 'Quảng Trị'}</span>
-                  <span className="cfood-price">{formatDualCurrency(f.priceRange || 'Bình dân', lang)}</span>
-                </div>
-                <div className="cfood-body">
-                  <h3 className="cfood-title">{f.name}</h3>
-                  <p className="cfood-desc">{f.description}</p>
-                  <div className="cfood-spot">
-                    <span>📍 Quán ngon gợi ý:</span>
-                    <strong>{f.addressRecs?.[0] || 'Chợ Đông Hà'}</strong>
+            {prioritizedFoods.slice(0, 4).map((f, idx) => (
+              <ScrollReveal key={f.id} variant="scale-up" delayMs={idx * 85}>
+                <Link href="/am-thuc" className="curated-food-card" aria-label={`Xem ${f.name} trong cẩm nang ẩm thực`}>
+                  <div className="cfood-media" style={{ position: 'relative', overflow: 'hidden' }}>
+                    <SafeImage src={f.image} alt={f.name} fill sizes="(max-width: 768px) 100vw, 320px" />
+                    <span className="cfood-zone">{f.origin || 'Quảng Trị'}</span>
+                    <span className="cfood-price">{formatDualCurrency(f.priceRange || 'Bình dân', lang)}</span>
                   </div>
-                </div>
-              </Link>
+                  <div className="cfood-body">
+                    <h3 className="cfood-title">{f.name}</h3>
+                    <p className="cfood-desc">{f.description}</p>
+                    <div className="cfood-spot">
+                      <span><i className="bi bi-geo-alt-fill" aria-hidden="true" /> Quán ngon gợi ý:</span>
+                      <strong>{f.addressRecs?.[0] || 'Chợ Đông Hà'}</strong>
+                    </div>
+                  </div>
+                </Link>
+              </ScrollReveal>
             ))}
           </div>
 
@@ -676,37 +695,41 @@ export default function HomeClient({
       {/* BƯỚC 04. LỘ TRÌNH ĐI CHẬM GỢI Ý */}
       <section className="itineraries-section-curated" id="lich-trinh">
         <div className="container">
-          <div className="section-head-hagiang">
-            <span className="sub-title-accent">BƯỚC 04 / 05 · CUNG ĐƯỜNG ĐI CHẬM</span>
-            <h2 className="title-serif">Hành Trình Gợi Ý Theo Ngày</h2>
-            <p className="desc-text">
-              Kết nối các điểm tham quan, quán ăn đặc sản và trạm nghỉ trên bản đồ thành lịch trình 1–3 ngày tối ưu thời gian di chuyển.
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="section-head-hagiang">
+              <span className="sub-title-accent">BƯỚC 04 / 05 · CUNG ĐƯỜNG ĐI CHẬM</span>
+              <h2 className="title-serif">Hành Trình Gợi Ý Theo Ngày</h2>
+              <p className="desc-text">
+                Kết nối các điểm tham quan, quán ăn đặc sản và trạm nghỉ trên bản đồ thành lịch trình 1–3 ngày tối ưu thời gian di chuyển.
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="itineraries-curated-grid">
-            {itineraries.slice(0, 3).map((it) => (
-              <div key={it.id} className="curated-itinerary-card">
-                <div className="citinerary-head">
-                  <span className="citinerary-duration">{it.duration}</span>
-                  <span className="citinerary-style">{it.suitability}</span>
-                </div>
-                <h3 className="citinerary-title">{it.title}</h3>
-                <p className="citinerary-desc">{it.description}</p>
+            {itineraries.slice(0, 3).map((it, idx) => (
+              <ScrollReveal key={it.id} variant="scale-up" delayMs={idx * 95}>
+                <div className="curated-itinerary-card">
+                  <div className="citinerary-head">
+                    <span className="citinerary-duration">{it.duration}</span>
+                    <span className="citinerary-style">{it.suitability}</span>
+                  </div>
+                  <h3 className="citinerary-title">{it.title}</h3>
+                  <p className="citinerary-desc">{it.description}</p>
 
-                <div className="citinerary-stops-wrap">
-                  <span className="citinerary-stops-title">Trạm dừng chân nổi bật:</span>
-                  <ul className="citinerary-stops-list">
-                    {(it.highlights || []).slice(0, 4).map((hl, idx) => (
-                      <li key={idx}>{hl}</li>
-                    ))}
-                  </ul>
-                </div>
+                  <div className="citinerary-stops-wrap">
+                    <span className="citinerary-stops-title">Trạm dừng chân nổi bật:</span>
+                    <ul className="citinerary-stops-list">
+                      {(it.highlights || []).slice(0, 4).map((hl, hIdx) => (
+                        <li key={hIdx}>{hl}</li>
+                      ))}
+                    </ul>
+                  </div>
 
-                <Link href="/lich-trinh" className="citinerary-link">
-                  Xem chi tiết lộ trình từng ngày →
-                </Link>
-              </div>
+                  <Link href="/lich-trinh" className="citinerary-link">
+                    Xem chi tiết lộ trình từng ngày →
+                  </Link>
+                </div>
+              </ScrollReveal>
             ))}
           </div>
 
@@ -724,15 +747,17 @@ export default function HomeClient({
       {/* BƯỚC 05. CỘNG ĐỒNG LÃNG DU & CẨM NANG BẢO AN */}
       <section className="community-safety-section" id="dien-dan">
         <div className="container">
-          <div className="section-head-hagiang">
-            <span className="sub-title-accent">BƯỚC 05 / 05 · AN TOÀN & SẺ CHIA TRÊN ĐƯỜNG PHƯỢT</span>
-            <h2 className="title-serif">Kinh Nghiệm Cộng Đồng & Cứu Hộ Thực Địa</h2>
-            <p className="desc-text">
-              Lưu lại các số điện thoại cứu hộ 24/7, trạm xăng trọng yếu trước khi lên đèo và tham khảo chia sẻ mới nhất từ những người vừa đi về.
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="section-head-hagiang">
+              <span className="sub-title-accent">BƯỚC 05 / 05 · AN TOÀN & SẺ CHIA TRÊN ĐƯỜNG PHƯỢT</span>
+              <h2 className="title-serif">Kinh Nghiệm Cộng Đồng & Cứu Hộ Thực Địa</h2>
+              <p className="desc-text">
+                Lưu lại các số điện thoại cứu hộ 24/7, trạm xăng trọng yếu trước khi lên đèo và tham khảo chia sẻ mới nhất từ những người vừa đi về.
+              </p>
+            </div>
+          </ScrollReveal>
           <div className="community-safety-grid">
-            <div className="community-col">
+            <ScrollReveal delayMs={80} className="community-col">
               <div className="col-header-row">
                 <div>
                   <span className="col-kicker">✦ KINH NGHIỆM THỰC TẾ</span>
@@ -743,7 +768,7 @@ export default function HomeClient({
                   onClick={() => setIsThreadModalOpen(true)}
                   className="quick-thread-btn"
                 >
-                  ✍️ Đăng bài
+                  <i className="bi bi-pencil-square" aria-hidden="true" /> Đăng bài
                 </button>
               </div>
 
@@ -770,7 +795,7 @@ export default function HomeClient({
                         onClick={() => handleLikeThread(th.id)}
                         className={`cthread-like-btn ${likedThreadIds[th.id] ? 'active' : ''}`}
                       >
-                        ❤️ Thích ({th.likes_count ?? th.likes ?? 0})
+                        <i className="bi bi-heart-fill" aria-hidden="true" /> Thích ({th.likes_count ?? th.likes ?? 0})
                       </button>
                     </div>
                   </article>
@@ -782,9 +807,9 @@ export default function HomeClient({
                   Xem tất cả các bài viết & hình ảnh cộng đồng →
                 </Link>
               </div>
-            </div>
+            </ScrollReveal>
 
-            <div className="safety-col">
+            <ScrollReveal delayMs={160} className="safety-col">
               <div className="col-header-row">
                 <div>
                   <span className="col-kicker">✦ CẨM NANG BẢO AN</span>
@@ -794,7 +819,7 @@ export default function HomeClient({
 
               <div className="safety-cards-box">
                 <div className="safety-item-group">
-                  <h4 className="safety-group-title">🚨 Số Điện Thoại Cứu Hộ 24/7</h4>
+                  <h4 className="safety-group-title"><i className="bi bi-exclamation-triangle-fill" aria-hidden="true" /> Số Điện Thoại Cứu Hộ 24/7</h4>
                   <div className="hotlines-compact-list">
                     {(guides?.emergencyHotlines || []).slice(0, 3).map((em, idx) => (
                       <div key={idx} className="hotline-compact-row">
@@ -803,7 +828,7 @@ export default function HomeClient({
                           <span>{em.note || 'Hỗ trợ 24/7'}</span>
                         </div>
                         <a href={`tel:${em.phone}`} className="hotline-compact-btn">
-                          📞 {em.phone}
+                          <i className="bi bi-telephone-fill" aria-hidden="true" /> {em.phone}
                         </a>
                       </div>
                     ))}
@@ -811,7 +836,7 @@ export default function HomeClient({
                 </div>
 
                 <div className="safety-item-group">
-                  <h4 className="safety-group-title">⛽ Cây Xăng Trọng Yếu Tuyến Đường Xa</h4>
+                  <h4 className="safety-group-title"><i className="bi bi-fuel-pump-fill" aria-hidden="true" /> Cây Xăng Trọng Yếu Tuyến Đường Xa</h4>
                   <ul className="gas-compact-list">
                     {(guides?.gasStations || []).slice(0, 3).map((g, idx) => (
                       <li key={idx}>
@@ -827,7 +852,7 @@ export default function HomeClient({
                   Xem toàn bộ danh bạ cứu hộ & trạm xăng toàn tỉnh →
                 </Link>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>

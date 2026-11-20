@@ -9,28 +9,28 @@ export default function Footer() {
         <div className="container">
           <div className="pledge-grid">
             <div className="pledge-item">
-              <span className="pledge-icon">🌿</span>
+              <span className="pledge-icon"><i className="bi bi-tree" aria-hidden="true" /></span>
               <div className="pledge-content">
                 <strong>Du Lịch Xanh & Không Rác Thải</strong>
                 <p>Giữ gìn vẻ đẹp hoang sơ của Trường Sơn đại ngàn và biển đảo Cồn Cỏ</p>
               </div>
             </div>
             <div className="pledge-item">
-              <span className="pledge-icon">🕊️</span>
+              <span className="pledge-icon"><i className="bi bi-peace" aria-hidden="true" /></span>
               <div className="pledge-content">
                 <strong>Tôn Nghiêm Di Sản Lịch Sử</strong>
                 <p>Trang nghiêm, thành kính tại các di tích chiến trường và nghĩa trang liệt sĩ</p>
               </div>
             </div>
             <div className="pledge-item">
-              <span className="pledge-icon">🤝</span>
+              <span className="pledge-icon"><i className="bi bi-people" aria-hidden="true" /></span>
               <div className="pledge-content">
                 <strong>Ủng Hộ Kinh Tế Bản Địa</strong>
                 <p>Đồng hành cùng đồng bào Vân Kiều, Pa Cô và người dân Quảng Trị</p>
               </div>
             </div>
             <div className="pledge-item">
-              <span className="pledge-icon">🧭</span>
+              <span className="pledge-icon"><i className="bi bi-compass" aria-hidden="true" /></span>
               <div className="pledge-content">
                 <strong>An Toàn Là Trên Hết</strong>
                 <p>Kiểm tra thời tiết, đèo dốc và chuẩn bị đồ bảo hộ trước khi khởi hành</p>
@@ -63,8 +63,8 @@ export default function Footer() {
               </p>
 
               <div className="footer-badges-wrap">
-                <span className="footer-cert-pill">🇻🇳 Cẩm nang phi lợi nhuận</span>
-                <span className="footer-cert-pill">✦ Dữ liệu thực địa 100%</span>
+                <span className="footer-cert-pill"><i className="bi bi-flag" aria-hidden="true" /> Cẩm nang phi lợi nhuận</span>
+                <span className="footer-cert-pill"><i className="bi bi-patch-check" aria-hidden="true" /> Dữ liệu thực địa 100%</span>
               </div>
 
               <div className="footer-social-row">
@@ -115,15 +115,15 @@ export default function Footer() {
               
               <div className="safety-phone-list">
                 <div className="safety-phone-card emergency">
-                  <span className="phone-label">🚨 Cứu hộ Đèo Sa Mù & Khe Sanh</span>
+                  <span className="phone-label"><i className="bi bi-exclamation-triangle-fill" aria-hidden="true" /> Cứu hộ Đèo Sa Mù & Khe Sanh</span>
                   <a href="tel:0914123456" className="phone-num">0914.123.456</a>
                 </div>
                 <div className="safety-phone-card">
-                  <span className="phone-label">🚑 Cấp cứu Y tế Khẩn cấp</span>
+                  <span className="phone-label"><i className="bi bi-hospital" aria-hidden="true" /> Cấp cứu Y tế Khẩn cấp</span>
                   <a href="tel:115" className="phone-num">115</a>
                 </div>
                 <div className="safety-phone-card">
-                  <span className="phone-label">👮 CSGT Tỉnh Quảng Trị</span>
+                  <span className="phone-label"><i className="bi bi-shield-check" aria-hidden="true" /> CSGT Tỉnh Quảng Trị</span>
                   <a href="tel:02333852445" className="phone-num">0233.385.2445</a>
                 </div>
               </div>

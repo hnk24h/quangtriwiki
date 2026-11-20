@@ -4,6 +4,7 @@ import React, { useMemo, useState } from 'react';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import PartnerRegistrationModal from '@/components/home/PartnerRegistrationModal';
 import type { Service } from '@/lib/supabase/types';
 
@@ -57,7 +58,7 @@ export default function DichVuClient({ initialServices }: DichVuClientProps) {
             textAlign: 'center',
           }}
         >
-          <div style={{ maxWidth: '850px', margin: '0 auto' }}>
+          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
               KẾT NỐI TRỰC TIẾP VỚI NGƯỜI BẢN ĐỊA
             </span>
@@ -87,6 +88,7 @@ export default function DichVuClient({ initialServices }: DichVuClientProps) {
         </div>
 
         {/* Search & Filters */}
+        <ScrollReveal variant="fade-in">
         <div style={{ maxWidth: '1200px', margin: '2rem auto 0', padding: '0 1.5rem' }}>
           <div
             style={{
@@ -150,6 +152,7 @@ export default function DichVuClient({ initialServices }: DichVuClientProps) {
             </div>
           </div>
         </div>
+        </ScrollReveal>
 
         {/* Services Grid */}
         <div style={{ maxWidth: '1200px', margin: '2.25rem auto 0', padding: '0 1.5rem' }}>
@@ -159,10 +162,11 @@ export default function DichVuClient({ initialServices }: DichVuClientProps) {
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2rem' }}>
-              {filteredServices.map((srv) => (
+              {filteredServices.map((srv, idx) => (
+                <ScrollReveal key={srv.id} delayMs={(idx % 3) * 80} style={{ display: 'flex' }}>
                 <article
-                  key={srv.id}
                   style={{
+                    flex: 1,
                     backgroundColor: '#fff',
                     borderRadius: '20px',
                     overflow: 'hidden',
@@ -205,7 +209,7 @@ export default function DichVuClient({ initialServices }: DichVuClientProps) {
                           zIndex: 2,
                         }}
                       >
-                        ✓ Đã xác minh
+                        <i className="bi bi-check-lg" aria-hidden="true" /> Đã xác minh
                       </span>
                     )}
                   </div>
@@ -213,7 +217,7 @@ export default function DichVuClient({ initialServices }: DichVuClientProps) {
                   <div style={{ padding: '1.4rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>{srv.zoneName}</span>
-                      <span style={{ fontSize: '0.85rem', color: '#d97706', fontWeight: 600 }}>★ {srv.rating} ({srv.reviewsCount})</span>
+                      <span style={{ fontSize: '0.85rem', color: '#d97706', fontWeight: 600 }}><i className="bi bi-star-fill" aria-hidden="true" /> {srv.rating} ({srv.reviewsCount})</span>
                     </div>
 
                     <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: '#133e2f', margin: '0 0 0.5rem 0' }}>
@@ -268,6 +272,7 @@ export default function DichVuClient({ initialServices }: DichVuClientProps) {
                     </div>
                   </div>
                 </article>
+                </ScrollReveal>
               ))}
             </div>
           )}

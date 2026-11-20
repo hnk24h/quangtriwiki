@@ -79,7 +79,11 @@ export default function PlaceActionsClient({
           cursor: 'pointer',
         }}
       >
-        {isBookmarked ? '★ Đã lưu trong Sổ tay' : '☆ Lưu vào Sổ tay của tôi'}
+        {isBookmarked ? (
+          <><i className="bi bi-star-fill" aria-hidden="true" /> Đã lưu trong Sổ tay</>
+        ) : (
+          <><i className="bi bi-star" aria-hidden="true" /> Lưu vào Sổ tay của tôi</>
+        )}
       </button>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
@@ -97,7 +101,7 @@ export default function PlaceActionsClient({
             cursor: 'pointer',
           }}
         >
-          📍 Chép GPS
+          <i className="bi bi-geo-alt-fill" aria-hidden="true" /> Chép GPS
         </button>
 
         <button
@@ -114,7 +118,7 @@ export default function PlaceActionsClient({
             cursor: 'pointer',
           }}
         >
-          🔗 Chia sẻ
+          <i className="bi bi-share" aria-hidden="true" /> Chia sẻ
         </button>
       </div>
     </div>

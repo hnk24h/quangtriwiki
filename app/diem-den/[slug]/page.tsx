@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import PlaceActionsClient from './PlaceActionsClient';
 import PlaceGuideSections from './PlaceGuideSections';
 import {
@@ -236,15 +237,16 @@ export default async function PlaceDetailPage({ params }: PageProps) {
 
         {/* Quick section navigation */}
         <nav className="pg-quick-nav" aria-label="Mục lục điểm đến">
-          <a href="#cach-di">🧭 Cách đi</a>
-          {guideFoods.length > 0 && <a href="#an-gi">🍲 Nên ăn gì</a>}
-          {nearestPlaces.length > 0 && <a href="#choi-o-dau">🎒 Nên chơi ở đâu</a>}
-          <a href="#nguoi-da-di">💬 Người đã đi</a>
+          <a href="#cach-di"><i className="bi bi-compass" aria-hidden="true" /> Cách đi</a>
+          {guideFoods.length > 0 && <a href="#an-gi"><i className="bi bi-cup-hot" aria-hidden="true" /> Nên ăn gì</a>}
+          {nearestPlaces.length > 0 && <a href="#choi-o-dau"><i className="bi bi-backpack" aria-hidden="true" /> Nên chơi ở đâu</a>}
+          <a href="#nguoi-da-di"><i className="bi bi-chat-dots" aria-hidden="true" /> Người đã đi</a>
         </nav>
 
         {/* Responsive 2-column content grid */}
         <div className="place-detail-grid">
           <div>
+            <ScrollReveal>
             <section style={{ background: '#fff', padding: '2rem', borderRadius: '18px', border: '1px solid rgba(27,42,34,0.08)', marginBottom: '1.5rem' }}>
               <h2 style={{ fontFamily: 'var(--font-serif)', color: '#133e2f', marginTop: 0, fontSize: '1.5rem' }}>
                 Giới thiệu & Lịch sử
@@ -253,8 +255,10 @@ export default async function PlaceDetailPage({ params }: PageProps) {
                 {place.history || place.fullDesc || place.shortDesc}
               </p>
             </section>
+            </ScrollReveal>
 
             {Array.isArray(place.highlights) && place.highlights.length > 0 && (
+              <ScrollReveal delayMs={60}>
               <section style={{ background: '#fff', padding: '2rem', borderRadius: '18px', border: '1px solid rgba(27,42,34,0.08)', marginBottom: '1.5rem' }}>
                 <h2 style={{ fontFamily: 'var(--font-serif)', color: '#133e2f', marginTop: 0, fontSize: '1.5rem' }}>
                   Điểm nhấn không thể bỏ qua
@@ -265,9 +269,11 @@ export default async function PlaceDetailPage({ params }: PageProps) {
                   ))}
                 </ul>
               </section>
+              </ScrollReveal>
             )}
 
             {place.tips && (
+              <ScrollReveal delayMs={80}>
               <section
                 style={{
                   background: '#fefce8',
@@ -278,15 +284,17 @@ export default async function PlaceDetailPage({ params }: PageProps) {
                 }}
               >
                 <h2 style={{ fontFamily: 'var(--font-serif)', color: '#854d0e', marginTop: 0, marginBottom: '0.5rem', fontSize: '1.25rem' }}>
-                  💡 Kinh nghiệm & Lưu ý phượt thủ
+                  <i className="bi bi-lightbulb" aria-hidden="true" /> Kinh nghiệm & Lưu ý phượt thủ
                 </h2>
                 <p style={{ margin: 0, lineHeight: 1.75, color: '#713f12', fontSize: '0.96rem' }}>
                   {place.tips}
                 </p>
               </section>
+              </ScrollReveal>
             )}
 
             {galleryImages.length > 0 && (
+              <ScrollReveal delayMs={80}>
               <section style={{ background: '#fff', padding: '1.75rem', borderRadius: '18px', border: '1px solid rgba(27,42,34,0.08)' }}>
                 <h2 style={{ fontFamily: 'var(--font-serif)', color: '#133e2f', marginTop: 0, marginBottom: '1rem', fontSize: '1.4rem' }}>
                   Thư viện hình ảnh thực tế
@@ -299,6 +307,7 @@ export default async function PlaceDetailPage({ params }: PageProps) {
                   ))}
                 </div>
               </section>
+              </ScrollReveal>
             )}
 
             <PlaceGuideSections
@@ -323,19 +332,19 @@ export default async function PlaceDetailPage({ params }: PageProps) {
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.92rem', color: '#4b5563' }}>
                 <div>
-                  <strong style={{ color: '#133e2f', display: 'block' }}>📍 Địa chỉ:</strong>
+                  <strong style={{ color: '#133e2f', display: 'block' }}><i className="bi bi-geo-alt-fill" aria-hidden="true" /> Địa chỉ:</strong>
                   <span>{place.address}</span>
                 </div>
                 <div>
-                  <strong style={{ color: '#133e2f', display: 'block' }}>🕒 Giờ mở cửa:</strong>
+                  <strong style={{ color: '#133e2f', display: 'block' }}><i className="bi bi-clock" aria-hidden="true" /> Giờ mở cửa:</strong>
                   <span>{place.openHours || 'Mở cửa cả ngày'}</span>
                 </div>
                 <div>
-                  <strong style={{ color: '#133e2f', display: 'block' }}>🎟️ Giá vé:</strong>
+                  <strong style={{ color: '#133e2f', display: 'block' }}><i className="bi bi-ticket-perforated" aria-hidden="true" /> Giá vé:</strong>
                   <span>{place.ticket || 'Miễn phí'}</span>
                 </div>
                 <div>
-                  <strong style={{ color: '#133e2f', display: 'block' }}>🧭 Tọa độ GPS:</strong>
+                  <strong style={{ color: '#133e2f', display: 'block' }}><i className="bi bi-compass" aria-hidden="true" /> Tọa độ GPS:</strong>
                   <span>{place.coordinates}</span>
                 </div>
               </div>
@@ -371,6 +380,7 @@ export default async function PlaceDetailPage({ params }: PageProps) {
 
         {/* Services in same Zone */}
         {nearbyServices.length > 0 && (
+          <ScrollReveal>
           <section style={{ marginTop: '3.5rem', paddingTop: '2.5rem', borderTop: '1px solid rgba(27,42,34,0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.5rem' }}>
               <div>
@@ -419,6 +429,7 @@ export default async function PlaceDetailPage({ params }: PageProps) {
               </div>
             )}
           </section>
+          </ScrollReveal>
         )}
       </main>
 

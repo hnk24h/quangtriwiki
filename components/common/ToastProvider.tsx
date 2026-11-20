@@ -45,7 +45,13 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
           {toasts.map((t) => (
             <div key={t.id} className={`qt-toast-item qt-toast-${t.variant}`}>
               <span className="qt-toast-icon">
-                {t.variant === 'error' ? '⚠️' : t.variant === 'info' ? 'ℹ️' : '✓'}
+                {t.variant === 'error' ? (
+                  <i className="bi bi-exclamation-triangle-fill" aria-hidden="true" />
+                ) : t.variant === 'info' ? (
+                  <i className="bi bi-info-circle-fill" aria-hidden="true" />
+                ) : (
+                  <i className="bi bi-check-circle-fill" aria-hidden="true" />
+                )}
               </span>
               <span className="qt-toast-msg">{t.message}</span>
               <button

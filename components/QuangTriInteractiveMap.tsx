@@ -533,13 +533,13 @@ const CATEGORY_TABS: Array<{
   icon: string;
   color: string;
 }> = [
-  { id: 'all', label: 'Tất cả', labelEn: 'All', labelJa: 'すべて', icon: '🧭', color: '#133e2f' },
-  { id: 'sightseeing', label: 'Điểm tham quan', labelEn: 'Attractions', labelJa: '観光スポット', icon: '🏛️', color: '#059669' },
-  { id: 'food', label: 'Ăn uống', labelEn: 'Food & Drink', labelJa: 'グルメ', icon: '🍲', color: '#ea580c' },
-  { id: 'hotel', label: 'Khách sạn & Lưu trú', labelEn: 'Hotels & Stays', labelJa: '宿泊', icon: '🏨', color: '#2563eb' },
-  { id: 'parking', label: 'Bãi đỗ xe', labelEn: 'Parking', labelJa: '駐車場', icon: '🅿️', color: '#4f46e5' },
-  { id: 'fuel', label: 'Cây xăng & Cứu hộ', labelEn: 'Fuel & Rescue', labelJa: '給油・救援', icon: '⛽', color: '#d97706' },
-  { id: 'user_pin', label: 'Cộng đồng ghim', labelEn: 'Community Pins', labelJa: 'みんなのピン', icon: '📌', color: '#db2777' },
+  { id: 'all', label: 'Tất cả', labelEn: 'All', labelJa: 'すべて', icon: 'bi-compass', color: '#133e2f' },
+  { id: 'sightseeing', label: 'Điểm tham quan', labelEn: 'Attractions', labelJa: '観光スポット', icon: 'bi-bank', color: '#059669' },
+  { id: 'food', label: 'Ăn uống', labelEn: 'Food & Drink', labelJa: 'グルメ', icon: 'bi-cup-hot', color: '#ea580c' },
+  { id: 'hotel', label: 'Khách sạn & Lưu trú', labelEn: 'Hotels & Stays', labelJa: '宿泊', icon: 'bi-building', color: '#2563eb' },
+  { id: 'parking', label: 'Bãi đỗ xe', labelEn: 'Parking', labelJa: '駐車場', icon: 'bi-p-square', color: '#4f46e5' },
+  { id: 'fuel', label: 'Cây xăng & Cứu hộ', labelEn: 'Fuel & Rescue', labelJa: '給油・救援', icon: 'bi-fuel-pump', color: '#d97706' },
+  { id: 'user_pin', label: 'Cộng đồng ghim', labelEn: 'Community Pins', labelJa: 'みんなのピン', icon: 'bi-pin-angle-fill', color: '#db2777' },
 ];
 
 function parsePlaceLatLng(place: Place): { lat: number; lng: number } {
@@ -1045,7 +1045,7 @@ export default function QuangTriInteractiveMap({
         className: 'gmap-custom-div-icon',
         html: `
           <div class="gmap-pin-marker is-draft">
-            <span class="gmap-pin-bubble" style="background:#db2777">📌</span>
+            <span class="gmap-pin-bubble" style="background:#db2777"><i class="bi bi-pin-angle-fill"></i></span>
             <span class="gmap-pin-label">Vị trí ghim mới</span>
           </div>
         `,
@@ -1089,7 +1089,7 @@ export default function QuangTriInteractiveMap({
         html: `
           <div class="gmap-pin-marker ${isSelected ? 'is-active' : ''}" title="${safeTitle}">
             <span class="gmap-pin-bubble" style="background:${catMeta.color}">
-              ${catMeta.icon}
+              <i class="bi ${catMeta.icon}"></i>
             </span>
             <span class="gmap-pin-label">${poi.name}</span>
           </div>
@@ -1280,7 +1280,7 @@ export default function QuangTriInteractiveMap({
                       : undefined
                   }
                 >
-                  <span>{tab.icon}</span>
+                  <i className={`bi ${tab.icon}`} aria-hidden="true" />
                   <span>
                     {lang === 'en' ? tab.labelEn : lang === 'ja' ? tab.labelJa : tab.label}
                   </span>
@@ -1293,7 +1293,7 @@ export default function QuangTriInteractiveMap({
           {/* Search & User Pin Action */}
           <div className="gmap-actions-right">
             <div className="gmap-search-mini">
-              <span>🔍</span>
+              <i className="bi bi-search" aria-hidden="true" />
               <input
                 type="text"
                 value={mapSearch}
@@ -1309,7 +1309,7 @@ export default function QuangTriInteractiveMap({
               />
               {mapSearch && (
                 <button type="button" onClick={() => setMapSearch('')} aria-label="Xóa tìm kiếm">
-                  ✕
+                  <i className="bi bi-x-lg" aria-hidden="true" />
                 </button>
               )}
             </div>
@@ -1319,7 +1319,7 @@ export default function QuangTriInteractiveMap({
               onClick={handleStartPinMode}
               className={`gmap-add-pin-btn ${isPinningMode ? 'active' : ''}`}
             >
-              <span>📌</span>
+              <i className="bi bi-pin-angle-fill" aria-hidden="true" />
               <span>
                 {isPinningMode
                   ? lang === 'en'
@@ -1339,7 +1339,7 @@ export default function QuangTriInteractiveMap({
 
         {/* Integrated 8-Zones Quick Selector Bar (Replaces the old standalone 8-Zones section) */}
         <div className="gmap-zone-bar" aria-label="Chọn nhanh 8 phân vùng Quảng Trị trên bản đồ">
-          <span className="gmap-zone-label">🗺️ Vùng:</span>
+          <span className="gmap-zone-label"><i className="bi bi-map" aria-hidden="true" /> Vùng:</span>
           <button
             type="button"
             onClick={() => handleZoneChange('all')}
@@ -1366,11 +1366,11 @@ export default function QuangTriInteractiveMap({
       {isPinningMode && (
         <div className="gmap-pin-banner">
           <div>
-            <strong>📌 Chế độ ghim địa điểm:</strong> Click vào bất kỳ vị trí nào trên bản đồ (hoặc kéo ghim màu hồng) để lấy tọa độ GPS chính xác và điền thông tin địa điểm.
+            <strong><i className="bi bi-pin-angle-fill" aria-hidden="true" /> Chế độ ghim địa điểm:</strong> Click vào bất kỳ vị trí nào trên bản đồ (hoặc kéo ghim màu hồng) để lấy tọa độ GPS chính xác và điền thông tin địa điểm.
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
             <button type="button" onClick={handleLocateMe} className="gmap-banner-btn">
-              🎯 Lấy vị trí của tôi
+              <i className="bi bi-crosshair" aria-hidden="true" /> Lấy vị trí của tôi
             </button>
             <button
               type="button"
@@ -1381,7 +1381,7 @@ export default function QuangTriInteractiveMap({
               }}
               className="gmap-banner-btn cancel"
             >
-              ✕ Thoát chế độ ghim
+              <i className="bi bi-x-lg" aria-hidden="true" /> Thoát chế độ ghim
             </button>
           </div>
         </div>
@@ -1428,40 +1428,40 @@ export default function QuangTriInteractiveMap({
               {filteredPois.length === 0 ? (
                 <div className="gmap-empty-box">
                   <p>Chưa có địa điểm nào khớp bộ lọc này.</p>
-                  <button
-                    type="button"
-                    onClick={handleStartPinMode}
-                    className="gmap-empty-pin-cta"
-                  >
-                    📌 + Ghim bổ sung địa điểm tại đây
-                  </button>
-                </div>
-              ) : (
-                filteredPois.map((poi) => {
-                  const isSelected = selectedPoi?.id === poi.id;
-                  const catMeta = getCategoryMeta(poi.isUserPin ? 'user_pin' : poi.category);
-                  return (
-                    <div
-                      key={poi.id}
-                      onClick={() => handleFocusPoi(poi)}
-                      className={`gmap-poi-row ${isSelected ? 'active' : ''}`}
+                    <button
+                      type="button"
+                      onClick={handleStartPinMode}
+                      className="gmap-empty-pin-cta"
                     >
-                      <span
-                        className="gmap-poi-icon"
-                        style={{ backgroundColor: `${catMeta.color}15`, color: catMeta.color }}
+                      <i className="bi bi-pin-angle-fill" aria-hidden="true" /> + Ghim bổ sung địa điểm tại đây
+                    </button>
+                  </div>
+                ) : (
+                  filteredPois.map((poi) => {
+                    const isSelected = selectedPoi?.id === poi.id;
+                    const catMeta = getCategoryMeta(poi.isUserPin ? 'user_pin' : poi.category);
+                    return (
+                      <div
+                        key={poi.id}
+                        onClick={() => handleFocusPoi(poi)}
+                        className={`gmap-poi-row ${isSelected ? 'active' : ''}`}
                       >
-                        {catMeta.icon}
-                      </span>
-                      <div className="gmap-poi-body">
-                        <div className="gmap-poi-meta">
-                          <span className="gmap-poi-zone">{poi.zoneCode}</span>
-                          <span className="gmap-poi-cat" style={{ color: catMeta.color }}>
-                            {poi.categoryLabel}
-                          </span>
-                          {poi.rating && <span className="gmap-poi-rate">★ {poi.rating}</span>}
-                        </div>
-                        <h4 className="gmap-poi-title">{poi.name}</h4>
-                        <p className="gmap-poi-addr">📍 {poi.address}</p>
+                        <span
+                          className="gmap-poi-icon"
+                          style={{ backgroundColor: `${catMeta.color}15`, color: catMeta.color }}
+                        >
+                          <i className={`bi ${catMeta.icon}`} aria-hidden="true" />
+                        </span>
+                        <div className="gmap-poi-body">
+                          <div className="gmap-poi-meta">
+                            <span className="gmap-poi-zone">{poi.zoneCode}</span>
+                            <span className="gmap-poi-cat" style={{ color: catMeta.color }}>
+                              {poi.categoryLabel}
+                            </span>
+                            {poi.rating && <span className="gmap-poi-rate"><i className="bi bi-star-fill" aria-hidden="true" /> {poi.rating}</span>}
+                          </div>
+                          <h4 className="gmap-poi-title">{poi.name}</h4>
+                          <p className="gmap-poi-addr"><i className="bi bi-geo-alt-fill" aria-hidden="true" /> {poi.address}</p>
                         <span className="gmap-poi-price">{poi.priceOrHours}</span>
                       </div>
                     </div>
@@ -1491,21 +1491,21 @@ export default function QuangTriInteractiveMap({
               onClick={() => setBaseLayer('street')}
               className={baseLayer === 'street' ? 'active' : ''}
             >
-              🗺️ Đường phố
+              <i className="bi bi-map" aria-hidden="true" /> Đường phố
             </button>
             <button
               type="button"
               onClick={() => setBaseLayer('satellite')}
               className={baseLayer === 'satellite' ? 'active' : ''}
             >
-              🛰️ Vệ tinh
+              <i className="bi bi-globe-asia-australia" aria-hidden="true" /> Vệ tinh
             </button>
             <button
               type="button"
               onClick={() => setBaseLayer('terrain')}
               className={baseLayer === 'terrain' ? 'active' : ''}
             >
-              ⛰️ Địa hình
+              <i className="bi bi-triangle" aria-hidden="true" /> Địa hình
             </button>
             <button
               type="button"
@@ -1513,7 +1513,7 @@ export default function QuangTriInteractiveMap({
               title="Định vị GPS của tôi"
               className="gmap-gps-btn"
             >
-              🎯 Vị trí
+              <i className="bi bi-crosshair" aria-hidden="true" /> Vị trí
             </button>
           </div>
 
@@ -1523,14 +1523,14 @@ export default function QuangTriInteractiveMap({
           {/* Loading or Offline Fallback Overlay */}
           {!leafletReady && !leafletFailed && (
             <div className="gmap-loading-overlay">
-              <span>🧭 Đang khởi tạo bản đồ tương tác Quảng Trị...</span>
+              <span><i className="bi bi-compass" aria-hidden="true" /> Đang khởi tạo bản đồ tương tác Quảng Trị...</span>
             </div>
           )}
 
           {leafletFailed && (
             <div className="gmap-loading-overlay">
               <div style={{ textAlign: 'center', maxWidth: '420px', padding: '1rem' }}>
-                <strong>⚠️ Chế độ ngoại tuyến</strong>
+                <strong><i className="bi bi-exclamation-triangle-fill" aria-hidden="true" /> Chế độ ngoại tuyến</strong>
                 <p style={{ fontSize: '0.85rem', marginTop: '0.35rem', opacity: 0.9 }}>
                   Không tải được lớp bản đồ trực tuyến. Bạn vẫn có thể chọn từng địa điểm ở danh sách bên trái và mở chỉ đường Google Maps.
                 </p>
@@ -1543,7 +1543,7 @@ export default function QuangTriInteractiveMap({
             <div className="gmap-pin-form-drawer" role="dialog" aria-label="Ghim bổ sung địa điểm mới">
               <div className="gmap-drawer-head">
                 <div>
-                  <span className="gmap-drawer-kicker">📌 ĐÓNG GÓP ĐỊA ĐIỂM CỘNG ĐỒNG</span>
+                  <span className="gmap-drawer-kicker"><i className="bi bi-pin-angle-fill" aria-hidden="true" /> ĐÓNG GÓP ĐỊA ĐIỂM CỘNG ĐỒNG</span>
                   <h4>Ghim Địa Điểm Mới Lên Bản Đồ</h4>
                 </div>
                 <button
@@ -1556,13 +1556,13 @@ export default function QuangTriInteractiveMap({
                   className="gmap-drawer-close"
                   aria-label="Đóng"
                 >
-                  ✕
+                  <i className="bi bi-x-lg" aria-hidden="true" />
                 </button>
               </div>
 
               <form onSubmit={handleSaveUserPin} className="gmap-pin-form">
                 <div className="gmap-coord-readout">
-                  <span>📍 Tọa độ đã chọn:</span>
+                  <span><i className="bi bi-geo-alt-fill" aria-hidden="true" /> Tọa độ đã chọn:</span>
                   <strong>
                     {draftPinCoords.lat}° N, {draftPinCoords.lng}° E
                   </strong>
@@ -1576,11 +1576,11 @@ export default function QuangTriInteractiveMap({
                       value={pinCategory}
                       onChange={(e) => setPinCategory(e.target.value as any)}
                     >
-                      <option value="sightseeing">🏛️ Điểm tham quan / Check-in</option>
-                      <option value="food">🍲 Quán ăn / Đặc sản / Cafe</option>
-                      <option value="hotel">🏨 Khách sạn / Homestay</option>
-                      <option value="parking">🅿️ Bãi đỗ xe / Trạm nghỉ</option>
-                      <option value="fuel">⛽ Cây xăng / Sửa xe cứu hộ</option>
+                      <option value="sightseeing">Điểm tham quan / Check-in</option>
+                      <option value="food">Quán ăn / Đặc sản / Cafe</option>
+                      <option value="hotel">Khách sạn / Homestay</option>
+                      <option value="parking">Bãi đỗ xe / Trạm nghỉ</option>
+                      <option value="fuel">Cây xăng / Sửa xe cứu hộ</option>
                     </select>
                   </div>
                   <div>
@@ -1674,7 +1674,7 @@ export default function QuangTriInteractiveMap({
                     Hủy
                   </button>
                   <button type="submit" className="gmap-btn-submit">
-                    📌 Lưu Ghim Lên Bản Đồ
+                    <i className="bi bi-pin-angle-fill" aria-hidden="true" /> Lưu Ghim Lên Bản Đồ
                   </button>
                 </div>
               </form>
@@ -1691,7 +1691,7 @@ export default function QuangTriInteractiveMap({
                 title="Thu gọn thẻ thông tin"
                 aria-label="Đóng thẻ thông tin"
               >
-                ✕
+                <i className="bi bi-x-lg" aria-hidden="true" />
               </button>
               {selectedPoi.image && (
                 <div className="gmap-info-thumb">
@@ -1714,14 +1714,14 @@ export default function QuangTriInteractiveMap({
                       ).color,
                     }}
                   >
-                    {getCategoryMeta(selectedPoi.isUserPin ? 'user_pin' : selectedPoi.category).icon}{' '}
+                    <i className={`bi ${getCategoryMeta(selectedPoi.isUserPin ? 'user_pin' : selectedPoi.category).icon}`} aria-hidden="true" />{' '}
                     {selectedPoi.categoryLabel}
                   </span>
                   <span className="gmap-info-zone">
                     {selectedPoi.zoneCode} · {selectedPoi.zoneName}
                   </span>
                   {selectedPoi.rating && (
-                    <span className="gmap-info-rating">★ {selectedPoi.rating}</span>
+                    <span className="gmap-info-rating"><i className="bi bi-star-fill" aria-hidden="true" /> {selectedPoi.rating}</span>
                   )}
                 </div>
 
@@ -1729,13 +1729,13 @@ export default function QuangTriInteractiveMap({
                 <p className="gmap-info-desc">{selectedPoi.description}</p>
 
                 <div className="gmap-info-meta-grid">
-                  <span>📍 {selectedPoi.address}</span>
-                  <span>🏷️ {formatDualCurrency(selectedPoi.priceOrHours, lang)}</span>
+                  <span><i className="bi bi-geo-alt-fill" aria-hidden="true" /> {selectedPoi.address}</span>
+                  <span><i className="bi bi-tag" aria-hidden="true" /> {formatDualCurrency(selectedPoi.priceOrHours, lang)}</span>
                   <span>
-                    🧭 {selectedPoi.lat.toFixed(4)}°N, {selectedPoi.lng.toFixed(4)}°E
+                    <i className="bi bi-compass" aria-hidden="true" /> {selectedPoi.lat.toFixed(4)}°N, {selectedPoi.lng.toFixed(4)}°E
                   </span>
                   {selectedPoi.contributor && (
-                    <span>👤 {lang === 'en' ? 'By:' : 'Đóng góp:'} {selectedPoi.contributor}</span>
+                    <span><i className="bi bi-person-fill" aria-hidden="true" /> {lang === 'en' ? 'By:' : 'Đóng góp:'} {selectedPoi.contributor}</span>
                   )}
                 </div>
 
@@ -1746,7 +1746,7 @@ export default function QuangTriInteractiveMap({
                     rel="noopener noreferrer"
                     className="gmap-action-btn primary"
                   >
-                    🧭{' '}
+                    <i className="bi bi-compass" aria-hidden="true" />{' '}
                     {lang === 'en'
                       ? 'Google Maps Directions ↗'
                       : lang === 'ja'
@@ -1761,7 +1761,7 @@ export default function QuangTriInteractiveMap({
                         onClick={() => handleOpenPlaceDetail(selectedPoi.rawPlace!)}
                         className="gmap-action-btn"
                       >
-                        📋 Xem nhanh
+                        <i className="bi bi-card-list" aria-hidden="true" /> Xem nhanh
                       </button>
                       <Link
                         href={`/diem-den/${selectedPoi.rawPlace.id}`}
@@ -1777,7 +1777,11 @@ export default function QuangTriInteractiveMap({
                             bookmarkedIds.includes(selectedPoi.rawPlace.id) ? 'bookmarked' : ''
                           }`}
                         >
-                          {bookmarkedIds.includes(selectedPoi.rawPlace.id) ? '★ Đã lưu' : '☆ Lưu sổ tay'}
+                          {bookmarkedIds.includes(selectedPoi.rawPlace.id) ? (
+                            <><i className="bi bi-star-fill" aria-hidden="true" /> Đã lưu</>
+                          ) : (
+                            <><i className="bi bi-star" aria-hidden="true" /> Lưu sổ tay</>
+                          )}
                         </button>
                       )}
                     </>
@@ -1785,7 +1789,7 @@ export default function QuangTriInteractiveMap({
 
                   {selectedPoi.phone && (
                     <a href={`tel:${selectedPoi.phone}`} className="gmap-action-btn">
-                      📞 Gọi {selectedPoi.phone}
+                      <i className="bi bi-telephone-fill" aria-hidden="true" /> Gọi {selectedPoi.phone}
                     </a>
                   )}
 
@@ -1795,7 +1799,7 @@ export default function QuangTriInteractiveMap({
                       onClick={() => handleDeleteUserPin(selectedPoi.id, selectedPoi.name)}
                       className="gmap-action-btn danger"
                     >
-                      🗑️ Xóa ghim này
+                      <i className="bi bi-trash" aria-hidden="true" /> Xóa ghim này
                     </button>
                   )}
                 </div>

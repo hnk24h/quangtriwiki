@@ -30,7 +30,7 @@ export default async function CungDuongPage() {
             overflow: 'hidden',
           }}
         >
-          <div style={{ maxWidth: '800px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+          <div className="subpage-hero-animate" style={{ maxWidth: '800px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
               HỆ THỐNG MÃ CUNG ĐƯỜNG QT-01 → QT-12
             </span>

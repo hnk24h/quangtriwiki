@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import SafeImage from '@/components/common/SafeImage';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import { useToast } from '@/components/common/ToastProvider';
 import { DEFAULT_ZONE_META } from '@/lib/normalize';
 import { matchesPlaceCategory, matchesPlaceSearch } from '@/lib/place-filters';
@@ -27,7 +28,7 @@ const QuangTriInteractiveMap = dynamic(
           fontWeight: 600,
         }}
       >
-        🧭 Đang tải bản đồ tọa độ tương tác Quảng Trị...
+        <i className="bi bi-compass" aria-hidden="true" /> Đang tải bản đồ tọa độ tương tác Quảng Trị...
       </div>
     ),
   }
@@ -97,10 +98,11 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
   return (
     <div className="container places-wide-container" style={{ marginTop: '2rem' }}>
       <section style={{ marginBottom: '2.5rem' }}>
+        <ScrollReveal variant="fade-in">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
           <div>
             <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d97706', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              📍 BẢN ĐỒ SỐ ĐA LỚP & GHIM CỘNG ĐỒNG
+              <i className="bi bi-geo-alt-fill" aria-hidden="true" /> BẢN ĐỒ SỐ ĐA LỚP & GHIM CỘNG ĐỒNG
             </span>
             <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#133e2f', margin: '0.15rem 0 0' }}>
               Bản Đồ Tương Tác Quảng Trị
@@ -125,7 +127,7 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
                 color: placesViewMode === 'map' ? '#ffffff' : '#4b5563',
               }}
             >
-              <span>🗺️</span>
+              <i className="bi bi-map" aria-hidden="true" />
               <span>Bản Đồ Tương Tác</span>
             </button>
 
@@ -146,13 +148,15 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
                 color: placesViewMode === 'grid' ? '#ffffff' : '#4b5563',
               }}
             >
-              <span>📋</span>
+              <i className="bi bi-card-list" aria-hidden="true" />
               <span>Danh Sách Thẻ ({filteredPlaces.length})</span>
             </button>
           </div>
         </div>
+        </ScrollReveal>
 
         {placesViewMode === 'map' ? (
+          <ScrollReveal variant="scale-up" delayMs={80}>
           <QuangTriInteractiveMap
             places={filteredPlaces}
             zones={zones}
@@ -162,14 +166,15 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
             bookmarkedIds={bookmarkedIds}
             onToggleBookmark={handleToggleBookmark}
           />
+          </ScrollReveal>
         ) : (
           <div className="places-grid">
-            {filteredPlaces.map((p) => (
+            {filteredPlaces.map((p, idx) => (
+              <ScrollReveal key={p.id} delayMs={(idx % 3) * 70} style={{ display: 'flex' }}>
               <article
-                key={p.id}
                 onClick={() => setActiveModal(p)}
                 className="place-card"
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', flex: 1 }}
               >
                 <div className="card-media" style={{ position: 'relative', overflow: 'hidden' }}>
                   <SafeImage src={p.image || p.hero_image} alt={p.name} fill sizes="(max-width: 768px) 100vw, 360px" />
@@ -189,16 +194,17 @@ export default function CungDuongClient({ places, zones }: CungDuongClientProps)
                 <div className="card-body">
                   <div className="card-meta-row">
                     <span className="card-cat">{p.categoryName}</span>
-                    <span className="card-rating">★ {p.rating} ({p.reviewsCount})</span>
+                    <span className="card-rating"><i className="bi bi-star-fill" aria-hidden="true" /> {p.rating} ({p.reviewsCount})</span>
                   </div>
                   <h3 className="card-title">{p.name}</h3>
                   <p className="card-short-desc">{p.shortDesc}</p>
                   <div className="card-footer-info">
-                    <span className="card-coord">📍 {p.zoneName}</span>
+                    <span className="card-coord"><i className="bi bi-geo-alt-fill" aria-hidden="true" /> {p.zoneName}</span>
                     <span className="card-ticket-preview">{p.ticket || 'Miễn phí'}</span>
                   </div>
                 </div>
               </article>
+              </ScrollReveal>
             ))}
           </div>
         )}

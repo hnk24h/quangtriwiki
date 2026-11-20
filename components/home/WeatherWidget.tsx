@@ -13,12 +13,12 @@ interface WeatherWidgetProps {
   weatherData: Record<string, WeatherLocationData>;
 }
 
-function getWeatherEmoji(icon?: string): string {
-  if (icon === 'sun') return '☀️';
-  if (icon === 'fog') return '🌫️';
-  if (icon === 'rain' || icon === 'cloud-rain') return '🌧️';
-  if (icon === 'storm') return '⛈️';
-  return '⛅';
+function getWeatherBiClass(icon?: string): string {
+  if (icon === 'sun') return 'bi-sun-fill';
+  if (icon === 'fog') return 'bi-cloud-fog2';
+  if (icon === 'rain' || icon === 'cloud-rain') return 'bi-cloud-rain-fill';
+  if (icon === 'storm') return 'bi-cloud-lightning-rain-fill';
+  return 'bi-cloud-sun-fill';
 }
 
 function formatVnTime(isoString?: string): string {
@@ -189,9 +189,11 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
             aria-label="Làm mới thời tiết thực tế"
             className="weather-refresh-btn"
           >
-            <span style={{ display: 'inline-block', transform: isRefreshing ? 'rotate(180deg)' : 'none', transition: 'transform 0.4s ease' }}>
-              🔄
-            </span>
+            <i
+              className="bi bi-arrow-clockwise"
+              aria-hidden="true"
+              style={{ display: 'inline-block', transform: isRefreshing ? 'rotate(180deg)' : 'none', transition: 'transform 0.4s ease' }}
+            />
           </button>
         </div>
       </div>
@@ -199,7 +201,9 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
       {/* Hero Temperature & Current Condition Summary */}
       <div className="weather-now-hero">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <span style={{ fontSize: '2.1rem', lineHeight: 1 }}>{getWeatherEmoji(displayIcon)}</span>
+          <span style={{ fontSize: '2rem', lineHeight: 1, color: '#fde047' }}>
+            <i className={`bi ${getWeatherBiClass(displayIcon)}`} aria-hidden="true" />
+          </span>
           <div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.45rem' }}>
               <strong className="weather-now-temp">
@@ -230,7 +234,9 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
           >
             <div className="weather-day-name">{fc.day}</div>
             <div className="weather-day-date">{fc.date}</div>
-            <div className="weather-day-icon">{getWeatherEmoji(fc.icon)}</div>
+            <div className="weather-day-icon">
+              <i className={`bi ${getWeatherBiClass(fc.icon)}`} aria-hidden="true" />
+            </div>
             <div className="weather-day-temp-high">{fc.high}°</div>
             <div className="weather-day-temp-low">{fc.low}°</div>
             <div className="weather-day-rain">{fc.rain}</div>
@@ -270,9 +276,9 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
                 {hourlySlots.map((slot) => (
                   <div key={slot.time} className="weather-hour-chip">
                     <span className="hour-label">{slot.time}</span>
-                    <span className="hour-icon">{getWeatherEmoji(slot.icon)}</span>
+                    <span className="hour-icon"><i className={`bi ${getWeatherBiClass(slot.icon)}`} aria-hidden="true" /></span>
                     <strong className="hour-temp">{slot.temp}°</strong>
-                    <span className="hour-rain">💧{slot.rain}</span>
+                    <span className="hour-rain"><i className="bi bi-droplet-fill" aria-hidden="true" /> {slot.rain}</span>
                   </div>
                 ))}
               </div>
@@ -296,8 +302,8 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
               </div>
               <div className="metric-col">
                 <div className="metric-label">Mặt trời</div>
-                <div className="metric-value" style={{ fontSize: '0.92rem' }}>🌅 {displaySunrise}</div>
-                <div className="metric-sub">🌇 Lặn {displaySunset}</div>
+                <div className="metric-value" style={{ fontSize: '0.92rem' }}><i className="bi bi-sunrise" aria-hidden="true" /> {displaySunrise}</div>
+                <div className="metric-sub"><i className="bi bi-sunset" aria-hidden="true" /> Lặn {displaySunset}</div>
               </div>
             </div>
           </div>
@@ -305,11 +311,11 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
           {/* Advisories */}
           <div className="weather-advisories" style={{ marginBottom: 0 }}>
             <div className="advisory-item">
-              <span>🧭</span>
+              <span><i className="bi bi-compass" aria-hidden="true" /></span>
               <span>{currentLoc.tipRain}</span>
             </div>
             <div className="advisory-item">
-              <span>🎒</span>
+              <span><i className="bi bi-backpack" aria-hidden="true" /></span>
               <span>{currentLoc.tipSleep}</span>
             </div>
           </div>

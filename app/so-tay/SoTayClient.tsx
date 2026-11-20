@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import { useToast } from '@/components/common/ToastProvider';
 import {
   ChecklistItem,
@@ -135,7 +136,7 @@ export default function SoTayClient({
             textAlign: 'center',
           }}
         >
-          <div style={{ maxWidth: '850px', margin: '0 auto' }}>
+          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
               SỔ TAY CÁ NHÂN CỦA BẠN
             </span>
@@ -149,6 +150,7 @@ export default function SoTayClient({
         </div>
 
         {/* Summary Bar */}
+        <ScrollReveal variant="fade-in">
         <div style={{ maxWidth: '1150px', margin: '2rem auto 0', padding: '0 1.5rem' }}>
           <div
             style={{
@@ -164,7 +166,7 @@ export default function SoTayClient({
             }}
           >
             <div style={{ fontSize: '0.95rem', color: '#4b5563' }}>
-              📍 <strong>{bookmarkedPlaces.length}</strong> điểm đến · 📅 <strong>{bookmarkedItineraries.length}</strong> lịch trình · 🎒 <strong>{checklist.filter((c) => c.done).length}/{checklist.length}</strong> hành trang đã sẵn sàng
+              <i className="bi bi-geo-alt-fill" aria-hidden="true" /> <strong>{bookmarkedPlaces.length}</strong> điểm đến · <i className="bi bi-calendar3" aria-hidden="true" /> <strong>{bookmarkedItineraries.length}</strong> lịch trình · <i className="bi bi-backpack" aria-hidden="true" /> <strong>{checklist.filter((c) => c.done).length}/{checklist.length}</strong> hành trang đã sẵn sàng
             </div>
 
             <button
@@ -184,17 +186,19 @@ export default function SoTayClient({
                 cursor: 'pointer',
               }}
             >
-              <span>🖨️ In / Lưu file PDF</span>
+              <span><i className="bi bi-printer" aria-hidden="true" /> In / Lưu file PDF</span>
             </button>
           </div>
         </div>
+        </ScrollReveal>
 
         <div style={{ maxWidth: '1150px', margin: '2.5rem auto 0', padding: '0 1.5rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
           {/* 1. Bookmarked Places */}
+          <ScrollReveal>
           <section>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', flexWrap: 'wrap', gap: '0.5rem' }}>
               <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#133e2f', margin: 0 }}>
-                📍 Điểm Đến Đã Đánh Dấu ({bookmarkedPlaces.length})
+                <i className="bi bi-geo-alt-fill" aria-hidden="true" /> Điểm Đến Đã Đánh Dấu ({bookmarkedPlaces.length})
               </h2>
               <Link href="/cung-duong" style={{ color: '#133e2f', fontSize: '0.9rem', fontWeight: 600 }}>
                 + Khám phá thêm điểm đến →
@@ -296,13 +300,15 @@ export default function SoTayClient({
               </div>
             )}
           </section>
+          </ScrollReveal>
 
           {/* 2. Saved Itineraries */}
           {bookmarkedItineraries.length > 0 && (
+            <ScrollReveal delayMs={60}>
             <section>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
                 <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.65rem', color: '#133e2f', margin: 0 }}>
-                  📅 Lộ Trình Đã Lưu ({bookmarkedItineraries.length})
+                  <i className="bi bi-calendar3" aria-hidden="true" /> Lộ Trình Đã Lưu ({bookmarkedItineraries.length})
                 </h2>
                 <Link href="/lich-trinh" style={{ color: '#133e2f', fontSize: '0.9rem', fontWeight: 600 }}>
                   Xem toàn bộ lộ trình →
@@ -344,9 +350,11 @@ export default function SoTayClient({
                 ))}
               </div>
             </section>
+            </ScrollReveal>
           )}
 
           {/* 3. Packing Checklist & Personal Notes */}
+          <ScrollReveal delayMs={80}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
             <div
               style={{
@@ -358,7 +366,7 @@ export default function SoTayClient({
               }}
             >
               <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: '#133e2f', margin: '0 0 1.2rem 0' }}>
-                🎒 Hành Trang Cần Chuẩn Bị
+                <i className="bi bi-backpack" aria-hidden="true" /> Hành Trang Cần Chuẩn Bị
               </h2>
 
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
@@ -466,7 +474,7 @@ export default function SoTayClient({
                 }}
               >
                 <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: '#133e2f', margin: '0 0 0.5rem 0' }}>
-                  📝 Ghi Chú & Lịch Trình Riêng
+                  <i className="bi bi-journal-text" aria-hidden="true" /> Ghi Chú & Lịch Trình Riêng
                 </h2>
                 <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: '0 0 1rem 0' }}>
                   Ghi lại số điện thoại tài xế, homestay đã hẹn hoặc các điểm muốn ghé thêm. Tự động lưu trên máy của bạn.
@@ -490,6 +498,7 @@ export default function SoTayClient({
               </div>
             </div>
           </div>
+          </ScrollReveal>
         </div>
       </main>
 

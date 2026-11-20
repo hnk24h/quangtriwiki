@@ -115,7 +115,7 @@ export default function AdminEditorModal({
           }}
         >
           <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#133e2f', margin: 0 }}>
-            {editingItem ? '✏️ Chỉnh Sửa' : '➕ Thêm Mới'} {titleLabel[editingType]}
+            {editingItem ? <><i className="bi bi-pencil-square" aria-hidden="true" /> Chỉnh Sửa</> : <><i className="bi bi-plus-lg" aria-hidden="true" /> Thêm Mới</>} {titleLabel[editingType]}
           </h3>
           <button
             type="button"
@@ -509,7 +509,7 @@ export default function AdminEditorModal({
 
               <div style={{ padding: '1rem', background: '#f0fdf4', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
                 <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#133e2f', marginBottom: '0.65rem' }}>
-                  🌤️ Cấu Hình Thời Tiết Thực Tế (Open-Meteo GPS)
+                  <i className="bi bi-cloud-sun" aria-hidden="true" /> Cấu Hình Thời Tiết Thực Tế (Open-Meteo GPS)
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.65rem' }}>
                   <div>

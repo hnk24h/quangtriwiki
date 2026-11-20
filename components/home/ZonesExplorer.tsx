@@ -42,7 +42,7 @@ export default function ZonesExplorer({
       <div className="container">
         <div className="zones-header-wrap">
           <div className="zones-badge-kicker">
-            <span>🗺️</span>
+            <i className="bi bi-map" aria-hidden="true" />
             <span>HỆ THỐNG MÃ CUNG ĐƯỜNG ({zones.length} KHU VỰC)</span>
           </div>
           <h2 className="zones-main-title">{zones.length} Vùng Di Sản, Danh Thắng & Đặc Sản Bản Địa</h2>
@@ -53,10 +53,10 @@ export default function ZonesExplorer({
 
         <div className="zone-filter-tabs">
           {[
-            { id: 'all', label: `Tất cả ${counts.all} vùng`, count: counts.all },
-            { id: 'history', label: '🏛️ Di tích lịch sử & Tâm linh', count: counts.history },
-            { id: 'mountain', label: '🏔️ Núi cao & Săn mây Sa Mù', count: counts.mountain },
-            { id: 'coastal', label: '🏖️ Biển đảo & Sinh thái', count: counts.coastal },
+            { id: 'all', icon: 'bi-grid', label: `Tất cả ${counts.all} vùng`, count: counts.all },
+            { id: 'history', icon: 'bi-bank', label: 'Di tích lịch sử & Tâm linh', count: counts.history },
+            { id: 'mountain', icon: 'bi-triangle', label: 'Núi cao & Săn mây Sa Mù', count: counts.mountain },
+            { id: 'coastal', icon: 'bi-umbrella', label: 'Biển đảo & Sinh thái', count: counts.coastal },
           ].map((tab) => (
             <button
               type="button"
@@ -64,6 +64,7 @@ export default function ZonesExplorer({
               onClick={() => setZoneTypeFilter(tab.id as any)}
               className={`zone-tab-btn ${zoneTypeFilter === tab.id ? 'active' : ''}`}
             >
+              <i className={`bi ${tab.icon}`} aria-hidden="true" />
               <span>{tab.label}</span>
               <span
                 style={{
@@ -110,7 +111,7 @@ export default function ZonesExplorer({
                   <span className="zone-code-badge">{z.code}</span>
                   <span className="zone-type-badge">{typeTag}</span>
                   <span className="zone-count-badge">
-                    {isEmpty ? '⏳ Sắp cập nhật' : `📍 ${count} điểm đến`}
+                    {isEmpty ? <><i className="bi bi-hourglass-split" aria-hidden="true" /> Sắp cập nhật</> : <><i className="bi bi-geo-alt-fill" aria-hidden="true" /> {count} điểm đến</>}
                   </span>
                 </div>
 
@@ -119,7 +120,7 @@ export default function ZonesExplorer({
                   <div className="zone-card-tagline">{z.tagline}</div>
 
                   <div className="zone-specialty-box">
-                    <span style={{ fontSize: '1rem', flexShrink: 0 }}>🍲</span>
+                    <span style={{ fontSize: '1rem', flexShrink: 0 }}><i className="bi bi-cup-hot" aria-hidden="true" /></span>
                     <div>
                       <span>Đặc sản: </span>
                       <strong>{specialty}</strong>
@@ -131,7 +132,7 @@ export default function ZonesExplorer({
                   <div className="zone-card-footer">
                     {isSelected ? (
                       <span className="zone-selected-indicator">
-                        <span>✓</span>
+                        <i className="bi bi-check-lg" aria-hidden="true" />
                         <span>Đang xem {count} điểm đến · bấm để bỏ lọc</span>
                       </span>
                     ) : isEmpty ? (

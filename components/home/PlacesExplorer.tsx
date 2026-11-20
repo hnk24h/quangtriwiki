@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import { formatDualCurrency, useLanguage } from '@/lib/i18n';
 import type { Food, GuidesData, Place, Service, Zone } from '@/lib/supabase/types';
 
@@ -99,10 +100,11 @@ export default function PlacesExplorer({
   return (
     <section className="places-section places-section-wide" id="cung-duong">
       <div className="container places-wide-container">
-        <div
-          id="places-results"
-          className="section-head-split"
-        >
+        <ScrollReveal>
+          <div
+            id="places-results"
+            className="section-head-split"
+          >
           <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
             <span className="sub-title-accent">
               {lang === 'en'
@@ -148,7 +150,7 @@ export default function PlacesExplorer({
                 transition: 'all 0.2s ease',
               }}
             >
-              <span>🗺️</span>
+              <i className="bi bi-map" aria-hidden="true" />
               <span>Bản Đồ Tương Tác</span>
             </button>
 
@@ -171,7 +173,7 @@ export default function PlacesExplorer({
                 transition: 'all 0.2s ease',
               }}
             >
-              <span>📋</span>
+              <i className="bi bi-card-list" aria-hidden="true" />
               <span>Danh Sách Thẻ ({filteredPlaces.length})</span>
             </button>
             </div>
@@ -180,8 +182,10 @@ export default function PlacesExplorer({
             </Link>
           </div>
         </div>
+        </ScrollReveal>
 
         {/* Conditional Rendering: Interactive Map (always available) or Grid */}
+        <ScrollReveal variant="scale-up" delayMs={100}>
         {placesViewMode === 'map' ? (
           <QuangTriInteractiveMap
             places={filteredPlaces}
@@ -254,12 +258,12 @@ export default function PlacesExplorer({
                 <div className="card-body">
                   <div className="card-meta-row">
                     <span className="card-cat">{p.categoryName}</span>
-                    <span className="card-rating">★ {p.rating} ({p.reviewsCount})</span>
+                    <span className="card-rating"><i className="bi bi-star-fill" aria-hidden="true" /> {p.rating} ({p.reviewsCount})</span>
                   </div>
                   <h3 className="card-title">{p.name}</h3>
                   <p className="card-short-desc">{p.shortDesc}</p>
                   <div className="card-footer-info">
-                    <span className="card-coord">📍 {p.zoneName}</span>
+                    <span className="card-coord"><i className="bi bi-geo-alt-fill" aria-hidden="true" /> {p.zoneName}</span>
                     <span className="card-ticket-preview">
                       {formatDualCurrency(p.ticket || 'Miễn phí', lang)}
                     </span>
@@ -269,10 +273,11 @@ export default function PlacesExplorer({
             ))}
           </div>
         )}
+        </ScrollReveal>
 
         <div className="section-journey-footer" style={{ marginTop: '1.5rem' }}>
           <span className="journey-hint-text">
-            💡 Chọn một vùng trên bản đồ để lọc nhanh điểm đến và ưu tiên gợi ý Lưu trú & Ẩm thực bên dưới.
+            <i className="bi bi-lightbulb" aria-hidden="true" /> Chọn một vùng trên bản đồ để lọc nhanh điểm đến và ưu tiên gợi ý Lưu trú & Ẩm thực bên dưới.
           </span>
           <a href="#dich-vu" className="journey-next-link">
             Tiếp theo: Lưu trú & Dịch vụ bản địa ↓

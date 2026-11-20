@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import { useToast } from '@/components/common/ToastProvider';
 import { STORAGE_KEYS } from '@/lib/storage';
 import type { Itinerary } from '@/lib/supabase/types';
@@ -55,7 +56,7 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
             textAlign: 'center',
           }}
         >
-          <div style={{ maxWidth: '850px', margin: '0 auto' }}>
+          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
               GỢI Ý LỘ TRÌNH KHÁM PHÁ QUẢNG TRỊ
             </span>
@@ -69,6 +70,7 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
         </div>
 
         {/* Tab Selection */}
+        <ScrollReveal variant="fade-in">
         <div style={{ maxWidth: '1100px', margin: '2.5rem auto 0', padding: '0 1.5rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
             {initialItineraries.map((it) => {
@@ -112,9 +114,11 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
             })}
           </div>
         </div>
+        </ScrollReveal>
 
         {/* Active Itinerary Details */}
         {currentItinerary && (
+          <ScrollReveal variant="scale-up" delayMs={80}>
           <div style={{ maxWidth: '1100px', margin: '2rem auto 0', padding: '0 1.5rem' }}>
             <div
               style={{
@@ -134,9 +138,9 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
                     {currentItinerary.title}
                   </h2>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.9rem', color: '#4b5563' }}>
-                    <div>⏱️ <strong>Thời gian:</strong> {currentItinerary.duration}</div>
-                    <div>🛣️ <strong>Cự ly:</strong> {currentItinerary.distance}</div>
-                    <div>🎯 <strong>Phù hợp:</strong> {currentItinerary.suitability}</div>
+                    <div><i className="bi bi-clock" aria-hidden="true" /> <strong>Thời gian:</strong> {currentItinerary.duration}</div>
+                    <div><i className="bi bi-signpost-split" aria-hidden="true" /> <strong>Cự ly:</strong> {currentItinerary.distance}</div>
+                    <div><i className="bi bi-bullseye" aria-hidden="true" /> <strong>Phù hợp:</strong> {currentItinerary.suitability}</div>
                   </div>
                 </div>
 
@@ -198,7 +202,7 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
                         fontWeight: 500,
                       }}
                     >
-                      📍 {hl}
+                      <i className="bi bi-geo-alt-fill" aria-hidden="true" /> {hl}
                     </span>
                   ))}
                 </div>
@@ -229,7 +233,8 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
                     />
 
                     {timelineSteps.map((step, idx) => (
-                      <div key={idx} style={{ display: 'flex', gap: '1.5rem', position: 'relative', zIndex: 1 }}>
+                      <ScrollReveal key={idx} delayMs={(idx % 4) * 60}>
+                      <div style={{ display: 'flex', gap: '1.5rem', position: 'relative', zIndex: 1 }}>
                         <div
                           style={{
                             width: '38px',
@@ -272,7 +277,7 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
                                 borderRadius: '12px',
                               }}
                             >
-                              ⏱️ {step.time}
+                              <i className="bi bi-clock" aria-hidden="true" /> {step.time}
                             </span>
                           </div>
                           <p style={{ margin: 0, color: '#4b5563', lineHeight: 1.6, fontSize: '0.95rem' }}>
@@ -280,6 +285,7 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
                           </p>
                         </div>
                       </div>
+                      </ScrollReveal>
                     ))}
                   </div>
                 )}
@@ -297,7 +303,7 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
                   alignItems: 'flex-start',
                 }}
               >
-                <span style={{ fontSize: '1.5rem' }}>💡</span>
+                <span style={{ fontSize: '1.35rem', color: '#854d0e' }}><i className="bi bi-lightbulb" aria-hidden="true" /></span>
                 <div style={{ fontSize: '0.92rem', color: '#854d0e', lineHeight: 1.6 }}>
                   <strong>Lưu ý cho chặng này:</strong> Nhớ kiểm tra áp suất lốp, đổ đầy bình xăng trước khi vào các cung đường đèo dốc hoặc đường nhánh Tây Trường Sơn. Tra cứu nhanh tại trang{' '}
                   <Link href="/tien-ich" style={{ color: '#133e2f', textDecoration: 'underline', fontWeight: 600 }}>
@@ -308,6 +314,7 @@ export default function LichTrinhClient({ initialItineraries }: LichTrinhClientP
               </div>
             </div>
           </div>
+          </ScrollReveal>
         )}
       </main>
 

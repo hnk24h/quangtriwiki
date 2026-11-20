@@ -612,7 +612,7 @@ export default function AdminClient() {
             maxWidth: '420px',
           }}
         >
-          {toast.type === 'error' ? '⚠️ ' : '✓ '}
+          {toast.type === 'error' ? <i className="bi bi-exclamation-triangle-fill" aria-hidden="true" /> : <i className="bi bi-check-circle-fill" aria-hidden="true" />}{' '}
           {toast.message}
         </div>
       )}
@@ -636,7 +636,7 @@ export default function AdminClient() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '1.35rem' }}>🧭</span>
+            <span style={{ fontSize: '1.35rem' }}><i className="bi bi-compass" aria-hidden="true" /></span>
             <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: '1.25rem', color: '#ffffff' }}>
               QuangTri.wiki
             </span>
@@ -692,7 +692,7 @@ export default function AdminClient() {
           }}
         >
           <span>
-            ⚠️ <strong>Cảnh báo bảo mật:</strong> Hệ thống đang dùng mật khẩu mặc định. Hãy thiết lập biến môi trường <code>ADMIN_PASSWORD</code>, <code>ADMIN_SESSION_SECRET</code> và <code>SUPABASE_SERVICE_ROLE_KEY</code> trên Vercel.
+            <i className="bi bi-exclamation-triangle-fill" aria-hidden="true" /> <strong>Cảnh báo bảo mật:</strong> Hệ thống đang dùng mật khẩu mặc định. Hãy thiết lập biến môi trường <code>ADMIN_PASSWORD</code>, <code>ADMIN_SESSION_SECRET</code> và <code>SUPABASE_SERVICE_ROLE_KEY</code> trên Vercel.
           </span>
           <button
             onClick={() => setHideSecurityWarning(true)}
@@ -722,17 +722,17 @@ export default function AdminClient() {
           </span>
 
           {[
-            { id: 'overview', label: 'Tổng Quan Hệ Thống', icon: '📊', count: null },
-            { id: 'analytics', label: 'Phân Tích Lượt Xem', icon: '📈', count: analytics?.todayViews ?? 'Live' },
-            { id: 'banners', label: 'Slide Trang Top (Banner)', icon: '🖼️', count: bannerSlides.length },
-            { id: 'zones', label: 'Khu Vực & Thời Tiết', icon: '🧭', count: zones.length },
-            { id: 'threads', label: 'Bài Viết & Diễn Đàn', icon: '✍️', count: threads.length },
-            { id: 'places', label: 'Điểm Đến & Danh Thắng', icon: '📍', count: places.length },
-            { id: 'services', label: 'Dịch Vụ & Đối Tác', icon: '🏕️', count: services.length },
-            { id: 'registrations', label: 'Hồ Sơ Đăng Ký Đối Tác', icon: '📩', count: pendingRegistrationsCount || registrations.length },
-            { id: 'foods', label: 'Ẩm Thực Đặc Sản', icon: '🍲', count: foods.length },
-            { id: 'itineraries', label: 'Lịch Trình & Cung Đường', icon: '🗺️', count: itineraries.length },
-            { id: 'utilities', label: 'Cứu Hộ & Tiện Ích', icon: '⛽', count: (guidesData.gasStations?.length || 0) + (guidesData.emergencyHotlines?.length || 0) },
+            { id: 'overview', label: 'Tổng Quan Hệ Thống', icon: 'bi-bar-chart-line', count: null },
+            { id: 'analytics', label: 'Phân Tích Lượt Xem', icon: 'bi-graph-up-arrow', count: analytics?.todayViews ?? 'Live' },
+            { id: 'banners', label: 'Slide Trang Top (Banner)', icon: 'bi-images', count: bannerSlides.length },
+            { id: 'zones', label: 'Khu Vực & Thời Tiết', icon: 'bi-compass', count: zones.length },
+            { id: 'threads', label: 'Bài Viết & Diễn Đàn', icon: 'bi-pencil-square', count: threads.length },
+            { id: 'places', label: 'Điểm Đến & Danh Thắng', icon: 'bi-geo-alt-fill', count: places.length },
+            { id: 'services', label: 'Dịch Vụ & Đối Tác', icon: 'bi-building', count: services.length },
+            { id: 'registrations', label: 'Hồ Sơ Đăng Ký Đối Tác', icon: 'bi-envelope-paper', count: pendingRegistrationsCount || registrations.length },
+            { id: 'foods', label: 'Ẩm Thực Đặc Sản', icon: 'bi-cup-hot', count: foods.length },
+            { id: 'itineraries', label: 'Lịch Trình & Cung Đường', icon: 'bi-map', count: itineraries.length },
+            { id: 'utilities', label: 'Cứu Hộ & Tiện Ích', icon: 'bi-fuel-pump', count: (guidesData.gasStations?.length || 0) + (guidesData.emergencyHotlines?.length || 0) },
           ].map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -758,7 +758,7 @@ export default function AdminClient() {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                  <span>{item.icon}</span>
+                  <i className={`bi ${item.icon}`} aria-hidden="true" />
                   <span>{item.label}</span>
                 </div>
                 {item.count !== null && (
@@ -838,19 +838,19 @@ export default function AdminClient() {
                 </h3>
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                   <button onClick={() => openAddModal('banners')} style={{ padding: '0.65rem 1.15rem', borderRadius: '10px', background: '#133e2f', color: '#fff', border: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
-                    🖼️ Thêm Slide Banner Top
+                    <i className="bi bi-images" aria-hidden="true" /> Thêm Slide Banner Top
                   </button>
                   <button onClick={() => setActiveTab('zones')} style={{ padding: '0.65rem 1.15rem', borderRadius: '10px', background: '#f3f4f6', color: '#1f2937', border: '1px solid #d1d5db', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
-                    🧭 Quản lý Khu vực & Thời tiết
+                    <i className="bi bi-compass" aria-hidden="true" /> Quản lý Khu vực & Thời tiết
                   </button>
                   <button onClick={() => openAddModal('threads')} style={{ padding: '0.65rem 1.15rem', borderRadius: '10px', background: '#f3f4f6', color: '#1f2937', border: '1px solid #d1d5db', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
-                    ✍️ Soạn bài viết mới
+                    <i className="bi bi-pencil-square" aria-hidden="true" /> Soạn bài viết mới
                   </button>
                   <button onClick={() => openAddModal('places')} style={{ padding: '0.65rem 1.15rem', borderRadius: '10px', background: '#f3f4f6', color: '#1f2937', border: '1px solid #d1d5db', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
-                    📍 Thêm địa danh mới
+                    <i className="bi bi-geo-alt-fill" aria-hidden="true" /> Thêm địa danh mới
                   </button>
                   <button onClick={() => setActiveTab('analytics')} style={{ padding: '0.65rem 1.15rem', borderRadius: '10px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
-                    📈 Xem phân tích lượt xem
+                    <i className="bi bi-graph-up-arrow" aria-hidden="true" /> Xem phân tích lượt xem
                   </button>
                 </div>
               </div>
@@ -912,10 +912,10 @@ export default function AdminClient() {
                         <td style={{ padding: '0.85rem 1rem', color: '#4b5563', fontSize: '0.82rem', maxWidth: '300px' }}>{slide.subtitle}</td>
                         <td style={{ padding: '0.85rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                           <button onClick={() => openEditModal('banners', slide)} style={{ padding: '0.35rem 0.65rem', marginRight: '0.4rem', borderRadius: '6px', background: '#f3f4f6', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            ✏️ Sửa
+                            <i className="bi bi-pencil-square" aria-hidden="true" /> Sửa
                           </button>
                           <button onClick={() => handleDelete('banners', slide.id, slide.title)} style={{ padding: '0.35rem 0.65rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            🗑️ Xóa
+                            <i className="bi bi-trash" aria-hidden="true" /> Xóa
                           </button>
                         </td>
                       </tr>
@@ -1001,15 +1001,15 @@ export default function AdminClient() {
                               color: z.showInWeather !== false ? '#047857' : '#6b7280',
                             }}
                           >
-                            {z.showInWeather !== false ? '🌤️ Đang bật' : 'Tắt'}
+                            {z.showInWeather !== false ? <><i className="bi bi-cloud-sun" aria-hidden="true" /> Đang bật</> : 'Tắt'}
                           </span>
                         </td>
                         <td style={{ padding: '0.85rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                           <button onClick={() => openEditModal('zones', z)} style={{ padding: '0.35rem 0.65rem', marginRight: '0.4rem', borderRadius: '6px', background: '#f3f4f6', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            ✏️ Sửa
+                            <i className="bi bi-pencil-square" aria-hidden="true" /> Sửa
                           </button>
                           <button onClick={() => handleDelete('zones', z.code, z.name)} style={{ padding: '0.35rem 0.65rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            🗑️ Xóa
+                            <i className="bi bi-trash" aria-hidden="true" /> Xóa
                           </button>
                         </td>
                       </tr>
@@ -1070,13 +1070,13 @@ export default function AdminClient() {
                           <span style={{ background: '#ecfdf5', color: '#059669', padding: '0.2rem 0.55rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>{th.tag}</span>
                         </td>
                         <td style={{ padding: '0.85rem 1rem' }}>{th.zoneCode}</td>
-                        <td style={{ padding: '0.85rem 1rem' }}>❤️ {th.likes_count ?? th.likes ?? 0}</td>
+                        <td style={{ padding: '0.85rem 1rem' }}><i className="bi bi-heart-fill" aria-hidden="true" /> {th.likes_count ?? th.likes ?? 0}</td>
                         <td style={{ padding: '0.85rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                           <button onClick={() => openEditModal('threads', th)} style={{ padding: '0.35rem 0.65rem', marginRight: '0.4rem', borderRadius: '6px', background: '#f3f4f6', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            ✏️ Sửa
+                            <i className="bi bi-pencil-square" aria-hidden="true" /> Sửa
                           </button>
                           <button onClick={() => handleDelete('threads', th.id, th.title)} style={{ padding: '0.35rem 0.65rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            🗑️ Xóa
+                            <i className="bi bi-trash" aria-hidden="true" /> Xóa
                           </button>
                         </td>
                       </tr>
@@ -1142,10 +1142,10 @@ export default function AdminClient() {
                         <td style={{ padding: '0.85rem 1rem', color: '#059669', fontWeight: 600 }}>{p.ticket}</td>
                         <td style={{ padding: '0.85rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                           <button onClick={() => openEditModal('places', p)} style={{ padding: '0.35rem 0.65rem', marginRight: '0.4rem', borderRadius: '6px', background: '#f3f4f6', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            ✏️ Sửa
+                            <i className="bi bi-pencil-square" aria-hidden="true" /> Sửa
                           </button>
                           <button onClick={() => handleDelete('places', p.id, p.name)} style={{ padding: '0.35rem 0.65rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            🗑️ Xóa
+                            <i className="bi bi-trash" aria-hidden="true" /> Xóa
                           </button>
                         </td>
                       </tr>
@@ -1209,10 +1209,10 @@ export default function AdminClient() {
                         </td>
                         <td style={{ padding: '0.85rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                           <button onClick={() => openEditModal('services', srv)} style={{ padding: '0.35rem 0.65rem', marginRight: '0.4rem', borderRadius: '6px', background: '#f3f4f6', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            ✏️ Sửa
+                            <i className="bi bi-pencil-square" aria-hidden="true" /> Sửa
                           </button>
                           <button onClick={() => handleDelete('services', srv.id, srv.name)} style={{ padding: '0.35rem 0.65rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            🗑️ Xóa
+                            <i className="bi bi-trash" aria-hidden="true" /> Xóa
                           </button>
                         </td>
                       </tr>
@@ -1279,10 +1279,10 @@ export default function AdminClient() {
                         <td style={{ padding: '0.85rem 1rem' }}>{f.addressRecs?.[0] || 'Chợ Đông Hà'}</td>
                         <td style={{ padding: '0.85rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                           <button onClick={() => openEditModal('foods', f)} style={{ padding: '0.35rem 0.65rem', marginRight: '0.4rem', borderRadius: '6px', background: '#f3f4f6', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            ✏️ Sửa
+                            <i className="bi bi-pencil-square" aria-hidden="true" /> Sửa
                           </button>
                           <button onClick={() => handleDelete('foods', f.id, f.name)} style={{ padding: '0.35rem 0.65rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            🗑️ Xóa
+                            <i className="bi bi-trash" aria-hidden="true" /> Xóa
                           </button>
                         </td>
                       </tr>
@@ -1333,10 +1333,10 @@ export default function AdminClient() {
                         <td style={{ padding: '0.85rem 1rem' }}>{it.distance}</td>
                         <td style={{ padding: '0.85rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                           <button onClick={() => openEditModal('itineraries', it)} style={{ padding: '0.35rem 0.65rem', marginRight: '0.4rem', borderRadius: '6px', background: '#f3f4f6', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            ✏️ Sửa
+                            <i className="bi bi-pencil-square" aria-hidden="true" /> Sửa
                           </button>
                           <button onClick={() => handleDelete('itineraries', it.id, it.title)} style={{ padding: '0.35rem 0.65rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}>
-                            🗑️ Xóa
+                            <i className="bi bi-trash" aria-hidden="true" /> Xóa
                           </button>
                         </td>
                       </tr>
@@ -1362,7 +1362,7 @@ export default function AdminClient() {
               <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #e5e7eb', padding: '1.5rem', marginBottom: '2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: '#dc2626' }}>
-                    🚨 Danh Bạ Hotline Khẩn Cấp
+                    <i className="bi bi-exclamation-triangle-fill" aria-hidden="true" /> Danh Bạ Hotline Khẩn Cấp
                   </h3>
                   <button
                     onClick={() => openAddModal('hotlines')}
@@ -1377,14 +1377,14 @@ export default function AdminClient() {
                     <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: '#fef2f2', borderRadius: '10px', gap: '1rem', flexWrap: 'wrap' }}>
                       <div>
                         <strong style={{ color: '#991b1b', display: 'block', fontSize: '0.88rem' }}>{h.name}</strong>
-                        <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{h.note || 'Hỗ trợ 24/7'} · 📞 {h.phone}</span>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{h.note || 'Hỗ trợ 24/7'} · <i className="bi bi-telephone-fill" aria-hidden="true" /> {h.phone}</span>
                       </div>
                       <div>
                         <button onClick={() => openEditModal('hotlines', h, idx)} style={{ padding: '0.3rem 0.6rem', marginRight: '0.4rem', borderRadius: '6px', background: '#fff', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
-                          ✏️ Sửa
+                          <i className="bi bi-pencil-square" aria-hidden="true" /> Sửa
                         </button>
                         <button onClick={() => handleDelete('hotlines', idx, h.name)} style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
-                          🗑️ Xóa
+                          <i className="bi bi-trash" aria-hidden="true" /> Xóa
                         </button>
                       </div>
                     </div>
@@ -1395,7 +1395,7 @@ export default function AdminClient() {
               <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #e5e7eb', padding: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: '#059669' }}>
-                    ⛽ Cây Xăng Trọng Yếu Tuyến Xa
+                    <i className="bi bi-fuel-pump-fill" aria-hidden="true" /> Cây Xăng Trọng Yếu Tuyến Xa
                   </h3>
                   <button
                     onClick={() => openAddModal('gas')}
@@ -1410,14 +1410,14 @@ export default function AdminClient() {
                     <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: '#f0fdf4', borderRadius: '10px', gap: '1rem', flexWrap: 'wrap' }}>
                       <div>
                         <strong style={{ color: '#166534', display: 'block', fontSize: '0.88rem' }}>{g.name}</strong>
-                        <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{g.route} · 💡 {g.tip}</span>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{g.route} · <i className="bi bi-lightbulb" aria-hidden="true" /> {g.tip}</span>
                       </div>
                       <div>
                         <button onClick={() => openEditModal('gas', g, idx)} style={{ padding: '0.3rem 0.6rem', marginRight: '0.4rem', borderRadius: '6px', background: '#fff', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
-                          ✏️ Sửa
+                          <i className="bi bi-pencil-square" aria-hidden="true" /> Sửa
                         </button>
                         <button onClick={() => handleDelete('gas', idx, g.name)} style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', background: '#fee2e2', border: '1px solid #fca5a5', color: '#b91c1c', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
-                          🗑️ Xóa
+                          <i className="bi bi-trash" aria-hidden="true" /> Xóa
                         </button>
                       </div>
                     </div>

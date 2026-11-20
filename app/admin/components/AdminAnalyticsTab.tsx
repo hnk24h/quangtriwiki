@@ -55,14 +55,14 @@ export default function AdminAnalyticsTab({ analytics, loading, onRefresh }: Adm
             disabled={loading}
             style={{ padding: '0.6rem 1rem', borderRadius: '8px', background: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}
           >
-            {loading ? '⏳ Đang tải...' : '🔄 Đồng bộ từ Database'}
+            {loading ? <><i className="bi bi-hourglass-split" aria-hidden="true" /> Đang tải...</> : <><i className="bi bi-arrow-clockwise" aria-hidden="true" /> Đồng bộ từ Database</>}
           </button>
           <Link
             href="/"
             target="_blank"
             style={{ padding: '0.6rem 1rem', borderRadius: '8px', background: '#133e2f', color: '#fff', textDecoration: 'none', fontSize: '0.82rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
           >
-            👁️ Xem trang chủ ↗
+            <i className="bi bi-eye" aria-hidden="true" /> Xem trang chủ ↗
           </Link>
         </div>
       </div>
@@ -187,7 +187,7 @@ export default function AdminAnalyticsTab({ analytics, loading, onRefresh }: Adm
                 {data.deviceBreakdown.map((d) => (
                   <div key={d.device} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', padding: '0.5rem 0.75rem', background: '#f8fafc', borderRadius: '8px' }}>
                     <span style={{ fontWeight: 700, color: '#0f172a' }}>
-                      {d.device === 'Mobile' ? '📱' : d.device === 'Tablet' ? '📲' : '💻'} {d.device}
+                      <i className={`bi ${d.device === 'Mobile' ? 'bi-phone' : d.device === 'Tablet' ? 'bi-tablet' : 'bi-laptop'}`} aria-hidden="true" /> {d.device}
                     </span>
                     <span style={{ color: '#059669', fontWeight: 700 }}>
                       {d.count} lượt ({d.percent}%)
@@ -210,7 +210,7 @@ export default function AdminAnalyticsTab({ analytics, loading, onRefresh }: Adm
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
                 {data.regionBreakdown.map((r) => (
                   <div key={r.region} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', padding: '0.45rem 0.75rem', background: '#f8fafc', borderRadius: '8px' }}>
-                    <span style={{ fontWeight: 600, color: '#133e2f' }}>📍 {r.region}</span>
+                    <span style={{ fontWeight: 600, color: '#133e2f' }}><i className="bi bi-geo-alt-fill" aria-hidden="true" /> {r.region}</span>
                     <span style={{ color: '#4b5563' }}>{r.count} ({r.percent}%)</span>
                   </div>
                 ))}

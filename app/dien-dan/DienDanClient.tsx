@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
+import ScrollReveal from '@/components/common/ScrollReveal';
 import { useToast } from '@/components/common/ToastProvider';
 import ThreadCreateModal from '@/components/home/ThreadCreateModal';
 import type { Comment, Thread } from '@/lib/supabase/types';
@@ -158,7 +159,7 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
             textAlign: 'center',
           }}
         >
-          <div style={{ maxWidth: '850px', margin: '0 auto' }}>
+          <div className="subpage-hero-animate" style={{ maxWidth: '850px', margin: '0 auto' }}>
             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
               CỘNG ĐỒNG NHỮNG NGƯỜI ĐI CHẬM
             </span>
@@ -182,12 +183,13 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
                 cursor: 'pointer',
               }}
             >
-              ✍️ Chia sẻ chuyến đi của bạn
+              <i className="bi bi-pencil-square" aria-hidden="true" /> Chia sẻ chuyến đi của bạn
             </button>
           </div>
         </div>
 
         {/* Filter & Search Bar */}
+        <ScrollReveal variant="fade-in">
         <div style={{ maxWidth: '900px', margin: '2rem auto 0', padding: '0 1.25rem' }}>
           <div
             style={{
@@ -261,6 +263,7 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
             </div>
           </div>
         </div>
+        </ScrollReveal>
 
         {/* Thread List */}
         <div style={{ maxWidth: '900px', margin: '2rem auto 0', padding: '0 1.25rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -269,14 +272,14 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
               Chưa có bài viết phù hợp với bộ lọc. Hãy là người đầu tiên chia sẻ kinh nghiệm của bạn!
             </div>
           ) : (
-            filteredThreads.map((th) => {
+            filteredThreads.map((th, idx) => {
               const isCommentsOpen = Boolean(expandedComments[th.id]);
               const commentsList = th.comments || [];
               const likeCount = th.likes_count ?? th.likes ?? 0;
 
               return (
+                <ScrollReveal key={th.id} delayMs={(idx % 3) * 70}>
                 <article
-                  key={th.id}
                   style={{
                     backgroundColor: '#fff',
                     borderRadius: '18px',
@@ -352,7 +355,7 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
                         cursor: 'pointer',
                       }}
                     >
-                      ❤️ Thích ({likeCount})
+                      <i className="bi bi-heart-fill" aria-hidden="true" /> Thích ({likeCount})
                     </button>
 
                     <button
@@ -373,7 +376,7 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
                         cursor: 'pointer',
                       }}
                     >
-                      💬 Bình luận ({commentsList.length})
+                      <i className="bi bi-chat-dots" aria-hidden="true" /> Bình luận ({commentsList.length})
                     </button>
                   </div>
 
@@ -436,6 +439,7 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
                     </div>
                   )}
                 </article>
+                </ScrollReveal>
               );
             })
           )}
