@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminSession, hashPassword, requireAdmin } from '@/lib/admin-auth';
 import { formatSupabaseWriteError } from '@/lib/normalize';
-import { supabaseServer } from '@/lib/supabase/server';
+import { hasRealServiceRoleKey, supabaseServer } from '@/lib/supabase/server';
 import type { UserRole, UserStatus } from '@/lib/supabase/types';
 
 export const dynamic = 'force-dynamic';
@@ -12,9 +12,21 @@ const VALID_STATUSES: UserStatus[] = ['active', 'inactive'];
 const SAFE_USER_COLS =
   'id, name, email, role, status, phone, avatar, note, last_login_at, created_at, updated_at';
 
+function missingServiceKeyResponse() {
+  return NextResponse.json(
+    {
+      success: false,
+      error:
+        'Chưa cấu hình SUPABASE_SERVICE_ROLE_KEY thật trong .env.local (hiện đang là placeholder). Hãy vào Supabase Dashboard → Project Settings → API → copy key "service_role" (hoặc Secret key) dán vào SUPABASE_SERVICE_ROLE_KEY trong .env.local rồi khởi động lại server.',
+    },
+    { status: 500 }
+  );
+}
+
 export async function GET(req: NextRequest) {
   const unauthorized = requireAdmin(req);
   if (unauthorized) return unauthorized;
+  if (!hasRealServiceRoleKey) return missingServiceKeyResponse();
 
   try {
     const roleFilter = req.nextUrl.searchParams.get('role') || 'all';
@@ -61,6 +73,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const unauthorized = requireAdmin(req);
   if (unauthorized) return unauthorized;
+  if (!hasRealServiceRoleKey) return missingServiceKeyResponse();
 
   const session = await getAdminSession(req);
   if (session?.role !== 'admin') {
@@ -138,6 +151,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const unauthorized = requireAdmin(req);
   if (unauthorized) return unauthorized;
+  if (!hasRealServiceRoleKey) return missingServiceKeyResponse();
 
   const session = await getAdminSession(req);
   if (session?.role !== 'admin') {
@@ -215,6 +229,7 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   const unauthorized = requireAdmin(req);
   if (unauthorized) return unauthorized;
+  if (!hasRealServiceRoleKey) return missingServiceKeyResponse();
 
   const session = await getAdminSession(req);
   if (session?.role !== 'admin') {
