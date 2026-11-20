@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import SafeImage from '@/components/common/SafeImage';
-import type { Place } from '@/lib/supabase/types';
+import type { Food, GuidesData, Place, Service, Zone } from '@/lib/supabase/types';
 
 const QuangTriInteractiveMap = dynamic(
   () => import('@/components/QuangTriInteractiveMap'),
@@ -31,9 +31,19 @@ const QuangTriInteractiveMap = dynamic(
 
 interface PlacesExplorerProps {
   filteredPlaces: Place[];
+  foods?: Food[];
+  services?: Service[];
+  zones?: Zone[];
+  guides?: GuidesData;
   placeCategory: string;
   onChangePlaceCategory: (cat: string) => void;
   selectedZone: string;
+  onSelectZone?: (zoneCode: string) => void;
+  selectedZoneName?: string;
+  /** Number of places per category under the current zone/keyword */
+  categoryCounts: Record<string, number>;
+  /** Increment to jump to the results panel (list view) after an external action such as picking a zone */
+  focusToken: number;
   searchQuery: string;
   onResetFilters: () => void;
   bookmarkedIds: string[];
@@ -52,9 +62,17 @@ const WAYPOINTS = [
 
 export default function PlacesExplorer({
   filteredPlaces,
+  foods = [],
+  services = [],
+  zones = [],
+  guides,
   placeCategory,
   onChangePlaceCategory,
   selectedZone,
+  onSelectZone,
+  selectedZoneName,
+  categoryCounts,
+  focusToken,
   searchQuery,
   onResetFilters,
   bookmarkedIds,
@@ -63,85 +81,38 @@ export default function PlacesExplorer({
 }: PlacesExplorerProps) {
   const [placesViewMode, setPlacesViewMode] = useState<'map' | 'grid'>('map');
 
+  // After picking a zone: show the list right away (visible, scannable) and scroll to the results panel
+  useEffect(() => {
+    if (focusToken === 0) return;
+    setPlacesViewMode('grid');
+    const frame = requestAnimationFrame(() => {
+      document.getElementById('places-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [focusToken]);
+
+  const hasActiveFilter = placeCategory !== 'all' || selectedZone !== 'all' || searchQuery.trim() !== '';
+
   return (
-    <section className="places-section" id="cung-duong">
-      <div className="container">
-        <div className="section-head-hagiang">
-          <span className="sub-title-accent">TỌA ĐỘ DU LỊCH & LỊCH SỬ</span>
-          <h2 className="title-serif">Khám Phá Điểm Đến</h2>
-          <p className="desc-text">
-            Được xác minh kỹ lưỡng với đầy đủ tọa độ GPS, giá vé, giờ mở cửa và lời khuyên phượt thủ.
-          </p>
-        </div>
-
-        {/* Phượt Explorer Waypoints Bar */}
-        <div className="phuot-filter-wrapper">
-          <div className="phuot-filter-track">
-            {WAYPOINTS.map((f) => {
-              const isActive = placeCategory === f.id;
-              return (
-                <button
-                  type="button"
-                  key={f.id}
-                  onClick={() => onChangePlaceCategory(f.id)}
-                  className={`phuot-waypoint-btn ${isActive ? 'active' : ''}`}
-                >
-                  <div className="phuot-btn-top">
-                    <span className="phuot-btn-code">{f.code}</span>
-                    <span className="phuot-btn-badge">{f.badge}</span>
-                  </div>
-                  <div className="phuot-btn-main">
-                    <span className="phuot-btn-icon">{f.icon}</span>
-                    <span className="phuot-btn-label">{f.label}</span>
-                    {isActive && <span className="phuot-radar-dot" title="Tọa độ đang mở" />}
-                  </div>
-                  <div className="phuot-btn-desc">{f.desc}</div>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="phuot-status-strip">
-            <div className="phuot-status-left">
-              <span style={{ fontSize: '1.1rem' }}>🧭</span>
-              <span>
-                Đang mở <strong>{filteredPlaces.length}</strong> trạm dừng chân
-                {placeCategory !== 'all' && (
-                  <span style={{ color: '#059669', fontWeight: 600 }}> · Đã bật chế độ lọc chủ đề</span>
-                )}
-                {selectedZone !== 'all' && (
-                  <span style={{ color: '#d97706', fontWeight: 600 }}> · Phân vùng {selectedZone}</span>
-                )}
-                {searchQuery.trim() && (
-                  <span style={{ color: '#2563eb', fontWeight: 600 }}> · Từ khóa &ldquo;{searchQuery.trim()}&rdquo;</span>
-                )}
-              </span>
-            </div>
-
-            {(placeCategory !== 'all' || selectedZone !== 'all' || searchQuery.trim() !== '') && (
-              <button
-                type="button"
-                onClick={onResetFilters}
-                className="phuot-status-reset-btn"
-              >
-                ✕ Xem toàn bộ tọa độ
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* View Mode Toggle: Interactive Map vs Grid */}
+    <section className="places-section places-section-wide" id="cung-duong">
+      <div className="container places-wide-container">
         <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '1rem',
-            margin: '1.2rem 0 1.5rem',
-          }}
+          id="places-results"
+          className="section-head-split"
         >
-          <div style={{ display: 'flex', gap: '0.4rem', background: 'rgba(19, 62, 47, 0.08)', padding: '4px', borderRadius: '12px' }}>
+          <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
+            <span className="sub-title-accent">
+              BƯỚC 01 / 05 · BẢN ĐỒ SỐ ĐA LỚP & GHIM ĐỊA ĐIỂM CỘNG ĐỒNG
+            </span>
+            <h2 className="title-serif">
+              Bản Đồ Tương Tác & Khám Phá Quảng Trị
+            </h2>
+            <p className="desc-text">
+              Chọn khu vực (QT-01 → QT-12), lọc nhanh điểm tham quan, quán ăn, khách sạn, bãi đỗ xe hoặc tự ghim tọa độ mới lên bản đồ.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.4rem', background: 'rgba(19, 62, 47, 0.08)', padding: '4px', borderRadius: '12px', flexShrink: 0 }}>
             <button
               type="button"
               onClick={() => setPlacesViewMode('map')}
@@ -149,10 +120,10 @@ export default function PlacesExplorer({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.45rem',
-                padding: '0.55rem 1.2rem',
+                padding: '0.5rem 1.1rem',
                 borderRadius: '8px',
                 border: 'none',
-                fontSize: '0.88rem',
+                fontSize: '0.86rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 backgroundColor: placesViewMode === 'map' ? '#133e2f' : 'transparent',
@@ -162,7 +133,7 @@ export default function PlacesExplorer({
               }}
             >
               <span>🗺️</span>
-              <span>Bản Đồ Tương Tác & Cung Đường</span>
+              <span>Bản Đồ Tương Tác</span>
             </button>
 
             <button
@@ -172,10 +143,10 @@ export default function PlacesExplorer({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.45rem',
-                padding: '0.55rem 1.2rem',
+                padding: '0.5rem 1.1rem',
                 borderRadius: '8px',
                 border: 'none',
-                fontSize: '0.88rem',
+                fontSize: '0.86rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 backgroundColor: placesViewMode === 'grid' ? '#133e2f' : 'transparent',
@@ -185,19 +156,21 @@ export default function PlacesExplorer({
               }}
             >
               <span>📋</span>
-              <span>Danh Sách Thẻ Tọa Độ ({filteredPlaces.length})</span>
+              <span>Danh Sách Thẻ ({filteredPlaces.length})</span>
             </button>
-          </div>
-
-          <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>
-            Hiển thị <strong>{filteredPlaces.length}</strong> tọa độ danh thắng tại Quảng Trị
           </div>
         </div>
 
-        {/* Conditional Rendering: Interactive Map or Grid */}
+        {/* Conditional Rendering: Interactive Map (always available) or Grid */}
         {placesViewMode === 'map' ? (
           <QuangTriInteractiveMap
             places={filteredPlaces}
+            foods={foods}
+            services={services}
+            zones={zones}
+            guides={guides}
+            selectedZone={selectedZone}
+            onSelectZone={onSelectZone}
             onOpenModal={onOpenModal}
             bookmarkedIds={bookmarkedIds}
             onToggleBookmark={onToggleBookmark}
@@ -205,7 +178,7 @@ export default function PlacesExplorer({
         ) : filteredPlaces.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 1rem', background: '#fff', borderRadius: '16px' }}>
             <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
-              Không tìm thấy điểm đến phù hợp với bộ lọc hiện tại.
+              Không tìm thấy điểm tham quan phù hợp với bộ lọc hiện tại.
             </p>
             <button
               type="button"
@@ -273,6 +246,15 @@ export default function PlacesExplorer({
             ))}
           </div>
         )}
+
+        <div className="section-journey-footer" style={{ marginTop: '1.5rem' }}>
+          <span className="journey-hint-text">
+            💡 Mẹo: Chọn một vùng <strong>QT-01 → QT-12</strong> trên bản đồ để các mục Lưu trú & Ẩm thực bên dưới tự động ưu tiên gợi ý theo vùng đó.
+          </span>
+          <a href="#dich-vu" className="journey-next-link">
+            Bước tiếp theo: Lưu trú, Thuê xe & Vé tàu Cồn Cỏ ↓
+          </a>
+        </div>
       </div>
     </section>
   );

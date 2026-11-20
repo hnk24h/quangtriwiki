@@ -7,9 +7,9 @@ import CungDuongClient from './CungDuongClient';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Khám Phá Cung Đường Quảng Trị · 8 Vùng Lộ Trình & Điểm Đến',
+  title: 'Khám Phá Cung Đường Quảng Trị · 12 Vùng Lộ Trình & Điểm Đến',
   description:
-    'Bản đồ tương tác và cẩm nang chi tiết 8 phân vùng lộ trình QT-01 đến QT-08: Thành Cổ, Đôi Bờ Hiền Lương, Đèo Sa Mù, Đảo Cồn Cỏ, Địa đạo Vịnh Mốc.',
+    'Bản đồ tương tác và cẩm nang chi tiết 12 phân vùng lộ trình QT-01 đến QT-12: Phong Nha - Kẻ Bàng, Đồng Hới - Nhật Lệ, Vũng Chùa, Thành Cổ, Hiền Lương, Đèo Sa Mù, Đảo Cồn Cỏ.',
 };
 
 export default async function CungDuongPage() {
@@ -32,13 +32,13 @@ export default async function CungDuongPage() {
         >
           <div style={{ maxWidth: '800px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#86efac', fontWeight: 700 }}>
-              HỆ THỐNG MÃ CUNG ĐƯỜNG QT-01 → QT-08
+              HỆ THỐNG MÃ CUNG ĐƯỜNG QT-01 → QT-12
             </span>
             <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0.8rem 0 1rem', lineHeight: 1.2 }}>
               Khám Phá Cung Đường Quảng Trị
             </h1>
             <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: 0 }}>
-              Hành trình kết nối di sản lịch sử hào hùng, những con đèo mây ngàn Trường Sơn và đảo ngọc tiền đồn Cồn Cỏ.
+              Hành trình xuyên suốt từ Di sản thiên nhiên thế giới Phong Nha - Kẻ Bàng, biển Nhật Lệ đến Vĩ tuyến 17, đèo mây Sa Mù và đảo ngọc Cồn Cỏ.
             </p>
           </div>
         </div>

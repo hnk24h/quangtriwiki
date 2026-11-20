@@ -10,10 +10,13 @@ export const metadata: Metadata = {
     template: '%s · QuangTri.wiki',
   },
   description:
-    'Khám phá cung đường di sản, địa đạo Vịnh Mốc, đèo Sa Mù mây ngàn, đảo ngọc Cồn Cỏ và văn hóa lịch sử hào hùng đất thiêng Quảng Trị.',
+    'Khám phá cung đường di sản Quảng Trị mới: Vườn quốc gia Phong Nha - Kẻ Bàng, biển Nhật Lệ, Vũng Chùa - Đảo Yến, địa đạo Vịnh Mốc, đèo Sa Mù và đảo ngọc Cồn Cỏ.',
   keywords: [
     'du lịch quảng trị',
     'quang tri wiki',
+    'phong nha kẻ bàng',
+    'biển nhật lệ',
+    'đồng hới',
     'đèo sa mù',
     'đảo cồn cỏ',
     'địa đạo vịnh mốc',

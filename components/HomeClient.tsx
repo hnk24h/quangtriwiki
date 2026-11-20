@@ -7,12 +7,16 @@ import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
 import { useToast } from '@/components/common/ToastProvider';
 import HeroSection from '@/components/home/HeroSection';
-import ZonesExplorer from '@/components/home/ZonesExplorer';
 import PlacesExplorer from '@/components/home/PlacesExplorer';
 import PlaceQuickModal from '@/components/home/PlaceQuickModal';
 import PartnerRegistrationModal from '@/components/home/PartnerRegistrationModal';
 import ThreadCreateModal from '@/components/home/ThreadCreateModal';
 import { getBookmarkedIds, subscribeStorageSync, toggleBookmarkId } from '@/lib/storage';
+import {
+  PLACE_CATEGORY_IDS,
+  matchesPlaceCategory,
+  matchesPlaceSearch,
+} from '@/lib/place-filters';
 import type {
   BannerSlide,
   Food,
@@ -56,6 +60,7 @@ export default function HomeClient({
   const [selectedZone, setSelectedZone] = useState('all');
   const [placeCategory, setPlaceCategory] = useState('all');
   const [serviceCategory, setServiceCategory] = useState('all');
+  const [resultsFocusToken, setResultsFocusToken] = useState(0);
 
   const [activePlaceModal, setActivePlaceModal] = useState<Place | null>(null);
   const [isPartnerModalOpen, setIsPartnerModalOpen] = useState(false);
@@ -142,64 +147,79 @@ export default function HomeClient({
   );
 
   const filteredPlaces = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    return initialPlaces.filter((p) => {
-      let matchCat = placeCategory === 'all';
-      if (!matchCat) {
-        if (placeCategory === 'history') {
-          matchCat = p.category === 'history' || p.categoryName.toLowerCase().includes('lịch sử');
-        } else if (placeCategory === 'cloud') {
-          matchCat =
-            p.category === 'adventure' ||
-            p.category === 'checkin' ||
-            p.id.includes('sa-mu') ||
-            p.id.includes('gio') ||
-            p.id.includes('ta-con') ||
-            p.name.includes('Sa Mù') ||
-            p.name.includes('Gió') ||
-            p.name.includes('Tà Cơn');
-        } else if (placeCategory === 'beach') {
-          matchCat =
-            p.category === 'beach' ||
-            p.id.includes('cua-viet') ||
-            p.id.includes('cua-tung') ||
-            p.id.includes('mui-treo') ||
-            p.name.includes('Biển') ||
-            p.name.includes('Mũi Trèo');
-        } else if (placeCategory === 'island') {
-          matchCat = p.category === 'island' || p.id.includes('con-co') || p.name.includes('Cồn Cỏ');
-        } else if (placeCategory === 'waterfall') {
-          matchCat =
-            p.category === 'nature' ||
-            p.id.includes('thac') ||
-            p.id.includes('suoi') ||
-            p.id.includes('dakrong') ||
-            p.name.includes('Thác') ||
-            p.name.includes('Suối') ||
-            p.name.includes('Đakrông');
-        } else {
-          matchCat = p.category === placeCategory;
-        }
-      }
-
-      const matchZone = selectedZone === 'all' || p.zoneCode === selectedZone;
-      const matchSearch =
-        !q ||
-        p.name.toLowerCase().includes(q) ||
-        p.shortDesc.toLowerCase().includes(q) ||
-        p.zoneName.toLowerCase().includes(q) ||
-        p.zoneCode.toLowerCase().includes(q);
-
-      return matchCat && matchZone && matchSearch;
-    });
+    return initialPlaces.filter(
+      (p) =>
+        matchesPlaceCategory(p, placeCategory) &&
+        (selectedZone === 'all' || p.zoneCode === selectedZone) &&
+        matchesPlaceSearch(p, searchQuery)
+    );
   }, [initialPlaces, placeCategory, selectedZone, searchQuery]);
 
+  // Real number of places per zone (drives zone cards, so a zone never leads to an empty list)
+  const zonePlaceCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of initialPlaces) counts[p.zoneCode] = (counts[p.zoneCode] || 0) + 1;
+    return counts;
+  }, [initialPlaces]);
+
+  // Category counts under the current zone + keyword, so empty categories can be disabled
+  const categoryCounts = useMemo(() => {
+    const scoped = initialPlaces.filter(
+      (p) =>
+        (selectedZone === 'all' || p.zoneCode === selectedZone) && matchesPlaceSearch(p, searchQuery)
+    );
+    const counts: Record<string, number> = { all: scoped.length };
+    for (const id of PLACE_CATEGORY_IDS) {
+      counts[id] = scoped.filter((p) => matchesPlaceCategory(p, id)).length;
+    }
+    return counts;
+  }, [initialPlaces, selectedZone, searchQuery]);
+
+  const handleSelectZone = useCallback(
+    (zoneCode: string) => {
+      if (zoneCode === 'all') {
+        setSelectedZone('all');
+        return;
+      }
+      setSelectedZone(zoneCode);
+    },
+    []
+  );
+
+  const selectedZoneObj = useMemo(
+    () => zones.find((z) => z.code === selectedZone),
+    [zones, selectedZone]
+  );
+
   const filteredServices = useMemo(() => {
-    return initialServices.filter((s) => {
+    const byCat = initialServices.filter((s) => {
       if (serviceCategory === 'all') return true;
       return s.type === serviceCategory || s.category === serviceCategory;
     });
-  }, [initialServices, serviceCategory]);
+    if (selectedZone === 'all') return byCat;
+    // Prioritize services in the currently selected map zone while keeping others accessible
+    return [...byCat].sort((a, b) => {
+      const aMatch = a.zoneCode === selectedZone ? 1 : 0;
+      const bMatch = b.zoneCode === selectedZone ? 1 : 0;
+      return bMatch - aMatch;
+    });
+  }, [initialServices, serviceCategory, selectedZone]);
+
+  const prioritizedFoods = useMemo(() => {
+    if (selectedZone === 'all' || !selectedZoneObj) return foods;
+    const zoneKeywords = selectedZoneObj.name
+      .toLowerCase()
+      .split(/[&,-]/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 2);
+    return [...foods].sort((a, b) => {
+      const aOrigin = (a.origin || '').toLowerCase();
+      const bOrigin = (b.origin || '').toLowerCase();
+      const aMatch = zoneKeywords.some((kw) => aOrigin.includes(kw)) ? 1 : 0;
+      const bMatch = zoneKeywords.some((kw) => bOrigin.includes(kw)) ? 1 : 0;
+      return bMatch - aMatch;
+    });
+  }, [foods, selectedZone, selectedZoneObj]);
 
   const handleOpenPlaceModal = useCallback((place: Place) => {
     setActivePlaceModal(place);
@@ -223,33 +243,50 @@ export default function HomeClient({
         onSelectPlace={handleOpenPlaceModal}
       />
 
-      {/* Ribbon Bar */}
+      {/* Connected 5-Step Journey Navigation Bar */}
       <div className="hagiang-bottom-bar">
-        <div className="container hagiang-bottom-bar-inner">
-          <div className="bottom-bar-text">Bắt đầu từ toàn cảnh. Chọn nơi muốn đến.</div>
-          <a href="#vung-du-lich" className="bottom-bar-select-btn">
-            <span>Chọn vùng (QT-01 → QT-08)</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
+        <nav className="container home-quick-nav" aria-label="Hành trình khám phá Quảng Trị 5 bước">
+          <a href="#cung-duong">
+            <span className="step-num">01</span>
+            <span>🗺️ Bản đồ & Tọa độ ({initialPlaces.length})</span>
           </a>
-        </div>
+          <span className="step-arrow" aria-hidden="true">→</span>
+          <a href="#dich-vu">
+            <span className="step-num">02</span>
+            <span>🏕️ Lưu trú & Thuê xe</span>
+          </a>
+          <span className="step-arrow" aria-hidden="true">→</span>
+          <a href="#am-thuc">
+            <span className="step-num">03</span>
+            <span>🍲 Ẩm thực đất lửa</span>
+          </a>
+          <span className="step-arrow" aria-hidden="true">→</span>
+          <a href="#lich-trinh">
+            <span className="step-num">04</span>
+            <span>🧭 Lộ trình đi chậm</span>
+          </a>
+          <span className="step-arrow" aria-hidden="true">→</span>
+          <a href="#dien-dan">
+            <span className="step-num">05</span>
+            <span>💬 Cộng đồng & Cứu hộ</span>
+          </a>
+        </nav>
       </div>
 
-      {/* 8 Zones Explorer */}
-      <ZonesExplorer
-        zones={zones}
-        selectedZone={selectedZone}
-        onSelectZone={setSelectedZone}
-        filteredPlacesCount={filteredPlaces.length}
-      />
-
-      {/* Places Explorer + Dynamic Interactive Map */}
+      {/* Places Explorer + Google-Maps-Style Interactive Map (Moved to top, 8 Zones integrated inside map) */}
       <PlacesExplorer
         filteredPlaces={filteredPlaces}
+        foods={foods}
+        services={initialServices}
+        zones={zones}
+        guides={guides}
         placeCategory={placeCategory}
         onChangePlaceCategory={setPlaceCategory}
         selectedZone={selectedZone}
+        onSelectZone={handleSelectZone}
+        selectedZoneName={zones.find((z) => z.code === selectedZone)?.name}
+        categoryCounts={categoryCounts}
+        focusToken={resultsFocusToken}
         searchQuery={searchQuery}
         onResetFilters={() => {
           setPlaceCategory('all');
@@ -261,15 +298,26 @@ export default function HomeClient({
         onOpenModal={handleOpenPlaceModal}
       />
 
-      {/* 1. LƯU TRÚ & DỊCH VỤ ĐỐI TÁC BẢN ĐỊA */}
+      {/* BƯỚC 02. LƯU TRÚ & DỊCH VỤ ĐỐI TÁC BẢN ĐỊA */}
       <section className="services-section-curated" id="dich-vu">
         <div className="container">
-          <div className="section-head-hagiang">
-            <span className="sub-title-accent">✦ HỆ THỐNG ĐỐI TÁC BẢN ĐỊA · ĐÃ XÁC MINH</span>
-            <h2 className="title-serif">Lưu Trú, Thuê Xe & Hải Trình Cồn Cỏ</h2>
-            <p className="desc-text">
-              Kết nối trực tiếp chủ homestay Khe Sanh, dịch vụ cào cào vượt đèo Sa Mù và vé tàu cao tốc Cồn Cỏ – 100% giá gốc niêm yết, không qua trung gian.
-            </p>
+          <div className="section-head-split">
+            <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
+              <span className="sub-title-accent">BƯỚC 02 / 05 · ĐỐI TÁC BẢN ĐỊA ĐÃ XÁC MINH</span>
+              <h2 className="title-serif">Lưu Trú, Thuê Xe & Hải Trình Cồn Cỏ</h2>
+              <p className="desc-text">
+                Sau khi chọn điểm đến trên bản đồ, kết nối trực tiếp chủ homestay Khe Sanh, dịch vụ xe máy vượt đèo Sa Mù và vé tàu Cồn Cỏ – 100% giá gốc niêm yết.
+              </p>
+            </div>
+
+            {selectedZone !== 'all' && selectedZoneObj && (
+              <div className="zone-context-pill">
+                <span>🧭 Đang ưu tiên dịch vụ gần <strong>{selectedZoneObj.code} · {selectedZoneObj.name}</strong></span>
+                <button type="button" onClick={() => setSelectedZone('all')}>
+                  Xem toàn tỉnh ✕
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="services-trust-row">
@@ -369,28 +417,36 @@ export default function HomeClient({
             ))}
           </div>
 
-          <div className="section-view-all-row">
+          <div className="section-journey-footer">
             <Link href="/dich-vu" className="section-view-all-btn">
               Xem tất cả {initialServices.length} đối tác dịch vụ & lưu trú tại Quảng Trị →
             </Link>
+            <a href="#am-thuc" className="journey-next-link">
+              Bước tiếp theo: Thưởng thức ẩm thực bản địa ↓
+            </a>
           </div>
         </div>
       </section>
 
-      {/* 2. CẨM NANG ẨM THỰC ĐẶC SẢN */}
+      {/* BƯỚC 03. CẨM NANG ẨM THỰC ĐẶC SẢN */}
       <section className="food-section-curated" id="am-thuc">
         <div className="container">
-          <div className="section-head-hagiang">
-            <span className="sub-title-accent">✦ HƯƠNG VỊ ĐẤT LỬA</span>
-            <h2 className="title-serif">Ẩm Thực & Đặc Sản Nổi Tiếng</h2>
-            <p className="desc-text">
-              Vị cay nồng của ớt hiểm, đằm thắm của cá tràu đồng Thạch Hãn và hương thơm đậm đà của hạt tiêu Khe Sanh.
-            </p>
+          <div className="section-head-split">
+            <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
+              <span className="sub-title-accent">BƯỚC 03 / 05 · HƯƠNG VỊ ĐẤT LỬA</span>
+              <h2 className="title-serif">Ẩm Thực & Đặc Sản Nổi Tiếng</h2>
+              <p className="desc-text">
+                Nạp năng lượng trên mỗi cung đường với vị cay nồng của cháo vạt giường Hải Lăng, bún hến Mai Xá, gà đồi Cùa và cà phê Arabica Khe Sanh.
+              </p>
+            </div>
+            <a href="#cung-duong" className="journey-back-map-chip">
+              🗺️ Xem tọa độ quán ngon trên Bản đồ ↑
+            </a>
           </div>
 
           <div className="food-curated-grid">
-            {foods.slice(0, 4).map((f) => (
-              <article key={f.id} className="curated-food-card">
+            {prioritizedFoods.slice(0, 4).map((f) => (
+              <Link key={f.id} href="/am-thuc" className="curated-food-card" aria-label={`Xem ${f.name} trong cẩm nang ẩm thực`}>
                 <div className="cfood-media" style={{ position: 'relative', overflow: 'hidden' }}>
                   <SafeImage src={f.image} alt={f.name} fill sizes="(max-width: 768px) 100vw, 320px" />
                   <span className="cfood-zone">{f.origin || 'Quảng Trị'}</span>
@@ -404,31 +460,34 @@ export default function HomeClient({
                     <strong>{f.addressRecs?.[0] || 'Chợ Đông Hà'}</strong>
                   </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
 
-          <div className="section-view-all-row">
+          <div className="section-journey-footer">
             <Link href="/am-thuc" className="section-view-all-btn">
               Khám phá toàn bộ cẩm nang ẩm thực & địa chỉ quán ngon →
             </Link>
+            <a href="#lich-trinh" className="journey-next-link">
+              Bước tiếp theo: Lộ trình đi chậm theo ngày ↓
+            </a>
           </div>
         </div>
       </section>
 
-      {/* 3. LỘ TRÌNH ĐI CHẬM GỢI Ý */}
+      {/* BƯỚC 04. LỘ TRÌNH ĐI CHẬM GỢI Ý */}
       <section className="itineraries-section-curated" id="lich-trinh">
         <div className="container">
           <div className="section-head-hagiang">
-            <span className="sub-title-accent">✦ CUNG ĐƯỜNG ĐI CHẬM</span>
+            <span className="sub-title-accent">BƯỚC 04 / 05 · CUNG ĐƯỜNG ĐI CHẬM</span>
             <h2 className="title-serif">Hành Trình Gợi Ý Theo Ngày</h2>
             <p className="desc-text">
-              Lộ trình được thiết kế tối ưu thời gian di chuyển, dừng chân nghỉ ngơi và đón hoàng hôn đẹp nhất.
+              Kết nối các điểm tham quan, quán ăn đặc sản và trạm nghỉ trên bản đồ thành lịch trình 1–3 ngày tối ưu thời gian di chuyển.
             </p>
           </div>
 
           <div className="itineraries-curated-grid">
-            {itineraries.map((it) => (
+            {itineraries.slice(0, 3).map((it) => (
               <div key={it.id} className="curated-itinerary-card">
                 <div className="citinerary-head">
                   <span className="citinerary-duration">{it.duration}</span>
@@ -452,12 +511,28 @@ export default function HomeClient({
               </div>
             ))}
           </div>
+
+          <div className="section-journey-footer">
+            <Link href="/lich-trinh" className="section-view-all-btn">
+              Xem tất cả {itineraries.length} lịch trình đi chậm →
+            </Link>
+            <a href="#dien-dan" className="journey-next-link">
+              Bước tiếp theo: Kinh nghiệm thực tế & Cứu hộ 24/7 ↓
+            </a>
+          </div>
         </div>
       </section>
 
-      {/* 4. CỘNG ĐỒNG LÃNG DU & CẨM NANG BẢO AN */}
+      {/* BƯỚC 05. CỘNG ĐỒNG LÃNG DU & CẨM NANG BẢO AN */}
       <section className="community-safety-section" id="dien-dan">
         <div className="container">
+          <div className="section-head-hagiang">
+            <span className="sub-title-accent">BƯỚC 05 / 05 · AN TOÀN & SẺ CHIA TRÊN ĐƯỜNG PHƯỢT</span>
+            <h2 className="title-serif">Kinh Nghiệm Cộng Đồng & Cứu Hộ Thực Địa</h2>
+            <p className="desc-text">
+              Lưu lại các số điện thoại cứu hộ 24/7, trạm xăng trọng yếu trước khi lên đèo và tham khảo chia sẻ mới nhất từ những người vừa đi về.
+            </p>
+          </div>
           <div className="community-safety-grid">
             <div className="community-col">
               <div className="col-header-row">
@@ -499,9 +574,6 @@ export default function HomeClient({
                       >
                         ❤️ Thích ({th.likes_count ?? th.likes ?? 0})
                       </button>
-                      <Link href="/dien-dan" className="cthread-view-more">
-                        Thảo luận trên diễn đàn →
-                      </Link>
                     </div>
                   </article>
                 ))}

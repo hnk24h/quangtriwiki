@@ -80,6 +80,10 @@ const DEFAULT_FALLBACK_ZONES: { code: string; name: string }[] = [
   { code: 'QT-06', name: 'Đakrông & Đường Hồ Chí Minh' },
   { code: 'QT-07', name: 'Huyện Đảo Cồn Cỏ' },
   { code: 'QT-08', name: 'Cam Lộ & Vùng Trung Du' },
+  { code: 'QT-09', name: 'Đồng Hới & Biển Nhật Lệ' },
+  { code: 'QT-10', name: 'Phong Nha - Kẻ Bàng & Sơn Đoòng' },
+  { code: 'QT-11', name: 'Bố Trạch, Vũng Chùa & Đèo Ngang' },
+  { code: 'QT-12', name: 'Lệ Thủy & Suối Khoáng Bang' },
 ];
 
 const VN_WEEKDAYS = ['CN', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];

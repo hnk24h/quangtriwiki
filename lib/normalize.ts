@@ -241,6 +241,42 @@ export const DEFAULT_ZONE_META: Record<string, ZoneMetaDefault> = {
     showInWeather: true,
     weatherRegionLabel: 'TRUNG DU · VÙNG CÙA',
   },
+  'QT-09': {
+    specialty: 'Cháo canh cá lóc Đồng Hới & Khoai deo Hải Ninh',
+    typeTag: '🏖️ Trung tâm hành chính & Biển Nhật Lệ',
+    typeGroup: 'coastal',
+    lat: 17.4688,
+    lon: 106.6223,
+    showInWeather: true,
+    weatherRegionLabel: 'TRUNG TÂM · ĐỒNG HỚI & NHẬT LỆ',
+  },
+  'QT-10': {
+    specialty: 'Gà nướng chấm muối cheo & Cá trắm sông Son',
+    typeTag: '🦇 Di sản UNESCO Phong Nha - Kẻ Bàng',
+    typeGroup: 'mountain',
+    lat: 17.5522,
+    lon: 106.2836,
+    showInWeather: true,
+    weatherRegionLabel: 'DI SẢN UNESCO · PHONG NHA',
+  },
+  'QT-11': {
+    specialty: 'Hải sản Cảnh Dương & Sò huyết sông Roòn',
+    typeTag: '⛰️ Đèo Ngang & Vũng Chùa - Đảo Yến',
+    typeGroup: 'coastal',
+    lat: 17.9347,
+    lon: 106.4847,
+    showInWeather: true,
+    weatherRegionLabel: 'BẮC TỈNH · VŨNG CHÙA - ĐÈO NGANG',
+  },
+  'QT-12': {
+    specialty: 'Cháo cá Lệ Thủy & Rượu Tuy Lộc',
+    typeTag: '♨️ Suối khoáng Bang & Nhà Đại tướng',
+    typeGroup: 'history',
+    lat: 17.2215,
+    lon: 106.7985,
+    showInWeather: true,
+    weatherRegionLabel: 'LỆ THỦY · SUỐI KHOÁNG BANG',
+  },
 };
 
 function normalizeZoneGroup(val?: string | null): 'history' | 'mountain' | 'coastal' {

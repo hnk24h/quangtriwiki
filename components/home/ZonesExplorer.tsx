@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
 import { DEFAULT_ZONE_META } from '@/lib/normalize';
 import type { Zone } from '@/lib/supabase/types';
@@ -10,14 +9,15 @@ interface ZonesExplorerProps {
   zones: Zone[];
   selectedZone: string;
   onSelectZone: (zoneCode: string) => void;
-  filteredPlacesCount: number;
+  /** Real number of places per zone code (from the places list) */
+  placeCounts: Record<string, number>;
 }
 
 export default function ZonesExplorer({
   zones,
   selectedZone,
   onSelectZone,
-  filteredPlacesCount,
+  placeCounts,
 }: ZonesExplorerProps) {
   const [zoneTypeFilter, setZoneTypeFilter] = useState<'all' | 'history' | 'mountain' | 'coastal'>('all');
 
@@ -86,27 +86,32 @@ export default function ZonesExplorer({
             const typeTag = z.typeTag || def?.typeTag || 'Điểm đến tiêu biểu';
             const specialty = z.specialty || def?.specialty || 'Ẩm thực & Đặc sản bản địa';
             const isSelected = selectedZone === z.code;
+            const count = placeCounts[z.code] || 0;
+            const isEmpty = count === 0;
 
             return (
               <div
                 key={z.code}
-                onClick={() => {
-                  if (isSelected) {
-                    onSelectZone('all');
-                  } else {
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
+                onClick={() => onSelectZone(z.code)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
                     onSelectZone(z.code);
-                    const el = document.getElementById('cung-duong');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className={`zone-card ${isSelected ? 'selected' : ''}`}
+                className={`zone-card ${isSelected ? 'selected' : ''} ${isEmpty ? 'is-empty' : ''}`}
               >
                 <div className="zone-card-media" style={{ position: 'relative', overflow: 'hidden' }}>
                   <SafeImage src={z.heroImage} alt={z.name} fill sizes="(max-width: 768px) 100vw, 320px" />
                   <div className="zone-media-gradient" />
                   <span className="zone-code-badge">{z.code}</span>
                   <span className="zone-type-badge">{typeTag}</span>
-                  {z.featuredCount && <span className="zone-count-badge">📍 {z.featuredCount}</span>}
+                  <span className="zone-count-badge">
+                    {isEmpty ? '⏳ Sắp cập nhật' : `📍 ${count} điểm đến`}
+                  </span>
                 </div>
 
                 <div className="zone-card-body">
@@ -127,22 +132,18 @@ export default function ZonesExplorer({
                     {isSelected ? (
                       <span className="zone-selected-indicator">
                         <span>✓</span>
-                        <span>Đang chọn lọc điểm đến</span>
+                        <span>Đang xem {count} điểm đến · bấm để bỏ lọc</span>
+                      </span>
+                    ) : isEmpty ? (
+                      <span className="zone-action-text zone-action-muted">
+                        <span>Đang cập nhật điểm đến</span>
                       </span>
                     ) : (
                       <span className="zone-action-text">
-                        <span>Xem điểm đến & đặc sản</span>
+                        <span>Xem {count} điểm đến</span>
                         <span style={{ fontSize: '1.05rem' }}>→</span>
                       </span>
                     )}
-                    <Link
-                      href="/cung-duong"
-                      onClick={(e) => e.stopPropagation()}
-                      style={{ fontSize: '0.78rem', color: '#6b7280', textDecoration: 'none' }}
-                      title="Xem trang chi tiết cung đường"
-                    >
-                      Chi tiết
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -150,46 +151,6 @@ export default function ZonesExplorer({
           })}
         </div>
 
-        {selectedZone !== 'all' && (
-          <div
-            style={{
-              marginTop: '1.8rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              background: '#f0fdf4',
-              border: '1px solid #bbf7d0',
-              padding: '0.8rem 1.4rem',
-              borderRadius: '10px',
-              fontSize: '0.92rem',
-              color: '#166534',
-              flexWrap: 'wrap',
-              gap: '0.75rem',
-            }}
-          >
-            <div>
-              Đang lọc các điểm đến thuộc{' '}
-              <strong>{zones.find((z) => z.code === selectedZone)?.name || selectedZone}</strong> (
-              {filteredPlacesCount} địa danh)
-            </div>
-            <button
-              type="button"
-              onClick={() => onSelectZone('all')}
-              style={{
-                background: '#133e2f',
-                color: '#fff',
-                border: 'none',
-                padding: '4px 12px',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '0.82rem',
-                fontWeight: 600,
-              }}
-            >
-              ✕ Xóa bộ lọc vùng
-            </button>
-          </div>
-        )}
       </div>
     </section>
   );

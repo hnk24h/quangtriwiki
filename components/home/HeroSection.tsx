@@ -22,6 +22,28 @@ interface HeroSectionProps {
   onSelectPlace?: (place: Place) => void;
 }
 
+function pickRandomPlaces(list: Place[], count = 4): Place[] {
+  const shuffled = [...list];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  const picked: Place[] = [];
+  const usedZones = new Set<string>();
+  for (const p of shuffled) {
+    if (picked.length >= count) break;
+    if (!usedZones.has(p.zoneCode)) {
+      usedZones.add(p.zoneCode);
+      picked.push(p);
+    }
+  }
+  for (const p of shuffled) {
+    if (picked.length >= count) break;
+    if (!picked.includes(p)) picked.push(p);
+  }
+  return picked;
+}
+
 export default function HeroSection({
   slides,
   initialViews,
@@ -53,14 +75,16 @@ export default function HeroSection({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [selectedForecastDate, setSelectedForecastDate] = useState<string | null>(null);
+  const [suggestedPlaces, setSuggestedPlaces] = useState<Place[]>(() => places.slice(0, 4));
 
-  const forecastIsoDates = useMemo(() => {
-    const sample = weatherData?.['QT-05'] || Object.values(weatherData || {})[0];
-    return Array.isArray(sample?.forecast)
-      ? sample.forecast.map((d) => d.isoDate).filter(Boolean)
-      : [];
-  }, [weatherData]);
+  // Randomize only after mount to keep SSR/hydration deterministic
+  useEffect(() => {
+    if (places.length > 0) {
+      setSuggestedPlaces(pickRandomPlaces(places, 4));
+    }
+  }, [places]);
+
+  const handleShuffleSuggestions = () => setSuggestedPlaces(pickRandomPlaces(places, 4));
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchWrapRef = useRef<HTMLDivElement>(null);
@@ -158,7 +182,7 @@ export default function HeroSection({
 
   const scrollToPlaces = () => {
     setIsSearchOpen(false);
-    const el = document.getElementById('cung-duong');
+    const el = document.getElementById('places-results') || document.getElementById('cung-duong');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -366,20 +390,55 @@ export default function HeroSection({
               </div>
             )}
           </div>
+
+          {suggestedPlaces.length > 0 && (
+            <div className="hero-today-picks">
+              <div className="hero-picks-header">
+                <span className="hero-picks-title">✨ Gợi ý điểm đến hôm nay</span>
+                {places.length > 4 && (
+                  <button type="button" onClick={handleShuffleSuggestions} className="hero-picks-shuffle">
+                    🎲 Đổi gợi ý
+                  </button>
+                )}
+              </div>
+              <div className="hero-picks-grid">
+                {suggestedPlaces.map((place) => (
+                  <button
+                    type="button"
+                    key={place.id}
+                    onClick={() => onSelectPlace?.(place)}
+                    className="hero-pick-card"
+                    aria-label={`Xem nhanh ${place.name}`}
+                  >
+                    <span className="hero-pick-thumb">
+                      <SafeImage
+                        src={place.image || place.hero_image}
+                        alt={place.name}
+                        fill
+                        sizes="56px"
+                      />
+                    </span>
+                    <span className="hero-pick-info">
+                      <span className="hero-pick-meta">
+                        <span className="hero-pick-zone">{place.zoneCode}</span>
+                        <span className="hero-pick-rating">★ {place.rating}</span>
+                      </span>
+                      <span className="hero-pick-name">{place.name}</span>
+                      <span className="hero-pick-sub">
+                        {place.categoryName} · {place.ticket || 'Miễn phí'}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="hagiang-hero-right">
           <div className="hero-glass-stack">
-            <ClockCalendarWidget
-              forecastIsoDates={forecastIsoDates}
-              selectedIsoDate={selectedForecastDate}
-              onSelectIsoDate={setSelectedForecastDate}
-            />
-            <WeatherWidget
-              weatherData={weatherData}
-              selectedIsoDate={selectedForecastDate}
-              onSelectIsoDate={setSelectedForecastDate}
-            />
+            <ClockCalendarWidget />
+            <WeatherWidget weatherData={weatherData} />
           </div>
         </div>
       </div>

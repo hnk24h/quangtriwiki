@@ -148,7 +148,7 @@ export default function AdminEditorModal({
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={labelStyle}>Mã vùng (QT-01..QT-08)</label>
+                  <label style={labelStyle}>Mã vùng (QT-01..QT-12)</label>
                   <input name="zoneCode" defaultValue={editingItem?.zoneCode || ''} style={inputStyle} />
                 </div>
                 <div>
@@ -167,7 +167,7 @@ export default function AdminEditorModal({
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={labelStyle}>Mã vùng (QT-01 ... QT-08) *</label>
+                  <label style={labelStyle}>Mã vùng (QT-01 ... QT-12) *</label>
                   <input name="zoneCode" defaultValue={editingItem?.zoneCode || editingItem?.zone_code || 'QT-01'} required style={inputStyle} />
                 </div>
                 <div>
@@ -283,7 +283,7 @@ export default function AdminEditorModal({
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={labelStyle}>Mã vùng (QT-01..QT-08)</label>
+                  <label style={labelStyle}>Mã vùng (QT-01..QT-12)</label>
                   <input name="zoneCode" defaultValue={editingItem?.zoneCode || 'QT-05'} style={inputStyle} />
                 </div>
                 <div>

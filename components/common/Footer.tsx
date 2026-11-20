@@ -123,7 +123,7 @@ export default function Footer() {
 
               <div className="footer-contact-box">
                 <span className="contact-box-title">Đóng góp thông tin & cẩm nang:</span>
-                <a href="mailto:bandoc@quangtri.wiki" className="contact-email-link">bandoc@quangtri.wiki</a>
+                <a href="mailto:lienhe@quangtriwiki.com" className="contact-email-link">lienhe@quangtriwiki.com</a>
               </div>
             </div>
           </div>

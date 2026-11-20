@@ -128,6 +128,10 @@ export default function PartnerRegistrationModal({
                   <option value="QT-06">QT-06 · Đakrông & Trường Sơn</option>
                   <option value="QT-07">QT-07 · Đảo Cồn Cỏ</option>
                   <option value="QT-08">QT-08 · Cam Lộ & Vùng Cùa</option>
+                  <option value="QT-09">QT-09 · Đồng Hới & Biển Nhật Lệ</option>
+                  <option value="QT-10">QT-10 · Phong Nha - Kẻ Bàng</option>
+                  <option value="QT-11">QT-11 · Bố Trạch, Vũng Chùa & Đèo Ngang</option>
+                  <option value="QT-12">QT-12 · Lệ Thủy & Suối Khoáng Bang</option>
                 </select>
               </div>
             </div>

@@ -6,7 +6,25 @@ import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
 import SafeImage from '@/components/common/SafeImage';
 import PlaceActionsClient from './PlaceActionsClient';
-import { getPlaceBySlug, getPlaces, getServices } from '@/lib/get-data';
+import PlaceGuideSections from './PlaceGuideSections';
+import {
+  getFoods,
+  getItineraries,
+  getPlaceBySlug,
+  getPlaces,
+  getServices,
+  getThreads,
+  getZones,
+} from '@/lib/get-data';
+import {
+  buildTransportTips,
+  estimateRoutes,
+  findNearestPlaces,
+  matchFoodsForPlace,
+  matchItinerariesForPlace,
+  matchThreadsForPlace,
+  parseCoordinates,
+} from '@/lib/place-guide';
 
 export const revalidate = 60;
 
@@ -60,19 +78,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PlaceDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const [place, allPlaces, allServices] = await Promise.all([
-    getCachedPlace(slug),
-    getPlaces(),
-    getServices(),
-  ]);
+  const [place, allPlaces, allServices, allFoods, allThreads, allItineraries, allZones] =
+    await Promise.all([
+      getCachedPlace(slug),
+      getPlaces(),
+      getServices(),
+      getFoods(),
+      getThreads(),
+      getItineraries(),
+      getZones(),
+    ]);
 
   if (!place) {
     notFound();
   }
-
-  const nearbyPlaces = allPlaces
-    .filter((p) => p.id !== place.id && p.zoneCode === place.zoneCode)
-    .slice(0, 3);
 
   const nearbyServices = allServices
     .filter((s) => s.zoneCode === place.zoneCode)
@@ -84,6 +103,24 @@ export default async function PlaceDetailPage({ params }: PageProps) {
     .filter((n) => !isNaN(n));
   const lat = coords[0] || 16.8;
   const lng = coords[1] || 107.1;
+
+  const placePoint = parseCoordinates(place.coordinates) || { lat, lng };
+  const zoneInfo = allZones.find((z) => z.code === place.zoneCode);
+  const isMountain = zoneInfo?.typeGroup === 'mountain';
+
+  const routes = estimateRoutes(placePoint, isMountain);
+  const transportTips = buildTransportTips(place, isMountain);
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(
+    'Đông Hà, Quảng Trị'
+  )}&destination=${placePoint.lat},${placePoint.lng}&travelmode=driving`;
+  const matchedFoods = matchFoodsForPlace(place, allFoods, 3);
+  const foodsAreGeneral = matchedFoods.length === 0;
+  const guideFoods = foodsAreGeneral ? allFoods.slice(0, 3) : matchedFoods;
+  const nearestPlaces = findNearestPlaces(place, placePoint, allPlaces, 4);
+  const matchedThreads = matchThreadsForPlace(place, allThreads, 3);
+  const threadsAreGeneral = matchedThreads.length === 0;
+  const guideThreads = threadsAreGeneral ? allThreads.slice(0, 2) : matchedThreads;
+  const guideItineraries = matchItinerariesForPlace(place, allItineraries, 3);
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://quangtri.wiki';
 
@@ -197,6 +234,14 @@ export default async function PlaceDetailPage({ params }: PageProps) {
           </div>
         </div>
 
+        {/* Quick section navigation */}
+        <nav className="pg-quick-nav" aria-label="Mục lục điểm đến">
+          <a href="#cach-di">🧭 Cách đi</a>
+          {guideFoods.length > 0 && <a href="#an-gi">🍲 Nên ăn gì</a>}
+          {nearestPlaces.length > 0 && <a href="#choi-o-dau">🎒 Nên chơi ở đâu</a>}
+          <a href="#nguoi-da-di">💬 Người đã đi</a>
+        </nav>
+
         {/* Responsive 2-column content grid */}
         <div className="place-detail-grid">
           <div>
@@ -255,6 +300,19 @@ export default async function PlaceDetailPage({ params }: PageProps) {
                 </div>
               </section>
             )}
+
+            <PlaceGuideSections
+              place={place}
+              routes={routes}
+              transportTips={transportTips}
+              directionsUrl={directionsUrl}
+              foods={guideFoods}
+              foodsAreGeneral={foodsAreGeneral}
+              nearest={nearestPlaces}
+              threads={guideThreads}
+              threadsAreGeneral={threadsAreGeneral}
+              itineraries={guideItineraries}
+            />
           </div>
 
           {/* Sidebar Info */}
@@ -311,8 +369,8 @@ export default async function PlaceDetailPage({ params }: PageProps) {
           </aside>
         </div>
 
-        {/* Nearby Places & Services in same Zone */}
-        {(nearbyPlaces.length > 0 || nearbyServices.length > 0) && (
+        {/* Services in same Zone */}
+        {nearbyServices.length > 0 && (
           <section style={{ marginTop: '3.5rem', paddingTop: '2.5rem', borderTop: '1px solid rgba(27,42,34,0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.5rem' }}>
               <div>
@@ -320,43 +378,13 @@ export default async function PlaceDetailPage({ params }: PageProps) {
                   CÙNG CUNG ĐƯỜNG {place.zoneCode}
                 </span>
                 <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.75rem', color: '#133e2f', margin: '0.25rem 0 0' }}>
-                  Khám phá & Lưu trú lân cận ({place.zoneName})
+                  Dịch vụ & Lưu trú lân cận ({place.zoneName})
                 </h2>
               </div>
               <Link href="/cung-duong" style={{ color: '#133e2f', fontWeight: 700, fontSize: '0.9rem' }}>
                 Xem bản đồ toàn tỉnh →
               </Link>
             </div>
-
-            {nearbyPlaces.length > 0 && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
-                {nearbyPlaces.map((np) => (
-                  <Link
-                    key={np.id}
-                    href={`/diem-den/${np.id}`}
-                    style={{
-                      background: '#fff',
-                      borderRadius: '14px',
-                      overflow: 'hidden',
-                      border: '1px solid rgba(27,42,34,0.08)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <div style={{ position: 'relative', height: '150px' }}>
-                      <SafeImage src={np.image} alt={np.name} fill sizes="300px" />
-                    </div>
-                    <div style={{ padding: '1rem' }}>
-                      <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 700 }}>{np.categoryName}</span>
-                      <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', color: '#133e2f', margin: '0.25rem 0 0.35rem' }}>
-                        {np.name}
-                      </h3>
-                      <p style={{ margin: 0, fontSize: '0.84rem', color: '#6b7280' }}>{np.ticket || 'Miễn phí'}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
 
             {nearbyServices.length > 0 && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: '1.25rem' }}>
