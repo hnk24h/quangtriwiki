@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
 import type { Food, GuidesData, Place, Service, Zone } from '@/lib/supabase/types';
 
@@ -102,17 +103,18 @@ export default function PlacesExplorer({
         >
           <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
             <span className="sub-title-accent">
-              BƯỚC 01 / 05 · BẢN ĐỒ SỐ ĐA LỚP & GHIM ĐỊA ĐIỂM CỘNG ĐỒNG
+              BẢN ĐỒ SỐ ĐA LỚP · GHIM ĐỊA ĐIỂM CỘNG ĐỒNG
             </span>
             <h2 className="title-serif">
               Bản Đồ Tương Tác & Khám Phá Quảng Trị
             </h2>
             <p className="desc-text">
-              Chọn khu vực (QT-01 → QT-12), lọc nhanh điểm tham quan, quán ăn, khách sạn, bãi đỗ xe hoặc tự ghim tọa độ mới lên bản đồ.
+              Chọn khu vực (QT-01 → QT-12), lọc nhanh điểm tham quan, quán ăn, khách sạn, bãi đỗ xe hoặc tự ghim tọa độ mới.
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.4rem', background: 'rgba(19, 62, 47, 0.08)', padding: '4px', borderRadius: '12px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap', flexShrink: 0 }}>
+            <div style={{ display: 'flex', gap: '0.4rem', background: 'rgba(19, 62, 47, 0.08)', padding: '4px', borderRadius: '12px' }}>
             <button
               type="button"
               onClick={() => setPlacesViewMode('map')}
@@ -158,6 +160,10 @@ export default function PlacesExplorer({
               <span>📋</span>
               <span>Danh Sách Thẻ ({filteredPlaces.length})</span>
             </button>
+            </div>
+            <Link href="/cung-duong" className="journey-back-map-chip">
+              Mở toàn trang Bản đồ ↗
+            </Link>
           </div>
         </div>
 
@@ -174,6 +180,7 @@ export default function PlacesExplorer({
             onOpenModal={onOpenModal}
             bookmarkedIds={bookmarkedIds}
             onToggleBookmark={onToggleBookmark}
+            defaultSidebarCollapsed={true}
           />
         ) : filteredPlaces.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 1rem', background: '#fff', borderRadius: '16px' }}>
@@ -249,10 +256,10 @@ export default function PlacesExplorer({
 
         <div className="section-journey-footer" style={{ marginTop: '1.5rem' }}>
           <span className="journey-hint-text">
-            💡 Mẹo: Chọn một vùng <strong>QT-01 → QT-12</strong> trên bản đồ để các mục Lưu trú & Ẩm thực bên dưới tự động ưu tiên gợi ý theo vùng đó.
+            💡 Chọn một vùng trên bản đồ để lọc nhanh điểm đến và ưu tiên gợi ý Lưu trú & Ẩm thực bên dưới.
           </span>
           <a href="#dich-vu" className="journey-next-link">
-            Bước tiếp theo: Lưu trú, Thuê xe & Vé tàu Cồn Cỏ ↓
+            Tiếp theo: Lưu trú & Dịch vụ bản địa ↓
           </a>
         </div>
       </div>

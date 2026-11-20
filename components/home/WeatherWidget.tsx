@@ -41,6 +41,7 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
     weatherData?.['QT-05'] ? 'QT-05' : Object.keys(weatherData || {})[0] || 'QT-05'
   );
   const [weatherDayIdx, setWeatherDayIdx] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const didAutoRefresh = useRef(false);
   const liveWeatherRef = useRef(liveWeather);
@@ -224,56 +225,75 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
         ))}
       </div>
 
-      {/* Hourly Slots + 4-Col Detailed Metrics */}
-      <div className="weather-detail-box">
-        {hourlySlots.length > 0 && (
-          <div className="weather-hourly-strip" aria-label="Dự báo theo khung giờ trong ngày">
-            {hourlySlots.map((slot) => (
-              <div key={slot.time} className="weather-hour-chip">
-                <span className="hour-label">{slot.time}</span>
-                <span className="hour-icon">{getWeatherEmoji(slot.icon)}</span>
-                <strong className="hour-temp">{slot.temp}°</strong>
-                <span className="hour-rain">💧{slot.rain}</span>
+      {/* Expand / Collapse Hourly & Metrics Details */}
+      <button
+        type="button"
+        onClick={() => setIsExpanded((prev) => !prev)}
+        className="weather-expand-btn"
+        aria-expanded={isExpanded}
+      >
+        <span>
+          {isExpanded
+            ? 'Thu gọn chi tiết giờ & gió/UV'
+            : `Chi tiết theo giờ · Mưa ${displayRain} · Gió ${displayWind}`}
+        </span>
+        <span>{isExpanded ? '▴' : '▾'}</span>
+      </button>
+
+      {/* Hourly Slots + 4-Col Detailed Metrics (Expanded on demand) */}
+      {isExpanded && (
+        <>
+          <div className="weather-detail-box" style={{ marginTop: '0.65rem' }}>
+            {hourlySlots.length > 0 && (
+              <div className="weather-hourly-strip" aria-label="Dự báo theo khung giờ trong ngày">
+                {hourlySlots.map((slot) => (
+                  <div key={slot.time} className="weather-hour-chip">
+                    <span className="hour-label">{slot.time}</span>
+                    <span className="hour-icon">{getWeatherEmoji(slot.icon)}</span>
+                    <strong className="hour-temp">{slot.temp}°</strong>
+                    <span className="hour-rain">💧{slot.rain}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            )}
 
-        <div className="weather-detail-metrics-4">
-          <div className="metric-col">
-            <div className="metric-label">Mưa</div>
-            <div className="metric-value">{displayRain}</div>
-            <div className="metric-sub">{displayRainMm > 0 ? `${displayRainMm} mm` : 'Khô ráo'}</div>
+            <div className="weather-detail-metrics-4">
+              <div className="metric-col">
+                <div className="metric-label">Mưa</div>
+                <div className="metric-value">{displayRain}</div>
+                <div className="metric-sub">{displayRainMm > 0 ? `${displayRainMm} mm` : 'Khô ráo'}</div>
+              </div>
+              <div className="metric-col">
+                <div className="metric-label">{isToday ? 'Độ ẩm' : 'Chỉ số UV'}</div>
+                <div className="metric-value">{isToday ? currentLoc.current?.humidity : `UV ${displayUv}`}</div>
+                <div className="metric-sub">{isToday ? currentLoc.current?.humidityNote : displayUv >= 8 ? 'Nắng gắt' : 'Trung bình'}</div>
+              </div>
+              <div className="metric-col">
+                <div className="metric-label">Gió</div>
+                <div className="metric-value">{displayWind}</div>
+                <div className="metric-sub">{isToday ? `Hướng ${currentLoc.current?.windDir}` : currentLoc.current?.windNote}</div>
+              </div>
+              <div className="metric-col">
+                <div className="metric-label">Mặt trời</div>
+                <div className="metric-value" style={{ fontSize: '0.92rem' }}>🌅 {displaySunrise}</div>
+                <div className="metric-sub">🌇 Lặn {displaySunset}</div>
+              </div>
+            </div>
           </div>
-          <div className="metric-col">
-            <div className="metric-label">{isToday ? 'Độ ẩm' : 'Chỉ số UV'}</div>
-            <div className="metric-value">{isToday ? currentLoc.current?.humidity : `UV ${displayUv}`}</div>
-            <div className="metric-sub">{isToday ? currentLoc.current?.humidityNote : displayUv >= 8 ? 'Nắng gắt' : 'Trung bình'}</div>
-          </div>
-          <div className="metric-col">
-            <div className="metric-label">Gió</div>
-            <div className="metric-value">{displayWind}</div>
-            <div className="metric-sub">{isToday ? `Hướng ${currentLoc.current?.windDir}` : currentLoc.current?.windNote}</div>
-          </div>
-          <div className="metric-col">
-            <div className="metric-label">Mặt trời</div>
-            <div className="metric-value" style={{ fontSize: '0.92rem' }}>🌅 {displaySunrise}</div>
-            <div className="metric-sub">🌇 Lặn {displaySunset}</div>
-          </div>
-        </div>
-      </div>
 
-      {/* Advisories */}
-      <div className="weather-advisories" style={{ marginBottom: 0 }}>
-        <div className="advisory-item">
-          <span>🧭</span>
-          <span>{currentLoc.tipRain}</span>
-        </div>
-        <div className="advisory-item">
-          <span>🎒</span>
-          <span>{currentLoc.tipSleep}</span>
-        </div>
-      </div>
+          {/* Advisories */}
+          <div className="weather-advisories" style={{ marginBottom: 0 }}>
+            <div className="advisory-item">
+              <span>🧭</span>
+              <span>{currentLoc.tipRain}</span>
+            </div>
+            <div className="advisory-item">
+              <span>🎒</span>
+              <span>{currentLoc.tipSleep}</span>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

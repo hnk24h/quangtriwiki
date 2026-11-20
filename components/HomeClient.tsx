@@ -243,37 +243,104 @@ export default function HomeClient({
         onSelectPlace={handleOpenPlaceModal}
       />
 
-      {/* Connected 5-Step Journey Navigation Bar */}
+      {/* Connected Journey Navigation Bar */}
       <div className="hagiang-bottom-bar">
-        <nav className="container home-quick-nav" aria-label="Hành trình khám phá Quảng Trị 5 bước">
-          <a href="#cung-duong">
+        <nav className="container home-quick-nav" aria-label="Hành trình khám phá Quảng Trị">
+          <a href="#kham-pha">
             <span className="step-num">01</span>
-            <span>🗺️ Bản đồ & Tọa độ ({initialPlaces.length})</span>
+            <span>✨ Trải nghiệm biểu tượng</span>
+          </a>
+          <span className="step-arrow" aria-hidden="true">→</span>
+          <a href="#cung-duong">
+            <span className="step-num">02</span>
+            <span>🗺️ Bản đồ đa lớp ({initialPlaces.length})</span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#dich-vu">
-            <span className="step-num">02</span>
+            <span className="step-num">03</span>
             <span>🏕️ Lưu trú & Thuê xe</span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#am-thuc">
-            <span className="step-num">03</span>
+            <span className="step-num">04</span>
             <span>🍲 Ẩm thực đất lửa</span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#lich-trinh">
-            <span className="step-num">04</span>
-            <span>🧭 Lộ trình đi chậm</span>
-          </a>
-          <span className="step-arrow" aria-hidden="true">→</span>
-          <a href="#dien-dan">
             <span className="step-num">05</span>
-            <span>💬 Cộng đồng & Cứu hộ</span>
+            <span>🧭 Lộ trình & Cộng đồng</span>
           </a>
         </nav>
       </div>
 
-      {/* Places Explorer + Google-Maps-Style Interactive Map (Moved to top, 8 Zones integrated inside map) */}
+      {/* 01. INSPIRE SHOWCASE: 4 Trải Nghiệm Không Thể Bỏ Lỡ */}
+      <section className="inspire-showcase-section" id="kham-pha">
+        <div className="container">
+          <div className="section-head-split">
+            <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
+              <span className="sub-title-accent">BƯỚC 01 / 05 · CẢM HỨNG HÀNH TRÌNH</span>
+              <h2 className="title-serif">4 Mảnh Ghép Không Thể Bỏ Lỡ Tại Quảng Trị</h2>
+              <p className="desc-text">
+                Từ kỳ quan hang động UNESCO phía Bắc đến đèo mây Trường Sơn, ký ức Vĩ tuyến 17 và đảo ngọc tiền tiêu giữa Biển Đông.
+              </p>
+            </div>
+            <a href="#cung-duong" className="journey-back-map-chip">
+              🗺️ Mở bản đồ tương tác ↓
+            </a>
+          </div>
+
+          <div className="inspire-grid">
+            {[
+              {
+                slug: 'dong-phong-nha',
+                tag: 'QT-10 · DI SẢN UNESCO',
+                title: 'Vương Quốc Hang Động Phong Nha – Kẻ Bàng',
+                desc: 'Xuôi thuyền sông Son vào lòng động kỳ vĩ, khám phá Động Thiên Đường & suối Nước Moọc xanh ngọc.',
+                image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80',
+              },
+              {
+                slug: 'thanh-co-quang-tri',
+                tag: 'QT-02 & QT-03 · ĐẤT THIÊNG',
+                title: 'Ký Ức Thành Cổ & Vĩ Tuyến 17 Hiền Lương',
+                desc: 'Lắng đọng bên dòng Thạch Hãn, Cầu Hiền Lương – Bến Hải và kỳ quan ngầm Địa đạo Vịnh Mốc.',
+                image: 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=900&q=80',
+              },
+              {
+                slug: 'deo-sa-mu',
+                tag: 'QT-05 · TRƯỜNG SƠN TÂY',
+                title: 'Săn Mây Đỉnh Đèo Sa Mù & Cà Phê Khe Sanh',
+                desc: 'Chinh phục độ cao 1.400m mờ sương, cánh đồng điện gió Hướng Linh và thưởng thức Arabica vùng cao.',
+                image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=80',
+              },
+              {
+                slug: 'dao-con-co',
+                tag: 'QT-09 & QT-07 · BIỂN ĐẢO',
+                title: 'Biển Nhật Lệ, Cửa Việt & Đảo Ngọc Cồn Cỏ',
+                desc: 'Đón bình minh đồi cát Quang Phú, dạo biển Cửa Việt và lặn ngắm san hô tại đảo tiền tiêu Cồn Cỏ.',
+                image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80',
+              },
+            ].map((item) => (
+              <Link key={item.slug} href={`/diem-den/${item.slug}`} className="inspire-card">
+                <SafeImage
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                />
+                <div className="inspire-card-overlay" />
+                <div className="inspire-card-body">
+                  <span className="inspire-card-tag">{item.tag}</span>
+                  <h3 className="inspire-card-title">{item.title}</h3>
+                  <p className="inspire-card-desc">{item.desc}</p>
+                  <span className="inspire-card-cta">Khám phá ngay →</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Places Explorer + Google-Maps-Style Interactive Map */}
       <PlacesExplorer
         filteredPlaces={filteredPlaces}
         foods={foods}

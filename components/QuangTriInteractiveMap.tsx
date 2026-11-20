@@ -50,6 +50,7 @@ interface Props {
   onOpenModal?: (place: Place) => void;
   bookmarkedIds?: string[];
   onToggleBookmark?: (id: string, e?: React.MouseEvent) => void;
+  defaultSidebarCollapsed?: boolean;
 }
 
 const USER_PINS_STORAGE_KEY = 'quangtri_user_map_pins_v1';
@@ -637,6 +638,7 @@ export default function QuangTriInteractiveMap({
   onOpenModal,
   bookmarkedIds = [],
   onToggleBookmark,
+  defaultSidebarCollapsed = false,
 }: Props) {
   const { showToast } = useToast();
 
@@ -652,7 +654,7 @@ export default function QuangTriInteractiveMap({
   const [draftPinCoords, setDraftPinCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [isPinDrawerOpen, setIsPinDrawerOpen] = useState(false);
   const [internalModalPlace, setInternalModalPlace] = useState<Place | null>(null);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(defaultSidebarCollapsed);
   const [isInfoCardVisible, setIsInfoCardVisible] = useState(true);
   const [leafletReady, setLeafletReady] = useState(false);
   const [leafletFailed, setLeafletFailed] = useState(false);

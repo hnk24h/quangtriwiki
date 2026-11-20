@@ -392,45 +392,29 @@ export default function HeroSection({
           </div>
 
           {suggestedPlaces.length > 0 && (
-            <div className="hero-today-picks">
-              <div className="hero-picks-header">
-                <span className="hero-picks-title">✨ Gợi ý điểm đến hôm nay</span>
-                {places.length > 4 && (
-                  <button type="button" onClick={handleShuffleSuggestions} className="hero-picks-shuffle">
-                    🎲 Đổi gợi ý
-                  </button>
-                )}
-              </div>
-              <div className="hero-picks-grid">
-                {suggestedPlaces.map((place) => (
-                  <button
-                    type="button"
-                    key={place.id}
-                    onClick={() => onSelectPlace?.(place)}
-                    className="hero-pick-card"
-                    aria-label={`Xem nhanh ${place.name}`}
-                  >
-                    <span className="hero-pick-thumb">
-                      <SafeImage
-                        src={place.image || place.hero_image}
-                        alt={place.name}
-                        fill
-                        sizes="56px"
-                      />
-                    </span>
-                    <span className="hero-pick-info">
-                      <span className="hero-pick-meta">
-                        <span className="hero-pick-zone">{place.zoneCode}</span>
-                        <span className="hero-pick-rating">★ {place.rating}</span>
-                      </span>
-                      <span className="hero-pick-name">{place.name}</span>
-                      <span className="hero-pick-sub">
-                        {place.categoryName} · {place.ticket || 'Miễn phí'}
-                      </span>
-                    </span>
-                  </button>
-                ))}
-              </div>
+            <div className="hero-quick-picks">
+              <span className="hero-quick-label">✨ Gợi ý hôm nay:</span>
+              {suggestedPlaces.map((place) => (
+                <button
+                  type="button"
+                  key={place.id}
+                  onClick={() => onSelectPlace?.(place)}
+                  className="hagiang-tag-chip"
+                >
+                  {place.name}
+                </button>
+              ))}
+              {places.length > 4 && (
+                <button
+                  type="button"
+                  onClick={handleShuffleSuggestions}
+                  className="hero-picks-shuffle"
+                  title="Đổi gợi ý điểm đến"
+                  aria-label="Đổi gợi ý điểm đến"
+                >
+                  🎲
+                </button>
+              )}
             </div>
           )}
         </div>

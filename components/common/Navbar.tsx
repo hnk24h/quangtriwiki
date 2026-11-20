@@ -32,13 +32,11 @@ export default function Navbar() {
   }, [mobileMenuOpen]);
 
   const navLinks = [
-    { href: '/cung-duong', label: 'Khám phá cung đường' },
-    { href: '/am-thuc', label: 'Ăn uống' },
+    { href: '/cung-duong', label: 'Bản đồ & Cung đường' },
+    { href: '/am-thuc', label: 'Ẩm thực' },
     { href: '/dich-vu', label: 'Lưu trú & Dịch vụ' },
-    { href: '/lich-trinh', label: 'Hành trình' },
-    { href: '/dien-dan', label: 'Diễn đàn' },
-    { href: '/tien-ich', label: 'Cây xăng & Trạm sạc' },
-    { href: '/chi-phi', label: 'Chi Phí' },
+    { href: '/lich-trinh', label: 'Lịch trình' },
+    { href: '/dien-dan', label: 'Cộng đồng' },
     { href: '/so-tay', label: 'Sổ tay của tôi' },
   ];
 
