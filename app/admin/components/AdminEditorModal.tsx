@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export type CmsEntityType =
   | 'banners'
@@ -33,11 +33,307 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: '0.8rem',
+  fontSize: '0.82rem',
   fontWeight: 700,
-  marginBottom: '0.25rem',
+  marginBottom: '0.3rem',
   color: '#374151',
 };
+
+const textareaStyle: React.CSSProperties = {
+  ...inputStyle,
+  lineHeight: 1.6,
+  resize: 'vertical',
+};
+
+function compressImageToDataUrl(file: File, maxDim = 1400, quality = 0.82): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Không thể đọc file'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('File ảnh không hợp lệ'));
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width >= height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(String(reader.result));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function ImageInputField({
+  name,
+  label,
+  defaultValue = '',
+  required = false,
+}: {
+  name: string;
+  label: string;
+  defaultValue?: string;
+  required?: boolean;
+}) {
+  const [mode, setMode] = useState<'url' | 'upload'>(
+    defaultValue.startsWith('data:image/') ? 'upload' : 'url'
+  );
+  const [value, setValue] = useState(defaultValue);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    setValue(defaultValue);
+    setMode(defaultValue.startsWith('data:image/') ? 'upload' : 'url');
+  }, [defaultValue]);
+
+  const handleFile = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const dataUrl = await compressImageToDataUrl(file);
+      setValue(dataUrl);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem', flexWrap: 'wrap', gap: '0.4rem' }}>
+        <label style={{ ...labelStyle, marginBottom: 0 }}>{label}</label>
+        <div style={{ display: 'inline-flex', background: '#f3f4f6', padding: '2px', borderRadius: '8px', gap: '2px' }}>
+          <button
+            type="button"
+            onClick={() => setMode('url')}
+            style={{
+              padding: '0.22rem 0.6rem',
+              borderRadius: '6px',
+              border: 'none',
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              background: mode === 'url' ? '#133e2f' : 'transparent',
+              color: mode === 'url' ? '#fff' : '#4b5563',
+            }}
+          >
+            <i className="bi bi-link-45deg" aria-hidden="true" /> Nhập URL
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('upload')}
+            style={{
+              padding: '0.22rem 0.6rem',
+              borderRadius: '6px',
+              border: 'none',
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              background: mode === 'upload' ? '#133e2f' : 'transparent',
+              color: mode === 'upload' ? '#fff' : '#4b5563',
+            }}
+          >
+            <i className="bi bi-cloud-arrow-up" aria-hidden="true" /> Tải ảnh lên
+          </button>
+        </div>
+      </div>
+
+      {/* Hidden input keeps exact FormData key */}
+      <input type="hidden" name={name} value={value} />
+
+      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+        <div style={{ flex: 1 }}>
+          {mode === 'url' ? (
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              required={required}
+              placeholder="https://... hoặc /images/..."
+              style={inputStyle}
+            />
+          ) : (
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                padding: '0.6rem 0.9rem',
+                borderRadius: '8px',
+                border: '1px dashed #059669',
+                background: '#f0fdf4',
+                color: '#133e2f',
+                fontSize: '0.84rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              <i className="bi bi-image" aria-hidden="true" />
+              <span>{uploading ? 'Đang nén ảnh...' : value ? 'Chọn ảnh khác từ máy' : 'Chọn ảnh từ máy để tải lên'}</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  handleFile(e.target.files);
+                  e.target.value = '';
+                }}
+                style={{ display: 'none' }}
+              />
+            </label>
+          )}
+        </div>
+
+        {value && (
+          <div style={{ position: 'relative', width: '58px', height: '42px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #d1d5db', flexShrink: 0, background: '#f8fafc' }}>
+            <img src={value} alt="Xem trước" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MultiImageTextareaField({
+  name,
+  label,
+  defaultValue = '',
+  rows = 3,
+}: {
+  name: string;
+  label: string;
+  defaultValue?: string;
+  rows?: number;
+}) {
+  const [value, setValue] = useState(defaultValue);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+
+  const lines = value
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const handleUploadMany = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    try {
+      const encoded = await Promise.all(
+        Array.from(files)
+          .filter((f) => f.type.startsWith('image/'))
+          .slice(0, 8)
+          .map((f) => compressImageToDataUrl(f))
+      );
+      if (encoded.length > 0) {
+        const merged = [...lines, ...encoded].join('\n');
+        setValue(merged);
+      }
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeAt = (idx: number) => {
+    setValue(lines.filter((_, i) => i !== idx).join('\n'));
+  };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem', flexWrap: 'wrap', gap: '0.4rem' }}>
+        <label style={{ ...labelStyle, marginBottom: 0 }}>{label}</label>
+        <label
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+            padding: '0.28rem 0.7rem',
+            borderRadius: '8px',
+            border: '1px solid #059669',
+            background: '#f0fdf4',
+            color: '#133e2f',
+            fontSize: '0.76rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          <i className="bi bi-cloud-arrow-up" aria-hidden="true" />
+          <span>{uploading ? 'Đang tải...' : 'Tải thêm ảnh từ máy'}</span>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={(e) => {
+              handleUploadMany(e.target.files);
+              e.target.value = '';
+            }}
+            style={{ display: 'none' }}
+          />
+        </label>
+      </div>
+
+      <textarea
+        name={name}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        rows={rows}
+        placeholder="Dán mỗi dòng 1 URL ảnh hoặc bấm 'Tải thêm ảnh từ máy' ở trên"
+        style={textareaStyle}
+      />
+
+      {lines.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+          {lines.map((src, idx) => (
+            <div key={`multi-${idx}`} style={{ position: 'relative', width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #d1d5db', background: '#f8fafc' }}>
+              <img src={src} alt={`Ảnh ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <button
+                type="button"
+                onClick={() => removeAt(idx)}
+                aria-label="Xóa ảnh"
+                style={{
+                  position: 'absolute',
+                  top: '2px',
+                  right: '2px',
+                  width: '18px',
+                  height: '18px',
+                  borderRadius: '50%',
+                  border: 'none',
+                  background: 'rgba(0,0,0,0.72)',
+                  color: '#fff',
+                  fontSize: '0.7rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                }}
+              >
+                <i className="bi bi-x" aria-hidden="true" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function AdminEditorModal({
   isOpen,
@@ -96,11 +392,11 @@ export default function AdminEditorModal({
         style={{
           background: '#ffffff',
           borderRadius: '20px',
-          maxWidth: '660px',
-          width: '100%',
-          maxHeight: '90vh',
+          maxWidth: '880px',
+          width: '96%',
+          maxHeight: '92vh',
           overflowY: 'auto',
-          padding: '2rem',
+          padding: '2.25rem',
           boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
         }}
       >
@@ -127,7 +423,11 @@ export default function AdminEditorModal({
           </button>
         </div>
 
-        <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form
+          key={`${editingType}-${editingItem?.id || editingItem?.code || 'new'}-${isOpen}`}
+          onSubmit={onSubmit}
+          style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+        >
           {editingType === 'banners' && (
             <>
               <div>
@@ -140,12 +440,14 @@ export default function AdminEditorModal({
               </div>
               <div>
                 <label style={labelStyle}>Giới thiệu ngắn (Subtitle) *</label>
-                <textarea name="subtitle" defaultValue={editingItem?.subtitle || ''} required rows={3} style={inputStyle} />
+                <textarea name="subtitle" defaultValue={editingItem?.subtitle || ''} required rows={4} style={textareaStyle} />
               </div>
-              <div>
-                <label style={labelStyle}>URL Hình ảnh nền *</label>
-                <input name="image" defaultValue={editingItem?.image || ''} required style={inputStyle} />
-              </div>
+              <ImageInputField
+                name="image"
+                label="Hình ảnh nền (URL hoặc Tải lên) *"
+                defaultValue={editingItem?.image || ''}
+                required
+              />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={labelStyle}>Mã vùng (QT-01..QT-12)</label>
@@ -185,10 +487,18 @@ export default function AdminEditorModal({
                   <input name="categoryName" defaultValue={editingItem?.categoryName || editingItem?.category_name || 'Di tích lịch sử'} required style={inputStyle} />
                 </div>
               </div>
-              <div>
-                <label style={labelStyle}>URL Hình ảnh chính *</label>
-                <input name="image" defaultValue={editingItem?.image || editingItem?.hero_image || ''} required style={inputStyle} />
-              </div>
+              <ImageInputField
+                name="image"
+                label="Hình ảnh chính (URL hoặc Tải lên) *"
+                defaultValue={editingItem?.image || editingItem?.hero_image || ''}
+                required
+              />
+              <MultiImageTextareaField
+                name="gallery"
+                label="Thư viện ảnh thực tế (mỗi dòng 1 link hoặc tải nhiều ảnh)"
+                defaultValue={Array.isArray(editingItem?.gallery) ? editingItem.gallery.join('\n') : ''}
+                rows={3}
+              />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={labelStyle}>Giá vé</label>
@@ -211,19 +521,19 @@ export default function AdminEditorModal({
               </div>
               <div>
                 <label style={labelStyle}>Mô tả ngắn</label>
-                <textarea name="shortDesc" defaultValue={editingItem?.shortDesc || ''} rows={2} style={inputStyle} />
+                <textarea name="shortDesc" defaultValue={editingItem?.shortDesc || ''} rows={3} style={textareaStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Nội dung lịch sử & chi tiết</label>
-                <textarea name="fullDesc" defaultValue={editingItem?.fullDesc || ''} rows={3} style={inputStyle} />
+                <textarea name="fullDesc" defaultValue={editingItem?.fullDesc || ''} rows={6} style={textareaStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Điểm nhấn nổi bật (mỗi dòng 1 ý)</label>
-                <textarea name="highlights" defaultValue={Array.isArray(editingItem?.highlights) ? editingItem.highlights.join('\n') : ''} rows={2} style={inputStyle} />
+                <textarea name="highlights" defaultValue={Array.isArray(editingItem?.highlights) ? editingItem.highlights.join('\n') : ''} rows={4} style={textareaStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Lời khuyên phượt thủ (Tips)</label>
-                <textarea name="tips" defaultValue={editingItem?.tips || ''} rows={2} style={inputStyle} />
+                <textarea name="tips" defaultValue={editingItem?.tips || ''} rows={3} style={textareaStyle} />
               </div>
             </>
           )}
@@ -256,12 +566,14 @@ export default function AdminEditorModal({
               </div>
               <div>
                 <label style={labelStyle}>Nội dung bài viết *</label>
-                <textarea name="content" defaultValue={editingItem?.content || ''} rows={6} required style={inputStyle} />
+                <textarea name="content" defaultValue={editingItem?.content || ''} rows={9} required style={textareaStyle} />
               </div>
-              <div>
-                <label style={labelStyle}>Danh sách URL hình ảnh (mỗi dòng một link)</label>
-                <textarea name="images" defaultValue={Array.isArray(editingItem?.images) ? editingItem.images.join('\n') : ''} rows={2} style={inputStyle} />
-              </div>
+              <MultiImageTextareaField
+                name="images"
+                label="Danh sách hình ảnh (mỗi dòng 1 URL hoặc tải ảnh lên)"
+                defaultValue={Array.isArray(editingItem?.images) ? editingItem.images.join('\n') : ''}
+                rows={3}
+              />
             </>
           )}
 
@@ -305,10 +617,12 @@ export default function AdminEditorModal({
                 <label style={labelStyle}>Địa chỉ</label>
                 <input name="address" defaultValue={editingItem?.address || ''} style={inputStyle} />
               </div>
-              <div>
-                <label style={labelStyle}>URL Hình ảnh *</label>
-                <input name="image" defaultValue={editingItem?.image || ''} required style={inputStyle} />
-              </div>
+              <ImageInputField
+                name="image"
+                label="Hình ảnh dịch vụ (URL hoặc Tải lên) *"
+                defaultValue={editingItem?.image || ''}
+                required
+              />
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <input type="checkbox" name="verified" id="verified" defaultChecked={editingItem?.verified ?? true} />
                 <label htmlFor="verified" style={{ fontSize: '0.85rem', fontWeight: 700, color: '#059669', cursor: 'pointer' }}>
@@ -340,15 +654,17 @@ export default function AdminEditorModal({
               </div>
               <div>
                 <label style={labelStyle}>Quán ngon gợi ý (mỗi dòng 1 quán) *</label>
-                <textarea name="addressRecs" defaultValue={Array.isArray(editingItem?.addressRecs) ? editingItem.addressRecs.join('\n') : 'Chợ Đông Hà'} rows={2} required style={inputStyle} />
+                <textarea name="addressRecs" defaultValue={Array.isArray(editingItem?.addressRecs) ? editingItem.addressRecs.join('\n') : 'Chợ Đông Hà'} rows={3} required style={textareaStyle} />
               </div>
-              <div>
-                <label style={labelStyle}>URL Hình ảnh *</label>
-                <input name="image" defaultValue={editingItem?.image || ''} required style={inputStyle} />
-              </div>
+              <ImageInputField
+                name="image"
+                label="Hình ảnh món ăn (URL hoặc Tải lên) *"
+                defaultValue={editingItem?.image || ''}
+                required
+              />
               <div>
                 <label style={labelStyle}>Mô tả hương vị & cách thưởng thức</label>
-                <textarea name="description" defaultValue={editingItem?.description || ''} rows={3} style={inputStyle} />
+                <textarea name="description" defaultValue={editingItem?.description || ''} rows={5} style={textareaStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Ghi chú hương vị (Taste notes)</label>
@@ -379,11 +695,11 @@ export default function AdminEditorModal({
               </div>
               <div>
                 <label style={labelStyle}>Mô tả hành trình</label>
-                <textarea name="description" defaultValue={editingItem?.description || ''} rows={2} style={inputStyle} />
+                <textarea name="description" defaultValue={editingItem?.description || ''} rows={3} style={textareaStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Danh sách trạm dừng nổi bật (mỗi dòng một trạm)</label>
-                <textarea name="highlights" defaultValue={Array.isArray(editingItem?.highlights) ? editingItem.highlights.join('\n') : ''} rows={3} style={inputStyle} />
+                <textarea name="highlights" defaultValue={Array.isArray(editingItem?.highlights) ? editingItem.highlights.join('\n') : ''} rows={4} style={textareaStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Chi tiết từng chặng (mỗi dòng định dạng: Thời gian | Tên chặng | Mô tả)</label>
@@ -396,9 +712,9 @@ export default function AdminEditorModal({
                           .join('\n')
                       : ''
                   }
-                  rows={4}
+                  rows={6}
                   placeholder="07:00 - 09:00 | Xuất phát Đông Hà | Đổ đầy bình xăng..."
-                  style={inputStyle}
+                  style={textareaStyle}
                 />
               </div>
             </>
@@ -497,14 +813,16 @@ export default function AdminEditorModal({
                 </div>
               </div>
 
-              <div>
-                <label style={labelStyle}>URL Ảnh nền khu vực *</label>
-                <input name="heroImage" defaultValue={editingItem?.heroImage || ''} required style={inputStyle} />
-              </div>
+              <ImageInputField
+                name="heroImage"
+                label="Ảnh nền khu vực (URL hoặc Tải lên) *"
+                defaultValue={editingItem?.heroImage || ''}
+                required
+              />
 
               <div>
                 <label style={labelStyle}>Mô tả chi tiết khu vực</label>
-                <textarea name="description" defaultValue={editingItem?.description || editingItem?.desc || ''} rows={3} style={inputStyle} />
+                <textarea name="description" defaultValue={editingItem?.description || editingItem?.desc || ''} rows={4} style={textareaStyle} />
               </div>
 
               <div style={{ padding: '1rem', background: '#f0fdf4', borderRadius: '12px', border: '1px solid #bbf7d0' }}>

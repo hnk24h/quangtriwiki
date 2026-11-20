@@ -357,6 +357,7 @@ export default function AdminClient() {
             category: dataObj.category,
             categoryName: dataObj.categoryName,
             image: dataObj.image,
+            gallery: dataObj.gallery,
             ticket: dataObj.ticket,
             openHours: dataObj.openHours,
             coordinates: dataObj.coordinates,

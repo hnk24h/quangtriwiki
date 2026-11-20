@@ -9,8 +9,11 @@ export const dynamic = 'force-dynamic';
 
 function filterValidUrls(urls: string[]): string[] {
   return urls.filter((u) => {
+    const trimmed = u.trim();
+    if (!trimmed) return false;
+    if (trimmed.startsWith('data:image/') || trimmed.startsWith('/')) return true;
     try {
-      const parsed = new URL(u);
+      const parsed = new URL(trimmed);
       return parsed.protocol === 'http:' || parsed.protocol === 'https:';
     } catch {
       return false;

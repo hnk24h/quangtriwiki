@@ -476,8 +476,8 @@ export default function AdminUsersTab({ currentAdminEmail, showToast }: AdminUse
               background: '#fff',
               borderRadius: '18px',
               width: '100%',
-              maxWidth: '520px',
-              padding: '1.75rem',
+              maxWidth: '640px',
+              padding: '2rem',
               boxShadow: '0 24px 60px rgba(0, 0, 0, 0.25)',
             }}
           >
