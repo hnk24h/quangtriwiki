@@ -62,6 +62,25 @@ CREATE TABLE IF NOT EXISTS public.map_pins (
 
 CREATE INDEX IF NOT EXISTS idx_map_pins_created ON public.map_pins(created_at DESC);
 
+CREATE TABLE IF NOT EXISTS public.users (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'editor', 'user')),
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+    phone TEXT,
+    avatar TEXT,
+    note TEXT,
+    last_login_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON public.users(email);
+CREATE INDEX IF NOT EXISTS idx_users_role ON public.users(role);
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+
 -- 3. Enable RLS on new tables
 ALTER TABLE public.banner_slides ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.guides ENABLE ROW LEVEL SECURITY;

@@ -42,6 +42,26 @@ export function validateAdminCredentials(email: string, password: string): boole
   return emailValid && passwordValid;
 }
 
+export function hashPassword(password: string): string {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const derived = crypto.scryptSync(password, salt, 64).toString('hex');
+  return `${salt}:${derived}`;
+}
+
+export function verifyPassword(password: string, storedHash: string): boolean {
+  if (!password || !storedHash || !storedHash.includes(':')) return false;
+  const [salt, keyHex] = storedHash.split(':');
+  if (!salt || !keyHex) return false;
+  try {
+    const keyBuf = Buffer.from(keyHex, 'hex');
+    const derivedBuf = crypto.scryptSync(password, salt, 64);
+    if (keyBuf.length !== derivedBuf.length) return false;
+    return crypto.timingSafeEqual(keyBuf, derivedBuf);
+  } catch {
+    return false;
+  }
+}
+
 function signPayload(encodedPayload: string): string {
   return crypto
     .createHmac('sha256', getSessionSecret())
@@ -49,9 +69,21 @@ function signPayload(encodedPayload: string): string {
     .digest('base64url');
 }
 
-export function createAdminSessionToken(email: string): string {
+export interface AdminSessionInfo {
+  email: string;
+  role: 'admin' | 'editor';
+  name: string;
+}
+
+export function createAdminSessionToken(
+  email: string,
+  role: 'admin' | 'editor' = 'admin',
+  name = 'Quản trị viên'
+): string {
   const payload = {
     email: email.trim().toLowerCase(),
+    role,
+    name,
     exp: Date.now() + SESSION_TTL_MS,
   };
   const encodedPayload = Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
@@ -59,7 +91,7 @@ export function createAdminSessionToken(email: string): string {
   return `${encodedPayload}.${signature}`;
 }
 
-export function verifyAdminSessionToken(token?: string | null): { email: string } | null {
+export function verifyAdminSessionToken(token?: string | null): AdminSessionInfo | null {
   if (!token || typeof token !== 'string') return null;
   const dotIdx = token.indexOf('.');
   if (dotIdx <= 0) return null;
@@ -78,13 +110,17 @@ export function verifyAdminSessionToken(token?: string | null): { email: string 
     const parsed = JSON.parse(Buffer.from(encodedPayload, 'base64url').toString('utf8'));
     if (!parsed?.email || typeof parsed?.exp !== 'number') return null;
     if (parsed.exp <= Date.now()) return null;
-    return { email: String(parsed.email) };
+    return {
+      email: String(parsed.email),
+      role: parsed.role === 'editor' ? 'editor' : 'admin',
+      name: String(parsed.name || 'Quản trị viên'),
+    };
   } catch {
     return null;
   }
 }
 
-export async function getAdminSession(req?: NextRequest): Promise<{ email: string } | null> {
+export async function getAdminSession(req?: NextRequest): Promise<AdminSessionInfo | null> {
   if (req) {
     const token = req.cookies.get(COOKIE_NAME)?.value;
     return verifyAdminSessionToken(token);

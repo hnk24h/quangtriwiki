@@ -274,6 +274,28 @@ CREATE TABLE IF NOT EXISTS public.map_pins (
 CREATE INDEX IF NOT EXISTS idx_map_pins_created ON public.map_pins(created_at DESC);
 ALTER TABLE public.map_pins ENABLE ROW LEVEL SECURITY;
 
+-- -----------------------------------------------------------------------------
+-- 13c. BẢNG: users (Người dùng Web & Quản trị/Biên tập viên CMS)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.users (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'editor', 'user')),
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+    phone TEXT,
+    avatar TEXT,
+    note TEXT,
+    last_login_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON public.users(email);
+CREATE INDEX IF NOT EXISTS idx_users_role ON public.users(role);
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+
 -- Bổ sung cột mới an toàn nếu bảng cũ đã tồn tại từ bản trước
 ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS featured_count TEXT;
 ALTER TABLE public.zones ADD COLUMN IF NOT EXISTS specialty TEXT;

@@ -1,3 +1,20 @@
+export type UserRole = 'admin' | 'editor' | 'user';
+export type UserStatus = 'active' | 'inactive';
+
+export interface AppUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  status: UserStatus;
+  phone?: string | null;
+  avatar?: string | null;
+  note?: string | null;
+  last_login_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export type Json =
   | string
   | number

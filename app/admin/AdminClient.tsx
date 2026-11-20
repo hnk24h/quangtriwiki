@@ -5,6 +5,7 @@ import Link from 'next/link';
 import AdminLogin from './components/AdminLogin';
 import AdminAnalyticsTab from './components/AdminAnalyticsTab';
 import AdminPartnersTab from './components/AdminPartnersTab';
+import AdminUsersTab from './components/AdminUsersTab';
 import AdminEditorModal, { CmsEntityType } from './components/AdminEditorModal';
 import type {
   AnalyticsSummary,
@@ -32,7 +33,8 @@ type CmsTab =
   | 'registrations'
   | 'foods'
   | 'itineraries'
-  | 'utilities';
+  | 'utilities'
+  | 'users';
 
 export default function AdminClient() {
   const [authChecked, setAuthChecked] = useState(false);
@@ -733,6 +735,7 @@ export default function AdminClient() {
             { id: 'foods', label: 'Ẩm Thực Đặc Sản', icon: 'bi-cup-hot', count: foods.length },
             { id: 'itineraries', label: 'Lịch Trình & Cung Đường', icon: 'bi-map', count: itineraries.length },
             { id: 'utilities', label: 'Cứu Hộ & Tiện Ích', icon: 'bi-fuel-pump', count: (guidesData.gasStations?.length || 0) + (guidesData.emergencyHotlines?.length || 0) },
+            { id: 'users', label: 'Người Dùng (CMS & Web)', icon: 'bi-people-fill', count: null },
           ].map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -1425,6 +1428,14 @@ export default function AdminClient() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* TAB: USERS CRUD */}
+          {activeTab === 'users' && (
+            <AdminUsersTab
+              currentAdminEmail={adminEmail}
+              showToast={showToast}
+            />
           )}
         </main>
       </div>

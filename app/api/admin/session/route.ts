@@ -11,6 +11,8 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     authenticated: true,
     email: session.email,
+    role: session.role,
+    name: session.name,
     usingDefaultPassword: isUsingDefaultAdminPassword(),
   });
 }
