@@ -103,9 +103,11 @@ export interface Service {
 export interface Comment {
   id: string;
   thread_id: string;
+  parent_id?: string | null;
   author_name: string;
   author_avatar?: string;
   text: string;
+  images?: string[];
   created_at: string;
 }
 

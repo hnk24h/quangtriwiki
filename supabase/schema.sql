@@ -90,13 +90,16 @@ CREATE INDEX IF NOT EXISTS idx_threads_tag ON public.threads(tag);
 CREATE TABLE IF NOT EXISTS public.comments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     thread_id UUID NOT NULL REFERENCES public.threads(id) ON DELETE CASCADE,
+    parent_id UUID REFERENCES public.comments(id) ON DELETE CASCADE,
     author_name TEXT NOT NULL,
     author_avatar TEXT DEFAULT 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
     text TEXT NOT NULL,
+    images TEXT[] DEFAULT '{}',
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_comments_thread ON public.comments(thread_id);
+CREATE INDEX IF NOT EXISTS idx_comments_parent ON public.comments(parent_id);
 
 -- -----------------------------------------------------------------------------
 -- 5. BẢNG: leads (Ghi nhận chuyển đổi để tính phí hoa hồng & pay-per-lead)
@@ -309,6 +312,8 @@ ALTER TABLE public.foods ADD COLUMN IF NOT EXISTS taste_notes TEXT;
 ALTER TABLE public.foods ADD COLUMN IF NOT EXISTS highlights TEXT[] DEFAULT '{}';
 ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS region TEXT;
 ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS device_type TEXT;
+ALTER TABLE public.comments ADD COLUMN IF NOT EXISTS parent_id UUID REFERENCES public.comments(id) ON DELETE CASCADE;
+ALTER TABLE public.comments ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
 
 -- Page views: Public ghi nhận và xem bộ đếm tổng
 DROP POLICY IF EXISTS "Public insert page_views" ON public.page_views;

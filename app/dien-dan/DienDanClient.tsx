@@ -26,7 +26,84 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
   const [commentAuthor, setCommentAuthor] = useState<Record<string, string>>({});
   const [commentText, setCommentText] = useState<Record<string, string>>({});
+  const [commentImages, setCommentImages] = useState<Record<string, string[]>>({});
+  const [replyTarget, setReplyTarget] = useState<Record<string, { id: string; author: string } | null>>({});
   const [submittingCommentId, setSubmittingCommentId] = useState<string | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
+  const compressImageFile = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Không thể đọc file ảnh.'));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('File không phải ảnh hợp lệ.'));
+        img.onload = () => {
+          const maxDim = 1200;
+          let { width, height } = img;
+          if (width > maxDim || height > maxDim) {
+            if (width >= height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(String(reader.result));
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.78));
+        };
+        img.src = String(reader.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleSelectImages = async (formKey: string, files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const current = commentImages[formKey] || [];
+    const remaining = 5 - current.length;
+    if (remaining <= 0) {
+      showToast('Mỗi bình luận chỉ được tải lên tối đa 5 ảnh.', 'error');
+      return;
+    }
+
+    const picked = Array.from(files).slice(0, remaining);
+    if (files.length > remaining) {
+      showToast(`Chỉ thêm được ${remaining} ảnh nữa (tối đa 5 ảnh/bình luận).`, 'info');
+    }
+
+    try {
+      const compressed = await Promise.all(
+        picked
+          .filter((f) => f.type.startsWith('image/'))
+          .map((f) => compressImageFile(f))
+      );
+      if (compressed.length > 0) {
+        setCommentImages((prev) => ({
+          ...prev,
+          [formKey]: [...(prev[formKey] || []), ...compressed].slice(0, 5),
+        }));
+      }
+    } catch {
+      showToast('Không thể xử lý một số ảnh đã chọn.', 'error');
+    }
+  };
+
+  const handleRemoveImage = (formKey: string, index: number) => {
+    setCommentImages((prev) => ({
+      ...prev,
+      [formKey]: (prev[formKey] || []).filter((_, idx) => idx !== index),
+    }));
+  };
 
   useEffect(() => {
     try {
@@ -106,22 +183,34 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
     }
   };
 
-  const handleAddComment = async (e: React.FormEvent, threadId: string) => {
+  const handleAddComment = async (
+    e: React.FormEvent,
+    threadId: string,
+    parentId?: string | null
+  ) => {
     e.preventDefault();
-    const text = (commentText[threadId] || '').trim();
-    const author = (commentAuthor[threadId] || 'Bạn đọc').trim();
+    const formKey = parentId ? `${threadId}::${parentId}` : threadId;
+    const text = (commentText[formKey] || '').trim();
+    const author = (commentAuthor[formKey] || commentAuthor[threadId] || 'Bạn đọc').trim();
+    const images = commentImages[formKey] || [];
 
-    if (text.length < 2) {
-      showToast('Vui lòng nhập nội dung bình luận.', 'error');
+    if (text.length === 0 && images.length === 0) {
+      showToast('Vui lòng nhập nội dung hoặc đính kèm ít nhất 1 ảnh.', 'error');
       return;
     }
 
-    setSubmittingCommentId(threadId);
+    setSubmittingCommentId(formKey);
     try {
       const res = await fetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ threadId, author, text }),
+        body: JSON.stringify({
+          threadId,
+          parentId: parentId || null,
+          author,
+          text,
+          images,
+        }),
       });
       const data = await res.json();
 
@@ -138,8 +227,12 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
             : th
         )
       );
-      setCommentText((prev) => ({ ...prev, [threadId]: '' }));
-      showToast('Đã đăng bình luận của bạn!');
+      setCommentText((prev) => ({ ...prev, [formKey]: '' }));
+      setCommentImages((prev) => ({ ...prev, [formKey]: [] }));
+      if (parentId) {
+        setReplyTarget((prev) => ({ ...prev, [threadId]: null }));
+      }
+      showToast(parentId ? 'Đã gửi phản hồi!' : 'Đã đăng bình luận của bạn!');
     } catch {
       showToast('Lỗi kết nối máy chủ.', 'error');
     } finally {
@@ -393,64 +486,291 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
                     </button>
                   </div>
 
-                  {isCommentsOpen && (
-                    <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px dashed #e5e7eb' }}>
-                      {commentsList.length === 0 ? (
-                        <p style={{ fontSize: '0.84rem', color: '#6b7280', marginBottom: '0.9rem' }}>
-                          Chưa có bình luận nào. Hãy để lại góp ý hoặc đặt câu hỏi cho tác giả!
-                        </p>
-                      ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
-                          {commentsList.map((c) => (
-                            <div key={c.id} style={{ background: '#f8fafc', padding: '0.75rem 1rem', borderRadius: '10px', fontSize: '0.88rem' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                                <strong style={{ color: '#133e2f' }}>{c.author_name}</strong>
-                                <span style={{ fontSize: '0.74rem', color: '#9ca3af' }}>
-                                  {c.created_at ? new Date(c.created_at).toLocaleDateString('vi-VN') : ''}
-                                </span>
-                              </div>
-                              <p style={{ margin: 0, color: '#374151', lineHeight: 1.5 }}>{c.text}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                  {isCommentsOpen && (() => {
+                    const commentById = new Map(commentsList.map((c) => [c.id, c]));
+                    const getRootId = (c: Comment): string => {
+                      let curr: Comment | undefined = c;
+                      const seen = new Set<string>();
+                      while (curr?.parent_id && commentById.has(curr.parent_id) && !seen.has(curr.id)) {
+                        seen.add(curr.id);
+                        curr = commentById.get(curr.parent_id);
+                      }
+                      return curr?.id || c.id;
+                    };
 
-                      <form onSubmit={(e) => handleAddComment(e, th.id)} style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                        <input
-                          type="text"
-                          value={commentAuthor[th.id] || ''}
-                          onChange={(e) => setCommentAuthor((prev) => ({ ...prev, [th.id]: e.target.value }))}
-                          placeholder="Tên của bạn"
-                          style={{ width: '150px', padding: '0.55rem 0.75rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.85rem' }}
-                        />
-                        <input
-                          type="text"
-                          required
-                          minLength={2}
-                          value={commentText[th.id] || ''}
-                          onChange={(e) => setCommentText((prev) => ({ ...prev, [th.id]: e.target.value }))}
-                          placeholder="Viết bình luận hoặc hỏi thăm tình hình cung đường..."
-                          style={{ flex: '1 1 220px', padding: '0.55rem 0.75rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.85rem' }}
-                        />
-                        <button
-                          type="submit"
-                          disabled={submittingCommentId === th.id}
+                    const rootComments = commentsList.filter((c) => !c.parent_id || !commentById.has(c.parent_id));
+                    const repliesByRoot = new Map<string, Comment[]>();
+                    for (const c of commentsList) {
+                      if (c.parent_id && commentById.has(c.parent_id)) {
+                        const rootId = getRootId(c);
+                        const arr = repliesByRoot.get(rootId) || [];
+                        arr.push(c);
+                        repliesByRoot.set(rootId, arr);
+                      }
+                    }
+
+                    const activeReply = replyTarget[th.id] || null;
+                    const renderCommentCard = (c: Comment, isReply: boolean) => {
+                      const parentAuthor = c.parent_id ? commentById.get(c.parent_id)?.author_name : null;
+                      const imgs = Array.isArray(c.images) ? c.images : [];
+                      return (
+                        <div
+                          key={c.id}
                           style={{
-                            background: '#133e2f',
-                            color: '#fff',
-                            padding: '0.55rem 1rem',
-                            borderRadius: '8px',
-                            border: 'none',
-                            fontWeight: 600,
-                            fontSize: '0.85rem',
-                            cursor: 'pointer',
+                            background: isReply ? '#ffffff' : '#f8fafc',
+                            border: isReply ? '1px solid #e2e8f0' : '1px solid rgba(19,62,47,0.06)',
+                            padding: '0.75rem 1rem',
+                            borderRadius: '12px',
+                            fontSize: '0.88rem',
                           }}
                         >
-                          {submittingCommentId === th.id ? 'Đang gửi...' : 'Gửi'}
-                        </button>
-                      </form>
-                    </div>
-                  )}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem', gap: '0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                              <strong style={{ color: '#133e2f' }}>{c.author_name}</strong>
+                              {isReply && parentAuthor && (
+                                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                                  <i className="bi bi-reply-fill" aria-hidden="true" /> trả lời <strong>{parentAuthor}</strong>
+                                </span>
+                              )}
+                            </div>
+                            <span style={{ fontSize: '0.74rem', color: '#9ca3af' }}>
+                              {c.created_at ? new Date(c.created_at).toLocaleDateString('vi-VN') : ''}
+                            </span>
+                          </div>
+
+                          {c.text && (
+                            <p style={{ margin: 0, color: '#374151', lineHeight: 1.55 }}>{c.text}</p>
+                          )}
+
+                          {imgs.length > 0 && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: c.text ? '0.6rem' : '0.2rem' }}>
+                              {imgs.map((imgUrl, imgIdx) => (
+                                <button
+                                  key={`${c.id}-img-${imgIdx}`}
+                                  type="button"
+                                  onClick={() => setLightboxImage(imgUrl)}
+                                  aria-label={`Xem ảnh ${imgIdx + 1} của ${c.author_name}`}
+                                  style={{
+                                    padding: 0,
+                                    border: '1px solid #e2e8f0',
+                                    borderRadius: '8px',
+                                    overflow: 'hidden',
+                                    width: '86px',
+                                    height: '86px',
+                                    cursor: 'zoom-in',
+                                    background: '#f1f5f9',
+                                  }}
+                                >
+                                  <img
+                                    src={imgUrl}
+                                    alt={`Ảnh bình luận ${imgIdx + 1}`}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                                  />
+                                </button>
+                              ))}
+                            </div>
+                          )}
+
+                          <div style={{ marginTop: '0.45rem' }}>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setReplyTarget((prev) => ({
+                                  ...prev,
+                                  [th.id]: { id: c.id, author: c.author_name },
+                                }))
+                              }
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                padding: 0,
+                                fontSize: '0.78rem',
+                                fontWeight: 700,
+                                color: '#047857',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.3rem',
+                              }}
+                            >
+                              <i className="bi bi-reply" aria-hidden="true" /> Trả lời
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    };
+
+                    const renderCommentForm = (formKey: string, parentId?: string | null) => {
+                      const selectedImgs = commentImages[formKey] || [];
+                      const isSending = submittingCommentId === formKey;
+                      return (
+                        <form
+                          onSubmit={(e) => handleAddComment(e, th.id, parentId)}
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '0.55rem',
+                            background: parentId ? '#f0fdf4' : 'transparent',
+                            padding: parentId ? '0.85rem' : 0,
+                            borderRadius: parentId ? '12px' : 0,
+                            border: parentId ? '1px solid #bbf7d0' : 'none',
+                          }}
+                        >
+                          {parentId && activeReply && (
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', color: '#166534' }}>
+                              <span>
+                                <i className="bi bi-reply-fill" aria-hidden="true" /> Đang trả lời <strong>{activeReply.author}</strong>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setReplyTarget((prev) => ({ ...prev, [th.id]: null }))}
+                                style={{ background: 'none', border: 'none', color: '#b91c1c', fontWeight: 700, cursor: 'pointer', fontSize: '0.76rem' }}
+                              >
+                                <i className="bi bi-x-lg" aria-hidden="true" /> Hủy
+                              </button>
+                            </div>
+                          )}
+
+                          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            <input
+                              type="text"
+                              value={commentAuthor[formKey] ?? commentAuthor[th.id] ?? ''}
+                              onChange={(e) => setCommentAuthor((prev) => ({ ...prev, [formKey]: e.target.value }))}
+                              placeholder="Tên của bạn"
+                              style={{ width: '145px', padding: '0.55rem 0.75rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.85rem', background: '#fff' }}
+                            />
+                            <input
+                              type="text"
+                              value={commentText[formKey] || ''}
+                              onChange={(e) => setCommentText((prev) => ({ ...prev, [formKey]: e.target.value }))}
+                              placeholder={parentId ? 'Viết câu trả lời...' : 'Viết bình luận hoặc hỏi thăm tình hình cung đường...'}
+                              style={{ flex: '1 1 220px', padding: '0.55rem 0.75rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.85rem', background: '#fff' }}
+                            />
+                            <label
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                padding: '0.55rem 0.85rem',
+                                borderRadius: '8px',
+                                border: '1px solid #d1d5db',
+                                background: selectedImgs.length >= 5 ? '#f3f4f6' : '#fff',
+                                color: selectedImgs.length >= 5 ? '#9ca3af' : '#133e2f',
+                                fontSize: '0.82rem',
+                                fontWeight: 600,
+                                cursor: selectedImgs.length >= 5 ? 'not-allowed' : 'pointer',
+                              }}
+                              title="Tải lên tối đa 5 ảnh"
+                            >
+                              <i className="bi bi-images" aria-hidden="true" />
+                              <span>Ảnh ({selectedImgs.length}/5)</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                disabled={selectedImgs.length >= 5}
+                                onChange={(e) => {
+                                  handleSelectImages(formKey, e.target.files);
+                                  e.target.value = '';
+                                }}
+                                style={{ display: 'none' }}
+                              />
+                            </label>
+                            <button
+                              type="submit"
+                              disabled={isSending}
+                              style={{
+                                background: '#133e2f',
+                                color: '#fff',
+                                padding: '0.55rem 1rem',
+                                borderRadius: '8px',
+                                border: 'none',
+                                fontWeight: 600,
+                                fontSize: '0.85rem',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              {isSending ? 'Đang gửi...' : parentId ? 'Trả lời' : 'Gửi'}
+                            </button>
+                          </div>
+
+                          {selectedImgs.length > 0 && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.2rem' }}>
+                              {selectedImgs.map((src, idx) => (
+                                <div key={`${formKey}-preview-${idx}`} style={{ position: 'relative', width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #d1d5db' }}>
+                                  <img src={src} alt={`Xem trước ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveImage(formKey, idx)}
+                                    aria-label="Xóa ảnh"
+                                    style={{
+                                      position: 'absolute',
+                                      top: '2px',
+                                      right: '2px',
+                                      width: '18px',
+                                      height: '18px',
+                                      borderRadius: '50%',
+                                      border: 'none',
+                                      background: 'rgba(0,0,0,0.7)',
+                                      color: '#fff',
+                                      fontSize: '0.7rem',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      cursor: 'pointer',
+                                    }}
+                                  >
+                                    <i className="bi bi-x" aria-hidden="true" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </form>
+                      );
+                    };
+
+                    return (
+                      <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px dashed #e5e7eb' }}>
+                        {commentsList.length === 0 ? (
+                          <p style={{ fontSize: '0.84rem', color: '#6b7280', marginBottom: '0.9rem' }}>
+                            Chưa có bình luận nào. Hãy để lại góp ý hoặc đặt câu hỏi cho tác giả!
+                          </p>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', marginBottom: '1.1rem' }}>
+                            {rootComments.map((root) => {
+                              const replies = repliesByRoot.get(root.id) || [];
+                              const isReplyingHere =
+                                activeReply && (activeReply.id === root.id || replies.some((r) => r.id === activeReply.id));
+                              return (
+                                <div key={root.id} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                  {renderCommentCard(root, false)}
+
+                                  {(replies.length > 0 || isReplyingHere) && (
+                                    <div
+                                      style={{
+                                        marginLeft: '1rem',
+                                        paddingLeft: '0.9rem',
+                                        borderLeft: '2px solid #cbd5e1',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '0.5rem',
+                                      }}
+                                    >
+                                      {replies.map((rep) => renderCommentCard(rep, true))}
+                                      {isReplyingHere && activeReply && renderCommentForm(`${th.id}::${activeReply.id}`, activeReply.id)}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {renderCommentForm(th.id, null)}
+                      </div>
+                    );
+                  })()}
                 </article>
                 </ScrollReveal>
               );
@@ -466,6 +786,52 @@ export default function DienDanClient({ initialThreads }: DienDanClientProps) {
         onClose={() => setIsCreateOpen(false)}
         onCreated={(newThread) => setThreads((prev) => [newThread, ...prev])}
       />
+
+      {lightboxImage && (
+        <div
+          onClick={() => setLightboxImage(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Xem ảnh bình luận"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(9, 33, 24, 0.85)',
+            zIndex: 1200,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1.5rem',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setLightboxImage(null)}
+            aria-label="Đóng ảnh"
+            style={{
+              position: 'absolute',
+              top: '18px',
+              right: '18px',
+              width: '38px',
+              height: '38px',
+              borderRadius: '50%',
+              border: '1px solid rgba(255,255,255,0.3)',
+              background: 'rgba(0,0,0,0.5)',
+              color: '#fff',
+              fontSize: '1.1rem',
+              cursor: 'pointer',
+            }}
+          >
+            <i className="bi bi-x-lg" aria-hidden="true" />
+          </button>
+          <img
+            src={lightboxImage}
+            alt="Ảnh phóng to"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '92vw', maxHeight: '88vh', borderRadius: '12px', objectFit: 'contain', boxShadow: '0 20px 60px rgba(0,0,0,0.45)' }}
+          />
+        </div>
+      )}
     </div>
   );
 }

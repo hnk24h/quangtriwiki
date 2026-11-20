@@ -17,6 +17,9 @@ ALTER TABLE public.foods ADD COLUMN IF NOT EXISTS taste_notes TEXT;
 ALTER TABLE public.foods ADD COLUMN IF NOT EXISTS highlights TEXT[] DEFAULT '{}';
 ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS region TEXT;
 ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS device_type TEXT;
+ALTER TABLE public.comments ADD COLUMN IF NOT EXISTS parent_id UUID REFERENCES public.comments(id) ON DELETE CASCADE;
+ALTER TABLE public.comments ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
+CREATE INDEX IF NOT EXISTS idx_comments_parent ON public.comments(parent_id);
 
 -- 2. New tables: banner_slides & guides
 CREATE TABLE IF NOT EXISTS public.banner_slides (
