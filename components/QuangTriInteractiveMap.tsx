@@ -69,6 +69,12 @@ const FALLBACK_PLACE_COORDS: Record<string, { lat: number; lng: number }> = {
   'cau-treo-dakrong': { lat: 16.578, lng: 106.956 },
   'thanh-dia-la-vang': { lat: 16.7215, lng: 107.158 },
   'den-vua-ham-nghi-tan-so': { lat: 16.803, lng: 106.993 },
+  'dong-phong-nha': { lat: 17.5819, lng: 106.2836 },
+  'dong-thien-duong': { lat: 17.5194, lng: 106.2236 },
+  'suoi-nuoc-mooc': { lat: 17.5625, lng: 106.2358 },
+  'bai-bien-nhat-le': { lat: 17.4848, lng: 106.6252 },
+  'vung-chua-dao-yen': { lat: 17.9347, lng: 106.4847 },
+  'nha-luu-niem-dai-tuong-vo-nguyen-giap': { lat: 17.2215, lng: 106.7985 },
 };
 
 const CURATED_FOOD_POIS: MapPoiItem[] = [
@@ -162,6 +168,36 @@ const CURATED_FOOD_POIS: MapPoiItem[] = [
     description: 'Gà thả đồi nướng muối ớt xanh chấm lá chanh và cao chè vằng Định Sơn.',
     image: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=600&q=80',
   },
+  {
+    id: 'food-poi-chao-canh-dong-hoi',
+    name: 'Phố Cháo Canh Cá Lóc Đồng Hới',
+    category: 'food',
+    categoryLabel: 'Ăn uống & Đặc sản',
+    zoneCode: 'QT-09',
+    zoneName: 'Đồng Hới & Biển Nhật Lệ',
+    lat: 17.4712,
+    lng: 106.6205,
+    address: 'Đường Lý Thường Kiệt & Lê Lợi, Đồng Hới',
+    priceOrHours: '30.000 - 50.000đ · 06:00 - 21:30',
+    rating: 4.9,
+    description: 'Cháo canh cá lóc nóng hổi ăn cùng ram giòn và hải sản ven biển Nhật Lệ.',
+    image: 'https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'food-poi-ga-nuong-phong-nha',
+    name: 'Mẹt Gà Nướng Muối Cheo & Cá Trắm Sông Son',
+    category: 'food',
+    categoryLabel: 'Ẩm thực Phong Nha',
+    zoneCode: 'QT-10',
+    zoneName: 'Phong Nha - Kẻ Bàng',
+    lat: 17.5842,
+    lng: 106.2865,
+    address: 'Trung tâm thị trấn Phong Nha, Bố Trạch',
+    priceOrHours: '220.000 - 320.000đ · 09:00 - 22:00',
+    rating: 4.9,
+    description: 'Gà nướng than hoa chấm muối cheo lá chanh rừng bên dòng sông Son.',
+    image: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=600&q=80',
+  },
 ];
 
 const CURATED_HOTEL_POIS: MapPoiItem[] = [
@@ -224,6 +260,36 @@ const CURATED_HOTEL_POIS: MapPoiItem[] = [
     rating: 4.9,
     description: 'Homestay giữa đồi cà phê Arabica, cho thuê xe máy cào cào đi đèo Sa Mù.',
     image: 'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'hotel-poi-nhat-le-resort',
+    name: 'Sun Spa & Bảo Ninh Beach Resort Nhật Lệ',
+    category: 'hotel',
+    categoryLabel: 'Resort ven biển',
+    zoneCode: 'QT-09',
+    zoneName: 'Đồng Hới & Biển Nhật Lệ',
+    lat: 17.4655,
+    lng: 106.6345,
+    address: 'Bán đảo Bảo Ninh, TP. Đồng Hới',
+    priceOrHours: '900.000 - 2.200.000đ/đêm',
+    rating: 4.9,
+    description: 'Nghỉ dưỡng cao cấp bên bán đảo Bảo Ninh và bãi biển Nhật Lệ.',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'hotel-poi-phong-nha-farmstay',
+    name: 'Phong Nha Farmstay & Mountain Eco Lodge',
+    category: 'hotel',
+    categoryLabel: 'Farmstay Di sản',
+    zoneCode: 'QT-10',
+    zoneName: 'Phong Nha - Kẻ Bàng',
+    lat: 17.5685,
+    lng: 106.3105,
+    address: 'Cự Nẫm / Sơn Trạch, Phong Nha, Bố Trạch',
+    priceOrHours: '550.000 - 1.100.000đ/đêm',
+    rating: 4.9,
+    description: 'View đồng lúa và núi đá vôi Phong Nha, hỗ trợ đặt tour hang động & xe máy.',
+    image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80',
   },
 ];
 
@@ -340,6 +406,34 @@ const CURATED_PARKING_POIS: MapPoiItem[] = [
     rating: 4.7,
     description: 'Thuận tiện đỗ xe dạo phố đêm Đông Hà và ăn uống khu trung tâm.',
   },
+  {
+    id: 'parking-phong-nha',
+    name: 'Bãi Đỗ Xe Trung Tâm Du Lịch Phong Nha',
+    category: 'parking',
+    categoryLabel: 'Bãi đỗ xe Di sản',
+    zoneCode: 'QT-10',
+    zoneName: 'Phong Nha - Kẻ Bàng',
+    lat: 17.5835,
+    lng: 106.2852,
+    address: 'Sát bến thuyền du lịch Phong Nha, Bố Trạch',
+    priceOrHours: 'Ô tô & Xe máy · 06:30 - 18:00',
+    rating: 4.9,
+    description: 'Bãi đỗ xe chính trước bến thuyền Động Phong Nha và điểm trung chuyển Động Thiên Đường.',
+  },
+  {
+    id: 'parking-vung-chua',
+    name: 'Bãi Đỗ Xe Khu Viếng Vũng Chùa - Đảo Yến',
+    category: 'parking',
+    categoryLabel: 'Bãi đỗ xe di tích',
+    zoneCode: 'QT-11',
+    zoneName: 'Bố Trạch, Vũng Chùa & Đèo Ngang',
+    lat: 17.9325,
+    lng: 106.4822,
+    address: 'Chân núi Thọ, Vũng Chùa, Quảng Đông',
+    priceOrHours: 'Miễn phí · 06:30 - 17:30',
+    rating: 4.9,
+    description: 'Bãi đỗ xe rộng rãi cho đoàn khách và xe máy ngay lối lên khu mộ Đại tướng.',
+  },
 ];
 
 const CURATED_FUEL_POIS: MapPoiItem[] = [
@@ -399,6 +493,34 @@ const CURATED_FUEL_POIS: MapPoiItem[] = [
     rating: 4.8,
     description: 'Trạm xăng lớn thuận tiện cho cung Cầu Hiền Lương - Địa đạo Vịnh Mốc - Mũi Trèo.',
   },
+  {
+    id: 'fuel-petrolimex-dong-hoi',
+    name: 'Trạm Xăng Petrolimex Trung Tâm Đồng Hới',
+    category: 'fuel',
+    categoryLabel: 'Cây xăng QL1A',
+    zoneCode: 'QT-09',
+    zoneName: 'Đồng Hới & Biển Nhật Lệ',
+    lat: 17.4695,
+    lng: 106.6122,
+    address: 'Đường Trần Hưng Đạo, TP. Đồng Hới',
+    priceOrHours: 'Mở cửa 24/7',
+    rating: 4.9,
+    description: 'Trạm xăng trung tâm Đồng Hới, thuận tiện đổ đầy bình trước khi lên Phong Nha hoặc đi Đèo Ngang.',
+  },
+  {
+    id: 'fuel-petrolimex-phong-nha',
+    name: 'Cây Xăng Phong Nha (Cửa Ngõ Đường HCM Tây)',
+    category: 'fuel',
+    categoryLabel: 'Cây xăng trước rừng',
+    zoneCode: 'QT-10',
+    zoneName: 'Phong Nha - Kẻ Bàng',
+    lat: 17.5865,
+    lng: 106.2915,
+    address: 'TT. Phong Nha, Bố Trạch',
+    priceOrHours: '05:30 - 21:30',
+    rating: 4.9,
+    description: 'Điểm đổ xăng quan trọng nhất trước khi chạy đường Hồ Chí Minh nhánh Tây xuyên VQG Phong Nha - Kẻ Bàng.',
+  },
 ];
 
 const CATEGORY_TABS: Array<{
@@ -420,7 +542,7 @@ function parsePlaceLatLng(place: Place): { lat: number; lng: number } {
   if (FALLBACK_PLACE_COORDS[place.id]) {
     const raw = (place.coordinates || '').split(',');
     const nums = raw.map((s) => parseFloat(s.replace(/[^0-9.]/g, ''))).filter((n) => Number.isFinite(n));
-    if (nums.length >= 2 && nums[0] >= 15.5 && nums[0] <= 18.0 && nums[1] >= 105.5 && nums[1] <= 108.5) {
+    if (nums.length >= 2 && nums[0] >= 15.5 && nums[0] <= 18.5 && nums[1] >= 105.5 && nums[1] <= 108.5) {
       return { lat: nums[0], lng: nums[1] };
     }
     return FALLBACK_PLACE_COORDS[place.id];
@@ -645,6 +767,14 @@ export default function QuangTriInteractiveMap({
         ? 'QT-08'
         : originLower.includes('cồn cỏ')
         ? 'QT-07'
+        : originLower.includes('phong nha') || originLower.includes('bố trạch')
+        ? 'QT-10'
+        : originLower.includes('đồng hới') || originLower.includes('nhật lệ')
+        ? 'QT-09'
+        : originLower.includes('vũng chùa') || originLower.includes('đèo ngang')
+        ? 'QT-11'
+        : originLower.includes('lệ thủy')
+        ? 'QT-12'
         : 'QT-01';
       const meta = DEFAULT_ZONE_META[zoneCode] || DEFAULT_ZONE_META['QT-01'];
       const offset = (idx % 5) * 0.008 - 0.012;
@@ -770,7 +900,7 @@ export default function QuangTriInteractiveMap({
       const map = mapInstanceRef.current;
       if (map) {
         if (next === 'all') {
-          map.flyTo([16.78, 107.06], 10, { duration: 0.9 });
+          map.flyTo([17.22, 106.82], 9, { duration: 0.9 });
         } else {
           const z = zoneOptions.find((zo) => zo.code === next);
           if (z) {
@@ -795,8 +925,8 @@ export default function QuangTriInteractiveMap({
         }
 
         const map = L.map(mapContainerRef.current, {
-          center: [16.78, 107.06],
-          zoom: 10,
+          center: [17.22, 106.82],
+          zoom: 9,
           zoomControl: false,
           scrollWheelZoom: true,
         });

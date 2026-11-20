@@ -6,14 +6,14 @@
 export const QUANGTRI_DATA = {
   provinceInfo: {
     name: "Quảng Trị",
-    slogan: "Khám phá cung đường Di sản, Lịch sử và Thiên nhiên đại ngàn",
-    description: "Nằm ở dải đất miền Trung kiên cường, Quảng Trị không chỉ là vùng đất thiêng với những di tích lịch sử huyền thoại của Vĩ tuyến 17 và Thành Cổ, mà còn là thiên đường phượt hoang sơ với đèo Sa Mù mây phủ, dãy Trường Sơn hùng vĩ, những bãi biển cát trắng miên man và đảo Cồn Cỏ hiên ngang giữa trùng khơi.",
+    slogan: "Từ Di sản Phong Nha - Kẻ Bàng đến Thành Cổ, Vĩ tuyến 17 & Biển đảo Cồn Cỏ",
+    description: "Tỉnh Quảng Trị mới (sau hợp nhất Quảng Bình & Quảng Trị) trải dài từ Đèo Ngang - Vũng Chùa đến Hải Lăng - Đakrông, hội tụ Di sản thiên nhiên thế giới Phong Nha - Kẻ Bàng, Hang Sơn Đoòng, biển Nhật Lệ, Vĩ tuyến 17, Thành Cổ Quảng Trị, đèo Sa Mù và đảo ngọc Cồn Cỏ.",
     stats: {
-      districts: 10,
-      historicalSites: 500,
-      coastlineKm: 75,
+      districts: 12,
+      historicalSites: 750,
+      coastlineKm: 191,
       highestPeak: "1.617m (Đỉnh Sa Mù - Voi Mẹp)",
-      popularRoutes: 4
+      popularRoutes: 6
     }
   },
 
@@ -98,6 +98,46 @@ export const QUANGTRI_DATA = {
       icon: "tree-pine",
       heroImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80",
       featuredCount: "4 di tích · Làng chè Vằng"
+    },
+    {
+      code: "QT-09",
+      name: "Đồng Hới & Biển Nhật Lệ",
+      slug: "dong-hoi-nhat-le",
+      tagline: "Trung tâm hành chính mới, Biển Nhật Lệ & Đồi cát Quang Phú",
+      description: "Đô thị biển sôi động bên dòng Nhật Lệ thơ mộng, sở hữu sân bay Đồng Hới (VDH), bãi biển Bảo Ninh cát trắng mịn, đồi cát Quang Phú và nền ẩm thực cháo canh cá lóc trứ danh.",
+      icon: "waves",
+      heroImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      featuredCount: "6 điểm đến · Sân bay VDH"
+    },
+    {
+      code: "QT-10",
+      name: "Phong Nha - Kẻ Bàng & Sơn Đoòng",
+      slug: "phong-nha-ke-bang",
+      tagline: "Di sản thiên nhiên thế giới UNESCO · Vương quốc hang động",
+      description: "Kỳ quan địa chất tầm cỡ toàn cầu với Động Phong Nha, Động Thiên Đường, Hang Sơn Đoòng, Suối Nước Moọc và Sông Chày - Hang Tối giữa đại ngàn Trường Sơn.",
+      icon: "mountain",
+      heroImage: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+      featuredCount: "Di sản UNESCO · Hang động"
+    },
+    {
+      code: "QT-11",
+      name: "Bố Trạch, Vũng Chùa & Đèo Ngang",
+      slug: "vung-chua-deo-ngang",
+      tagline: "Vũng Chùa - Đảo Yến, Đèo Ngang & Làng biển Cảnh Dương",
+      description: "Cửa ngõ phía Bắc của tỉnh với Hoành Sơn Quan trên đỉnh Đèo Ngang lịch sử, nơi an nghỉ linh thiêng của Đại tướng Võ Nguyên Giáp tại Vũng Chùa - Đảo Yến và Bãi Đá Nhảy.",
+      icon: "compass",
+      heroImage: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+      featuredCount: "Bắc tỉnh · Đèo Ngang"
+    },
+    {
+      code: "QT-12",
+      name: "Lệ Thủy & Suối Khoáng Bang",
+      slug: "le-thuy-suoi-bang",
+      tagline: "Nhà lưu niệm Đại tướng Võ Nguyên Giáp & Suối nước nóng Bang",
+      description: "Vùng đất giàu truyền thống bên sông Kiến Giang với Nhà lưu niệm Đại tướng Võ Nguyên Giáp tại làng An Xá, suối khoáng nóng Bang sôi 105°C và chùa Hoằng Phúc cổ tự.",
+      icon: "shield",
+      heroImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80",
+      featuredCount: "Khoáng nóng · Di tích"
     }
   ],
 
@@ -438,6 +478,144 @@ export const QUANGTRI_DATA = {
       coordinates: "16.7845° N, 107.0312° E",
       address: "Xã Cam Chính, huyện Cam Lộ, Quảng Trị",
       tips: "Rất thích hợp cho những ai đam mê lịch sử triều Nguyễn và phong trào kháng Pháp cuối thế kỷ 19."
+    },
+    {
+      id: "dong-phong-nha",
+      name: "Động Phong Nha & Sông Son",
+      zoneCode: "QT-10",
+      zoneName: "Phong Nha - Kẻ Bàng",
+      category: "nature",
+      categoryName: "Di sản UNESCO",
+      image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+      rating: 4.9,
+      reviewsCount: 2450,
+      shortDesc: "Kỳ quan hang động nước nổi tiếng thế giới với dòng sông ngầm xanh biếc và hệ thống thạch nhũ triệu năm.",
+      fullDesc: "Động Phong Nha thuộc Vườn Quốc gia Phong Nha - Kẻ Bàng (Di sản thiên nhiên thế giới UNESCO), nổi bật với hành trình ngồi thuyền rồng ngược dòng sông Son phẳng lặng tiến vào lòng hang đá vôi mát lạnh quanh năm.",
+      highlights: [
+        "Ngồi thuyền sông Son chiêm ngưỡng hang Bi Ký, hang Tiên, hang Cung Đình",
+        "Hệ thống nhũ đá kỳ ảo hình thành qua hàng trăm triệu năm",
+        "Kết hợp tham quan Động Tiên Sơn ngay phía trên cửa động"
+      ],
+      ticket: "150.000 VNĐ (thuyền 550k/chuyến chia 12 người)",
+      openHours: "07:30 - 17:00",
+      coordinates: "17.5819° N, 106.2836° E",
+      address: "Thị trấn Phong Nha, Bố Trạch, Quảng Trị",
+      tips: "Nên đi thuyền buổi sáng từ 08:00 để tránh đông đoàn và ánh sáng trên sông Son đẹp nhất."
+    },
+    {
+      id: "dong-thien-duong",
+      name: "Động Thiên Đường (Phong Nha - Kẻ Bàng)",
+      zoneCode: "QT-10",
+      zoneName: "Phong Nha - Kẻ Bàng",
+      category: "nature",
+      categoryName: "Di sản UNESCO",
+      image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80",
+      rating: 5.0,
+      reviewsCount: 1980,
+      shortDesc: "Hoàng cung trong lòng đất với cầu gỗ dài hơn 1km xuyên qua vòm hang khổng lồ cao hàng chục mét.",
+      fullDesc: "Động Thiên Đường dài hơn 31km, là động khô dài nhất châu Á nằm sâu trong vùng lõi VQG Phong Nha - Kẻ Bàng trên nhánh Tây đường Hồ Chí Minh.",
+      highlights: [
+        "Hệ thống cầu gỗ 1km bên trong lòng hang với ánh sáng nghệ thuật",
+        "Quần thể thạch nhũ Tháp Liên Hoa, Ruộng Bậc Thang kỳ vĩ",
+        "Cung đường nhánh Tây Hồ Chí Minh xuyên rừng nguyên sinh cực đẹp"
+      ],
+      ticket: "250.000 VNĐ / người lớn",
+      openHours: "07:00 - 16:30",
+      coordinates: "17.5194° N, 106.2236° E",
+      address: "Km 16 đường Hồ Chí Minh nhánh Tây, Bố Trạch, Quảng Trị",
+      tips: "Chuẩn bị giày thể thao thoải mái để leo khoảng 500 bậc đá lên cửa động."
+    },
+    {
+      id: "suoi-nuoc-mooc",
+      name: "Suối Nước Moọc & Sông Chày Hang Tối",
+      zoneCode: "QT-10",
+      zoneName: "Phong Nha - Kẻ Bàng",
+      category: "adventure",
+      categoryName: "Sinh thái & Trải nghiệm",
+      image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80",
+      rating: 4.8,
+      reviewsCount: 1320,
+      shortDesc: "Suối nước xanh ngọc bích mát lạnh giữa rừng già, nổi tiếng với chèo kayak, zipline và tắm bùn hang động.",
+      fullDesc: "Điểm vui chơi sinh thái ngoài trời hấp dẫn nhất khu vực Phong Nha - Kẻ Bàng với làn nước xanh màu ngọc bích đặc trưng chảy ra từ mạch ngầm núi đá vôi.",
+      highlights: [
+        "Chèo thuyền kayak và zipline trên sông Chày",
+        "Cầu tre uốn lượn và võng nghỉ giữa suối Nước Moọc",
+        "Thưởng thức gà nướng chấm muối cheo bên bờ suối"
+      ],
+      ticket: "180.000 - 450.000 VNĐ tùy gói",
+      openHours: "08:00 - 17:00",
+      coordinates: "17.5625° N, 106.2358° E",
+      address: "Đường Hồ Chí Minh nhánh Tây, Phong Nha, Quảng Trị",
+      tips: "Đẹp nhất vào mùa nắng tháng 3 - tháng 8, nhớ mang đồ bơi và túi chống nước cho điện thoại."
+    },
+    {
+      id: "bai-bien-nhat-le",
+      name: "Biển Nhật Lệ & Đồi Cát Quang Phú",
+      zoneCode: "QT-09",
+      zoneName: "Đồng Hới & Nhật Lệ",
+      category: "beach",
+      categoryName: "Biển & Đồi cát",
+      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+      rating: 4.8,
+      reviewsCount: 1640,
+      shortDesc: "Bãi biển cát trắng mịn ngay trung tâm Đồng Hới, kết hợp trượt cát đồi Quang Phú đón bình minh rực rỡ.",
+      fullDesc: "Biển Nhật Lệ và bán đảo Bảo Ninh sở hữu bờ cát phẳng trải dài cùng làn nước trong xanh. Ngay sát đó là Đồi cát Quang Phú với những triền cát thay đổi hình dáng mỗi ngày theo gió biển.",
+      highlights: [
+        "Trượt cát lúc 05:30 - 07:30 sáng tại Đồi cát Quang Phú",
+        "Tắm biển Nhật Lệ & dạo cầu Nhật Lệ về đêm",
+        "Thưởng thức hải sản tươi sống và cháo canh cá lóc Đồng Hới"
+      ],
+      ticket: "Miễn phí",
+      openHours: "Mở cửa cả ngày",
+      coordinates: "17.4848° N, 106.6252° E",
+      address: "Đường Trương Pháp, TP. Đồng Hới, Quảng Trị",
+      tips: "Nên đi trượt cát sáng sớm hoặc sau 16:30 chiều để cát không bị nóng."
+    },
+    {
+      id: "vung-chua-dao-yen",
+      name: "Vũng Chùa - Đảo Yến & Đèo Ngang",
+      zoneCode: "QT-11",
+      zoneName: "Bố Trạch & Đèo Ngang",
+      category: "history",
+      categoryName: "Di tích & Danh thắng",
+      image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+      rating: 5.0,
+      reviewsCount: 2180,
+      shortDesc: "Nơi an nghỉ linh thiêng của Đại tướng Võ Nguyên Giáp dưới chân dãy Hoành Sơn hướng ra Đảo Yến thanh bình.",
+      fullDesc: "Nằm dưới chân Đèo Ngang hùng vĩ nhìn ra Biển Đông, Vũng Chùa - Đảo Yến là điểm đến thiêng liêng bậc nhất của người dân cả nước khi đi qua cửa ngõ phía Bắc Quảng Trị.",
+      highlights: [
+        "Viếng khu mộ Đại tướng Võ Nguyên Giáp tại mũi Rồng",
+        "Check-in Hoành Sơn Quan trên đỉnh Đèo Ngang",
+        "Ngắm Bãi Đá Nhảy kỳ thú trên Quốc lộ 1A"
+      ],
+      ticket: "Miễn phí",
+      openHours: "07:00 - 17:00",
+      coordinates: "17.9347° N, 106.4847° E",
+      address: "Xã Quảng Đông, Quảng Trạch, Quảng Trị",
+      tips: "Mặc trang phục chỉnh tề, giữ sự trang nghiêm khi vào khu vực viếng Đại tướng."
+    },
+    {
+      id: "nha-luu-niem-dai-tuong-vo-nguyen-giap",
+      name: "Nhà Lưu Niệm Đại Tướng Võ Nguyên Giáp & Suối Bang",
+      zoneCode: "QT-12",
+      zoneName: "Lệ Thủy",
+      category: "history",
+      categoryName: "Di tích & Nghỉ dưỡng",
+      image: "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=800&q=80",
+      rating: 4.9,
+      reviewsCount: 790,
+      shortDesc: "Ngôi nhà gỗ 3 gian giản dị bên sông Kiến Giang gắn với tuổi thơ Đại tướng, kết hợp tắm khoáng nóng suối Bang.",
+      fullDesc: "Tại làng An Xá, Lệ Thủy, ngôi nhà lưu niệm lưu giữ nhiều kỷ vật mộc mạc của Đại tướng Võ Nguyên Giáp. Cách đó không xa là khu suối khoáng nóng Bang nổi tiếng với nhiệt độ sôi tự nhiên lên tới 105°C.",
+      highlights: [
+        "Tham quan ngôi nhà 3 gian và cây khế hơn trăm tuổi tại làng An Xá",
+        "Trải nghiệm tắm khoáng nóng onsen tự nhiên tại Suối Bang",
+        "Viếng Chùa Hoằng Phúc cổ tự hơn 700 năm lịch sử"
+      ],
+      ticket: "Miễn phí (tắm khoáng Suối Bang theo dịch vụ)",
+      openHours: "07:30 - 17:00",
+      coordinates: "17.2215° N, 106.7985° E",
+      address: "Làng An Xá, xã Lộc Thủy, Lệ Thủy, Quảng Trị",
+      tips: "Rất thuận tiện kết hợp trên cung đường giữa Đồng Hới và Vĩnh Linh - Đông Hà."
     }
   ],
 
@@ -532,6 +710,36 @@ export const QUANGTRI_DATA = {
         "Vườn Cà Phê Pun Coffee (Xã Hướng Phùng, Hướng Hóa)"
       ],
       tasteNotes: "Hương hoa quả tươi mới, vị chua dịu thanh tao không đắng gắt, hậu vị lưu luyến dài lâu."
+    },
+    {
+      id: "chao-canh-dong-hoi",
+      name: "Cháo Canh Cá Lóc Đồng Hới & Ram Đẻn Biển",
+      type: "Món đặc sản vùng biển",
+      origin: "TP. Đồng Hới & Nhật Lệ",
+      image: "https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=600&q=80",
+      priceRange: "30.000 - 50.000 VNĐ",
+      description: "Bánh canh bột mì hoặc bột gạo dai mềm nấu cùng cá lóc đồng, tôm, thịt và xương heo ninh ngọt thanh, ăn kèm ram giòn rụm và cải xanh thái nhỏ.",
+      addressRecs: [
+        "Cháo canh Gia Bảo (08 Lý Thường Kiệt, Đồng Hới)",
+        "Quán Cháo Canh O Hạnh (04 Lê Lợi, Đồng Hới)",
+        "Hải sản ven biển Nhật Lệ (Đường Trương Pháp)"
+      ],
+      tasteNotes: "Nước dùng ngọt dịu đậm đà, sợi bánh mềm quyện vị béo của cá lóc và ram nóng giòn."
+    },
+    {
+      id: "ga-nuong-muoi-cheo-phong-nha",
+      name: "Gà Nướng Chấm Muối Cheo & Cá Trắm Sông Son",
+      type: "Đặc sản Di sản Phong Nha",
+      origin: "Phong Nha - Kẻ Bàng, Bố Trạch",
+      image: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=600&q=80",
+      priceRange: "220.000 - 320.000 VNĐ / mẹt",
+      description: "Gà đồi thả vườn nướng than hoa da giòn vàng ruộm, chấm muối cheo giã từ lá chanh, ớt xanh và húng quế rừng. Cá trắm nuôi lồng trên sông Son thịt chắc ngọt không tanh.",
+      addressRecs: [
+        "Nhà hàng Thung Lũng Phong Nha (TT. Phong Nha)",
+        "Quán Gà Nướng Suối Nước Moọc",
+        "Ẩm thực Sông Son (Cạnh bến thuyền Phong Nha)"
+      ],
+      tasteNotes: "Da gà giòn rụm thơm lừng, vị muối cheo cay thơm đặc trưng núi rừng Trường Sơn."
     }
   ],
 
