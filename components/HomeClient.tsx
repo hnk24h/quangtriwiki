@@ -247,30 +247,69 @@ export default function HomeClient({
 
       {/* Connected Journey Navigation Bar */}
       <div className="hagiang-bottom-bar">
-        <nav className="container home-quick-nav" aria-label={lang === 'en' ? '5-step Quang Tri travel guide' : 'Hành trình khám phá Quảng Trị'}>
+        <nav
+          className="container home-quick-nav"
+          aria-label={
+            lang === 'en'
+              ? '5-step Quang Tri travel guide'
+              : lang === 'ja'
+              ? 'クアンチ旅の5ステップ'
+              : 'Hành trình khám phá Quảng Trị'
+          }
+        >
           <a href="#kham-pha">
             <span className="step-num">01</span>
-            <span>{lang === 'en' ? '✨ Iconic Highlights' : '✨ Trải nghiệm biểu tượng'}</span>
+            <span>
+              {lang === 'en'
+                ? '✨ Iconic Highlights'
+                : lang === 'ja'
+                ? '✨ 定番の見どころ'
+                : '✨ Trải nghiệm biểu tượng'}
+            </span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#cung-duong">
             <span className="step-num">02</span>
-            <span>{lang === 'en' ? `🗺️ Interactive Map (${initialPlaces.length})` : `🗺️ Bản đồ đa lớp (${initialPlaces.length})`}</span>
+            <span>
+              {lang === 'en'
+                ? `🗺️ Interactive Map (${initialPlaces.length})`
+                : lang === 'ja'
+                ? `🗺️ 多層マップ (${initialPlaces.length})`
+                : `🗺️ Bản đồ đa lớp (${initialPlaces.length})`}
+            </span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#dich-vu">
             <span className="step-num">03</span>
-            <span>{lang === 'en' ? '🏕️ Stays & Transport' : '🏕️ Lưu trú & Thuê xe'}</span>
+            <span>
+              {lang === 'en'
+                ? '🏕️ Stays & Transport'
+                : lang === 'ja'
+                ? '🏕️ 宿泊・バイクレンタル'
+                : '🏕️ Lưu trú & Thuê xe'}
+            </span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#am-thuc">
             <span className="step-num">04</span>
-            <span>{lang === 'en' ? '🍲 Local Cuisine' : '🍲 Ẩm thực đất lửa'}</span>
+            <span>
+              {lang === 'en'
+                ? '🍲 Local Cuisine'
+                : lang === 'ja'
+                ? '🍲 ご当地グルメ'
+                : '🍲 Ẩm thực đất lửa'}
+            </span>
           </a>
           <span className="step-arrow" aria-hidden="true">→</span>
           <a href="#lich-trinh">
             <span className="step-num">05</span>
-            <span>{lang === 'en' ? '🧭 Routes & Safety' : '🧭 Lộ trình & Cộng đồng'}</span>
+            <span>
+              {lang === 'en'
+                ? '🧭 Routes & Safety'
+                : lang === 'ja'
+                ? '🧭 モデルコース・安全'
+                : '🧭 Lộ trình & Cộng đồng'}
+            </span>
           </a>
         </nav>
       </div>
@@ -281,19 +320,33 @@ export default function HomeClient({
           <div className="section-head-split">
             <div className="section-head-hagiang" style={{ marginBottom: 0 }}>
               <span className="sub-title-accent">
-                {lang === 'en' ? 'STEP 01 / 05 · INSPIRATION' : 'BƯỚC 01 / 05 · CẢM HỨNG HÀNH TRÌNH'}
+                {lang === 'en'
+                  ? 'STEP 01 / 05 · INSPIRATION'
+                  : lang === 'ja'
+                  ? 'ステップ 01 / 05 · 旅のインスピレーション'
+                  : 'BƯỚC 01 / 05 · CẢM HỨNG HÀNH TRÌNH'}
               </span>
               <h2 className="title-serif">
-                {lang === 'en' ? '4 Unmissable Experiences in Quang Tri' : '4 Mảnh Ghép Không Thể Bỏ Lỡ Tại Quảng Trị'}
+                {lang === 'en'
+                  ? '4 Unmissable Experiences in Quang Tri'
+                  : lang === 'ja'
+                  ? 'クアンチで外せない4つの体験'
+                  : '4 Mảnh Ghép Không Thể Bỏ Lỡ Tại Quảng Trị'}
               </h2>
               <p className="desc-text">
                 {lang === 'en'
                   ? 'From UNESCO karst caves in Phong Nha - Ke Bang to Truong Son cloud passes, the 17th Parallel DMZ, and Con Co Island.'
+                  : lang === 'ja'
+                  ? 'ユネスコ世界遺産フォンニャ＝ケバンの鍾乳洞から、雲海のチュオンソン山脈、17度線DMZ、離島コンコー島まで。'
                   : 'Từ kỳ quan hang động UNESCO phía Bắc đến đèo mây Trường Sơn, ký ức Vĩ tuyến 17 và đảo ngọc tiền tiêu giữa Biển Đông.'}
               </p>
             </div>
             <a href="#cung-duong" className="journey-back-map-chip">
-              {lang === 'en' ? '🗺️ Open Interactive Map ↓' : '🗺️ Mở bản đồ tương tác ↓'}
+              {lang === 'en'
+                ? '🗺️ Open Interactive Map ↓'
+                : lang === 'ja'
+                ? '🗺️ インタラクティブ地図を開く ↓'
+                : '🗺️ Mở bản đồ tương tác ↓'}
             </a>
           </div>
 
@@ -301,41 +354,89 @@ export default function HomeClient({
             {[
               {
                 slug: 'dong-phong-nha',
-                tag: lang === 'en' ? 'QT-10 · UNESCO HERITAGE' : 'QT-10 · DI SẢN UNESCO',
-                title: lang === 'en' ? 'Phong Nha – Ke Bang Cave Kingdom' : 'Vương Quốc Hang Động Phong Nha – Kẻ Bàng',
+                tag:
+                  lang === 'en'
+                    ? 'QT-10 · UNESCO HERITAGE'
+                    : lang === 'ja'
+                    ? 'QT-10 · ユネスコ世界遺産'
+                    : 'QT-10 · DI SẢN UNESCO',
+                title:
+                  lang === 'en'
+                    ? 'Phong Nha – Ke Bang Cave Kingdom'
+                    : lang === 'ja'
+                    ? 'フォンニャ＝ケバン 洞窟王国'
+                    : 'Vương Quốc Hang Động Phong Nha – Kẻ Bàng',
                 desc:
                   lang === 'en'
                     ? 'Cruise the emerald Son River into limestone caverns, Paradise Cave & Mooc Spring.'
+                    : lang === 'ja'
+                    ? 'エメラルド色のソン川を舟で進み、天国洞窟やモック渓流の神秘を巡る旅。'
                     : 'Xuôi thuyền sông Son vào lòng động kỳ vĩ, khám phá Động Thiên Đường & suối Nước Moọc xanh ngọc.',
                 image: '/images/phong-nha-cave.jpg',
               },
               {
                 slug: 'cau-hien-luong-ben-hai',
-                tag: lang === 'en' ? 'QT-03 & QT-02 · DMZ HERITAGE' : 'QT-03 & QT-02 · ĐẤT THIÊNG',
-                title: lang === 'en' ? 'Hien Luong 17th Parallel & Citadel' : 'Ký Ức Thành Cổ & Vĩ Tuyến 17 Hiền Lương',
+                tag:
+                  lang === 'en'
+                    ? 'QT-03 & QT-02 · DMZ HERITAGE'
+                    : lang === 'ja'
+                    ? 'QT-03 & QT-02 · DMZ 歴史遺産'
+                    : 'QT-03 & QT-02 · ĐẤT THIÊNG',
+                title:
+                  lang === 'en'
+                    ? 'Hien Luong 17th Parallel & Citadel'
+                    : lang === 'ja'
+                    ? 'ヒエンルオン橋（17度線）とクアンチ古城'
+                    : 'Ký Ức Thành Cổ & Vĩ Tuyến 17 Hiền Lương',
                 desc:
                   lang === 'en'
                     ? 'Walk the historic two-color bridge over Ben Hai River, Vinh Moc Tunnels & Quang Tri Citadel.'
+                    : lang === 'ja'
+                    ? 'ベンハイ川に架かる歴史の橋、ヴィンモック地下トンネル、平和を祈る古城跡へ。'
                     : 'Lắng đọng bên dòng Thạch Hãn, Cầu Hiền Lương – Bến Hải và kỳ quan ngầm Địa đạo Vịnh Mốc.',
                 image: '/images/hien-luong-bridge.jpg',
               },
               {
                 slug: 'deo-sa-mu',
-                tag: lang === 'en' ? 'QT-05 · TRUONG SON WEST' : 'QT-05 · TRƯỜNG SƠN TÂY',
-                title: lang === 'en' ? 'Sa Mu Cloud Pass & Khe Sanh Coffee' : 'Săn Mây Đỉnh Đèo Sa Mù & Cà Phê Khe Sanh',
+                tag:
+                  lang === 'en'
+                    ? 'QT-05 · TRUONG SON WEST'
+                    : lang === 'ja'
+                    ? 'QT-05 · 西チュオンソン山道'
+                    : 'QT-05 · TRƯỜNG SƠN TÂY',
+                title:
+                  lang === 'en'
+                    ? 'Sa Mu Cloud Pass & Khe Sanh Coffee'
+                    : lang === 'ja'
+                    ? 'サームー峠の雲海とケサン珈琲'
+                    : 'Săn Mây Đỉnh Đèo Sa Mù & Cà Phê Khe Sanh',
                 desc:
                   lang === 'en'
                     ? 'Ride 1,400m misty mountain roads above the clouds and savor highland Arabica coffee.'
+                    : lang === 'ja'
+                    ? '標高1,400mの朝霧と雲海を走り抜け、高原アラビカ珈琲を味わう絶景ルート。'
                     : 'Chinh phục độ cao 1.400m mờ sương, cánh đồng điện gió Hướng Linh và thưởng thức Arabica vùng cao.',
                 image: '/images/deo-sa-mu-clouds.jpg',
               },
               {
                 slug: 'dao-con-co',
-                tag: lang === 'en' ? 'QT-09 & QT-07 · COAST & ISLAND' : 'QT-09 & QT-07 · BIỂN ĐẢO',
-                title: lang === 'en' ? 'Nhat Le Coast & Con Co Island' : 'Biển Nhật Lệ, Cửa Việt & Đảo Ngọc Cồn Cỏ',
+                tag:
+                  lang === 'en'
+                    ? 'QT-09 & QT-07 · COAST & ISLAND'
+                    : lang === 'ja'
+                    ? 'QT-09 & QT-07 · 海岸・離島'
+                    : 'QT-09 & QT-07 · BIỂN ĐẢO',
+                title:
+                  lang === 'en'
+                    ? 'Nhat Le Coast & Con Co Island'
+                    : lang === 'ja'
+                    ? 'ニャットレー海岸とコンコー島'
+                    : 'Biển Nhật Lệ, Cửa Việt & Đảo Ngọc Cồn Cỏ',
                 desc:
                   lang === 'en'
                     ? 'Catch sunrise on Quang Phu sand dunes and snorkel pristine coral reefs off Con Co Island.'
+                    : lang === 'ja'
+                    ? 'クアンフー砂丘の朝日と、コンコー島周辺の透明な海・サンゴ礁シュノーケリング。'
                     : 'Đón bình minh đồi cát Quang Phú, dạo biển Cửa Việt và lặn ngắm san hô tại đảo tiền tiêu Cồn Cỏ.',
                 image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80',
               },
@@ -353,7 +454,11 @@ export default function HomeClient({
                   <h3 className="inspire-card-title">{item.title}</h3>
                   <p className="inspire-card-desc">{item.desc}</p>
                   <span className="inspire-card-cta">
-                    {lang === 'en' ? 'Explore guide →' : 'Khám phá ngay →'}
+                    {lang === 'en'
+                      ? 'Explore guide →'
+                      : lang === 'ja'
+                      ? '詳しく見る →'
+                      : 'Khám phá ngay →'}
                   </span>
                 </div>
               </Link>

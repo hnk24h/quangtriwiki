@@ -147,10 +147,19 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
             </span>
           </div>
           <h3 className="weather-card-title">
-            {lang === 'en' ? `Weather ${currentLoc.zoneCode}` : `Thời tiết ${currentLoc.zoneCode}`}
+            {lang === 'en'
+              ? `Weather ${currentLoc.zoneCode}`
+              : lang === 'ja'
+              ? `${currentLoc.zoneCode}の天気`
+              : `Thời tiết ${currentLoc.zoneCode}`}
           </h3>
           <p className="weather-card-meta">
-            {currentLoc.region} · {lang === 'en' ? '7-day Vietnam forecast' : '7 ngày theo giờ VN'}
+            {currentLoc.region} ·{' '}
+            {lang === 'en'
+              ? '7-day Vietnam forecast'
+              : lang === 'ja'
+              ? 'ベトナム時間 7日間予報'
+              : '7 ngày theo giờ VN'}
           </p>
         </div>
 
@@ -240,9 +249,13 @@ export default function WeatherWidget({ weatherData }: WeatherWidgetProps) {
           {isExpanded
             ? lang === 'en'
               ? 'Hide hourly & wind/UV details'
+              : lang === 'ja'
+              ? '時間別予報・詳細を閉じる'
               : 'Thu gọn chi tiết giờ & gió/UV'
             : lang === 'en'
             ? `Hourly details · Rain ${displayRain} · Wind ${displayWind}`
+            : lang === 'ja'
+            ? `時間別予報 · 降水 ${displayRain} · 風 ${displayWind}`
             : `Chi tiết theo giờ · Mưa ${displayRain} · Gió ${displayWind}`}
         </span>
         <span>{isExpanded ? '▴' : '▾'}</span>

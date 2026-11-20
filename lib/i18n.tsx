@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
-export type SiteLang = 'vi' | 'en';
+export type SiteLang = 'vi' | 'en' | 'ja';
 
 const LANG_STORAGE_KEY = 'quangtri_lang_v1';
 
@@ -24,7 +24,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(LANG_STORAGE_KEY);
-      if (saved === 'en' || saved === 'vi') {
+      if (saved === 'en' || saved === 'vi' || saved === 'ja') {
         setLangState(saved);
         document.documentElement.lang = saved;
       }
@@ -44,7 +44,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggleLang = useCallback(() => {
-    setLang(lang === 'vi' ? 'en' : 'vi');
+    const order: SiteLang[] = ['vi', 'en', 'ja'];
+    const next = order[(order.indexOf(lang) + 1) % order.length];
+    setLang(next);
   }, [lang, setLang]);
 
   return (
@@ -59,13 +61,12 @@ export function useLanguage() {
 }
 
 /**
- * Converts a Vietnamese VNĐ price string into a friendly `~USD` hint for international travelers.
- * Example: "450.000 VNĐ / đêm" -> "450.000 VNĐ (~$18 USD)" when lang === 'en'
+ * Converts a Vietnamese VNĐ price string into a friendly `~USD` (for EN) or `~JPY` (for JA) hint.
  */
 export function formatDualCurrency(rawPrice: string | undefined, lang: SiteLang): string {
-  if (!rawPrice) return lang === 'en' ? 'Free' : 'Miễn phí';
+  if (!rawPrice) return lang === 'en' ? 'Free' : lang === 'ja' ? '無料' : 'Miễn phí';
   if (lang === 'vi') return rawPrice;
-  if (/miễn phí/i.test(rawPrice)) return 'Free entry';
+  if (/miễn phí/i.test(rawPrice)) return lang === 'ja' ? '無料' : 'Free entry';
 
   const matches = rawPrice.match(/\d[\d.,]*/g);
   if (!matches || matches.length === 0) return rawPrice;
@@ -78,8 +79,20 @@ export function formatDualCurrency(rawPrice: string | undefined, lang: SiteLang)
 
   const first = parseVnd(matches[0]);
   if (first < 1000) return rawPrice;
-  const usdFirst = Math.max(1, Math.round(first / 25400));
 
+  if (lang === 'ja') {
+    const jpyFirst = Math.max(10, Math.round(first / 165 / 10) * 10);
+    if (matches.length >= 2) {
+      const second = parseVnd(matches[1]);
+      if (second >= 1000) {
+        const jpySecond = Math.max(10, Math.round(second / 165 / 10) * 10);
+        return `${rawPrice} (~¥${jpyFirst.toLocaleString('en-US')}–¥${jpySecond.toLocaleString('en-US')})`;
+      }
+    }
+    return `${rawPrice} (~¥${jpyFirst.toLocaleString('en-US')})`;
+  }
+
+  const usdFirst = Math.max(1, Math.round(first / 25400));
   if (matches.length >= 2) {
     const second = parseVnd(matches[1]);
     if (second >= 1000) {

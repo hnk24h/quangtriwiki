@@ -529,16 +529,17 @@ const CATEGORY_TABS: Array<{
   id: MapPoiCategory;
   label: string;
   labelEn: string;
+  labelJa: string;
   icon: string;
   color: string;
 }> = [
-  { id: 'all', label: 'Tất cả', labelEn: 'All', icon: '🧭', color: '#133e2f' },
-  { id: 'sightseeing', label: 'Điểm tham quan', labelEn: 'Attractions', icon: '🏛️', color: '#059669' },
-  { id: 'food', label: 'Ăn uống', labelEn: 'Food & Drink', icon: '🍲', color: '#ea580c' },
-  { id: 'hotel', label: 'Khách sạn & Lưu trú', labelEn: 'Hotels & Stays', icon: '🏨', color: '#2563eb' },
-  { id: 'parking', label: 'Bãi đỗ xe', labelEn: 'Parking', icon: '🅿️', color: '#4f46e5' },
-  { id: 'fuel', label: 'Cây xăng & Cứu hộ', labelEn: 'Fuel & Rescue', icon: '⛽', color: '#d97706' },
-  { id: 'user_pin', label: 'Cộng đồng ghim', labelEn: 'Community Pins', icon: '📌', color: '#db2777' },
+  { id: 'all', label: 'Tất cả', labelEn: 'All', labelJa: 'すべて', icon: '🧭', color: '#133e2f' },
+  { id: 'sightseeing', label: 'Điểm tham quan', labelEn: 'Attractions', labelJa: '観光スポット', icon: '🏛️', color: '#059669' },
+  { id: 'food', label: 'Ăn uống', labelEn: 'Food & Drink', labelJa: 'グルメ', icon: '🍲', color: '#ea580c' },
+  { id: 'hotel', label: 'Khách sạn & Lưu trú', labelEn: 'Hotels & Stays', labelJa: '宿泊', icon: '🏨', color: '#2563eb' },
+  { id: 'parking', label: 'Bãi đỗ xe', labelEn: 'Parking', labelJa: '駐車場', icon: '🅿️', color: '#4f46e5' },
+  { id: 'fuel', label: 'Cây xăng & Cứu hộ', labelEn: 'Fuel & Rescue', labelJa: '給油・救援', icon: '⛽', color: '#d97706' },
+  { id: 'user_pin', label: 'Cộng đồng ghim', labelEn: 'Community Pins', labelJa: 'みんなのピン', icon: '📌', color: '#db2777' },
 ];
 
 function parsePlaceLatLng(place: Place): { lat: number; lng: number } {
@@ -1280,7 +1281,9 @@ export default function QuangTriInteractiveMap({
                   }
                 >
                   <span>{tab.icon}</span>
-                  <span>{lang === 'en' ? tab.labelEn : tab.label}</span>
+                  <span>
+                    {lang === 'en' ? tab.labelEn : lang === 'ja' ? tab.labelJa : tab.label}
+                  </span>
                   <span className="gmap-cat-count">{count}</span>
                 </button>
               );
@@ -1298,6 +1301,8 @@ export default function QuangTriInteractiveMap({
                 placeholder={
                   lang === 'en'
                     ? 'Search food, hotels, parking...'
+                    : lang === 'ja'
+                    ? '飲食店、ホテル、駐車場を検索...'
                     : 'Tìm quán ăn, khách sạn, bãi đỗ xe...'
                 }
                 aria-label={lang === 'en' ? 'Search map' : 'Tìm địa điểm trên bản đồ'}
@@ -1319,9 +1324,13 @@ export default function QuangTriInteractiveMap({
                 {isPinningMode
                   ? lang === 'en'
                     ? 'Pinning (Click to cancel)'
+                    : lang === 'ja'
+                    ? 'ピン配置中 (キャンセル)'
                     : 'Đang ghim (Bấm để hủy)'
                   : lang === 'en'
                   ? '+ Pin New Place'
+                  : lang === 'ja'
+                  ? '+ スポットをピン留め'
                   : '+ Ghim địa điểm mới'}
               </span>
             </button>
@@ -1737,7 +1746,12 @@ export default function QuangTriInteractiveMap({
                     rel="noopener noreferrer"
                     className="gmap-action-btn primary"
                   >
-                    🧭 {lang === 'en' ? 'Google Maps Directions ↗' : 'Chỉ đường Google Maps ↗'}
+                    🧭{' '}
+                    {lang === 'en'
+                      ? 'Google Maps Directions ↗'
+                      : lang === 'ja'
+                      ? 'Googleマップで経路案内 ↗'
+                      : 'Chỉ đường Google Maps ↗'}
                   </a>
 
                   {selectedPoi.rawPlace && (

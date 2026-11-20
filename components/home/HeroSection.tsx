@@ -222,6 +222,8 @@ export default function HeroSection({
             <div className="hagiang-kicker" style={{ margin: 0 }}>
               {lang === 'en'
                 ? 'CENTRAL VIETNAM · GO WHERE THE WIND BLOWS'
+                : lang === 'ja'
+                ? 'ベトナム中部 · 風の吹く場所へ'
                 : activeSlide.badge || 'MIỀN TRUNG VIỆT NAM · ĐI ĐẾN NƠI CÓ GIÓ'}
             </div>
             <span
@@ -240,18 +242,23 @@ export default function HeroSection({
               }}
             >
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399' }} />
-              {initialViews.toLocaleString('vi-VN')} {lang === 'en' ? 'views' : 'lượt xem'}
+              {initialViews.toLocaleString('vi-VN')}{' '}
+              {lang === 'en' ? 'views' : lang === 'ja' ? '閲覧' : 'lượt xem'}
             </span>
           </div>
 
           <h1 className="hagiang-main-title" key={`title-${currentSlide}`}>
             {lang === 'en'
               ? 'From Phong Nha Caves to DMZ & Con Co Island.'
+              : lang === 'ja'
+              ? 'フォンニャ洞窟からDMZ、コンコー島へ。'
               : activeSlide.title || 'Gần hơn với Quảng Trị chân thật.'}
           </h1>
           <p className="hagiang-main-subtitle" key={`sub-${currentSlide}`} style={{ maxWidth: '520px', lineHeight: 1.6 }}>
             {lang === 'en'
               ? 'An independent local travel guide to Vietnam’s Phong Nha - Ke Bang, Hien Luong 17th Parallel, Sa Mu cloud pass, and Nhat Le coast.'
+              : lang === 'ja'
+              ? '世界遺産フォンニャ＝ケバン、歴史的な17度線ヒエンルオン橋、雲海のサームー峠、ニャットレー海岸を巡るローカル旅ガイド。'
               : activeSlide.subtitle || 'Đèo núi. Miền đất thiêng yên bình. Hành trình đáng để đi chậm.'}
           </p>
 
@@ -290,10 +297,18 @@ export default function HeroSection({
                 }
               }}
               className="hagiang-search-input"
-              aria-label={lang === 'en' ? 'Search destinations, food, stays in Quang Tri' : 'Tìm kiếm điểm đến, món ngon, dịch vụ tại Quảng Trị'}
+              aria-label={
+                lang === 'en'
+                  ? 'Search destinations, food, stays in Quang Tri'
+                  : lang === 'ja'
+                  ? 'クアンチの観光地、グルメ、宿泊を検索'
+                  : 'Tìm kiếm điểm đến, món ngon, dịch vụ tại Quảng Trị'
+              }
               placeholder={
                 lang === 'en'
                   ? 'Search Phong Nha, DMZ, Sa Mu Pass, Nhat Le... (⌘K)'
+                  : lang === 'ja'
+                  ? 'フォンニャ、DMZ、サームー峠、ニャットレーを検索... (⌘K)'
                   : 'Tìm Phong Nha, Thành Cổ, Đèo Sa Mù, Cồn Cỏ... (⌘K)'
               }
             />
@@ -406,7 +421,7 @@ export default function HeroSection({
           {suggestedPlaces.length > 0 && (
             <div className="hero-quick-picks">
               <span className="hero-quick-label">
-                {lang === 'en' ? '✨ Quick picks:' : '✨ Gợi ý hôm nay:'}
+                {lang === 'en' ? '✨ Quick picks:' : lang === 'ja' ? '✨ おすすめ:' : '✨ Gợi ý hôm nay:'}
               </span>
               {suggestedPlaces.map((place) => (
                 <button

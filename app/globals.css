@@ -7652,3 +7652,33 @@ a.curated-food-card {
 .lang-switch-btn .lang-sep {
   opacity: 0.4;
 }
+
+
+.lang-switch-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+  border: 1px solid rgba(19, 62, 47, 0.2);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.lang-pill {
+  padding: 0.24rem 0.48rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.lang-pill:hover {
+  color: var(--primary);
+}
+
+.lang-pill.active {
+  background: var(--primary);
+  color: #ffffff;
+}

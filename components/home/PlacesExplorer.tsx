@@ -107,16 +107,22 @@ export default function PlacesExplorer({
             <span className="sub-title-accent">
               {lang === 'en'
                 ? 'STEP 02 / 05 · INTERACTIVE MULTI-LAYER MAP & PINS'
+                : lang === 'ja'
+                ? 'ステップ 02 / 05 · 多層インタラクティブ地図'
                 : 'BẢN ĐỒ SỐ ĐA LỚP · GHIM ĐỊA ĐIỂM CỘNG ĐỒNG'}
             </span>
             <h2 className="title-serif">
               {lang === 'en'
                 ? 'Explore Quang Tri Interactive Map'
+                : lang === 'ja'
+                ? 'クアンチ・インタラクティブ観光マップ'
                 : 'Bản Đồ Tương Tác & Khám Phá Quảng Trị'}
             </h2>
             <p className="desc-text">
               {lang === 'en'
                 ? 'Filter zones (QT-01 → QT-12), attractions, food, hotels, parking & fuel stations — or drop your own pin.'
+                : lang === 'ja'
+                ? 'エリア別（QT-01 → QT-12）や観光地・グルメ・宿泊・駐車場・給油所で絞り込み、新しいピンも追加できます。'
                 : 'Chọn khu vực (QT-01 → QT-12), lọc nhanh điểm tham quan, quán ăn, khách sạn, bãi đỗ xe hoặc tự ghim tọa độ mới.'}
             </p>
           </div>
